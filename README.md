@@ -1,24 +1,34 @@
 PetAlliance, é um aplicativo para ajudar donos de animais a terem boas crias, com segurança e facilidade.
 
 Banco de dados:
-    Nome do usuário.
-    CPF.
-    Email.
-    Senha.
-    Endereço.
+    Usuário:
+        Nome do usuário.
+        CPF.
+        Email.
+        Senha.
+        Endereço.
     ------------------------
-    Nome do animal.
-    ID animal
-    Certificado de raça/foto.
-    Carteira de vacinação do animal.
-    Foto do animal.
-    Tipo do animal.
-    Raça.
-    Chat.
-    Cor.
-    Data de nascimento.
-    Sexo.
+    Animal:
+        Nome do animal.
+        ID animal
+        Certificado de raça/foto.
+        Carteira de vacinação do animal.
+        Foto do animal.
+        Tipo do animal.
+        Raça.
+        Chat.
+        Cor.
+        Data de nascimento.
+        Sexo.
     ------------------------
+    Chat:
+        ID usuário mandou.
+        ID da conversa.
+        Mensagem.
+        Arquivo.
+        Lido.
+        Data enviada.
+    -------------------------
 
 Funcionalidades:
     Login e Cadastro.
