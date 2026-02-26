@@ -93,7 +93,7 @@ RF07 – Configurações
     Alterar dados do perfil
     Alterar tema/cor
     Acessar suporte
-    Configurar privacidade
+    Termos e política
     Fazer logout
     Excluir conta
 
