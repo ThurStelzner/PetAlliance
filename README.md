@@ -36,7 +36,7 @@ Funcionalidades:
     Chat interno no aplicativo.
     Listagem de pets.
     VIP (Pet aparecer acima dos outros).
-    Carteira digital/transação de dinheiro dentro do aplicativo.
+    Carteira digital/transação de dinheiro dentro do aplicativo.(Mercado pago, PagBank)
     Curtir pet.
     Match pet.
     De olho (Mostra pessoas interessadas no animal).
