@@ -15,34 +15,31 @@
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             $bloqueado = false;
 
-            // 1. VERIFICA O BLOQUEIO TEMPORÁRIO
             if (!empty($usuario['dt_bloqueado_ate'])) {
-                $tempo_atual = strtotime('now'); // Pega a hora exata de agora
-                $tempo_desbloqueio = strtotime($usuario['dt_bloqueado_ate']); // Pega a hora do banco
+                $tempo_atual = strtotime('now'); 
+                $tempo_desbloqueio = strtotime($usuario['dt_bloqueado_ate']);
 
                 if ($tempo_atual < $tempo_desbloqueio) {
-                    // Ainda não passou os 2 minutos
+
                     $bloqueado = true;
                     $segundos_restantes = $tempo_desbloqueio - $tempo_atual;
                     $minutos_restantes = ceil($segundos_restantes / 60);
                     
                     $mensagem = "Conta bloqueada. Tente novamente em $minutos_restantes minuto(s).";
                 } else {
-                    // Já passou do tempo! O usuário está liberado para tentar de novo
+
                     $reset_bloqueio = $conectar->prepare("UPDATE tb_usuarios SET dt_bloqueado_ate = NULL, qt_tentativas_login = 0 WHERE cpf = :cpf");
                     $reset_bloqueio->bindParam(':cpf', $cpf);
                     $reset_bloqueio->execute();
                     
-                    // Atualizamos a variável na memória do PHP para ele passar para a etapa da senha
                     $usuario['tentativas_login'] = 0; 
                 }
             }
 
-            // 2. SE NÃO ESTIVER BLOQUEADO, TESTA A SENHA
             if (!$bloqueado) {
                 
                 if ($usuario['ds_senha'] === $senha) {
-                    // SUCESSO! Zera as tentativas e limpa qualquer bloqueio anterior
+
                     $reset = $conectar->prepare("UPDATE tb_usuarios SET qt_tentativas_login = 0, dt_bloqueado_ate = NULL WHERE cpf = :cpf");
                     $reset->bindParam(':cpf', $cpf);
                     $reset->execute();
@@ -52,13 +49,11 @@
                     exit;
 
                 } else {
-                    // SENHA INCORRETA!
+
                     $tentativas_atuais = $usuario['qt_tentativas_login'] + 1;
-                    $limite_tentativas = 5; // Define aqui o máximo de erros
 
                     if ($tentativas_atuais >= $limite_tentativas) {
-                        // 3. ATINGIU O LIMITE: BLOQUEIA POR 2 MINUTOS
-                        // Pega a hora de agora e soma 2 minutos
+
                         $tempo_futuro = date('Y-m-d H:i:s', strtotime('+2 minutes')); 
                         
                         $update = $conectar->prepare("UPDATE tb_usuarios SET qt_tentativas_login = :tentativas, dt_bloqueado_ate = :bloqueado_ate WHERE cpf = :cpf");
@@ -66,13 +61,11 @@
                         $mensagem = "Muitas tentativas falhas. Conta bloqueada por 2 minutos.";
                         
                     } else {
-                        // APENAS INCREMENTA O ERRO
                         $update = $conectar->prepare("UPDATE tb_usuarios SET qt_tentativas_login = :tentativas WHERE cpf = :cpf");
                         $restantes = $limite_tentativas - $tentativas_atuais;
                         $mensagem = "Senha incorreta. Você tem mais $restantes tentativa(s).";
                     }
                     
-                    // Executa a atualização (seja o bloqueio ou apenas mais 1 erro)
                     $update->bindParam(':tentativas', $tentativas_atuais);
                     $update->bindParam(':cpf', $cpf);
                     $update->execute();
