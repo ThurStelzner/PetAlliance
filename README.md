@@ -28,7 +28,7 @@ A plataforma retém uma pequena porcentagem sobre cada transação realizada, ga
 ### Pré-requisitos
 
 - XAMPP / WAMP / LAMP instalado
-- PHP >= 7.4
+- PHP >= 8.3
 - MySQL >= 5.7
 - Navegador moderno
 
