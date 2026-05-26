@@ -1,7 +1,6 @@
 <?php
-    include "funcoes/config.php";
+    include "./funcoes/config.php";
 
-    $conn = conectarBanco();
 ?>
 
 <!DOCTYPE html>
@@ -21,12 +20,7 @@
         <input type="text" id="email" name="email" placeholder="Seu email aqui" required>
         <label for="senha">Senha:</label>
         <input type="text" id="senha" name="senha" placeholder="Seu nome aqui" required>
-        <button type="submit" onclick="validarCPF()">Cadastrar</button>
+        <button type="submit">Cadastrar</button>
     </form>
-    <script>
-        function validarCPF() {
-            
-        }
-    </script>
 </body>
 </html>
