@@ -27,6 +27,19 @@
                 if($e->errorInfo[1] == 1062) {
                     throw new InvalidArgumentException("O CPF ou E-mail informado já está cadastrado.");
                 }
-            }
+            }  
+        }
+        public function read($cpf) {
+            $sql = "SELECT * FROM tb_usuarios WHERE cpf = ?";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$cpf]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+            if (!$dados) return null;
+            $usuario = new Usuario($dados['cpf'],$dados['senha']);
+            $usuario->setId($dados['id']);
+        
+            return $usuario;
         }
     }
