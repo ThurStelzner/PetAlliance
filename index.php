@@ -1,9 +1,7 @@
 <?php
 
-    include './frontEnd/navBar.html';
-    require_once './backEnd/funcoes/config.php';
+    require __DIR__ . '/frontEnd/view/navBar.html';
+    require __DIR__ . '/frontEnd/view/index.html';
+    require __DIR__ . '/frontEnd/view/footer.html';
 
 ?>
-    
-</body>
-</html>
