@@ -7,8 +7,9 @@ class Usuario {
     private $senha;
     private $id;
 
-    public function __construct($cpf, $nome, $email, $senha, $id = null) {
+    public function __construct($cpf, $cep, $nome, $email, $senha, $id = null) {
         $this->cpf = $cpf;
+        $this->cep = $cep;
         $this->nome = $nome;
         $this->email = $email;
         $this->senha = $senha;
@@ -21,6 +22,10 @@ class Usuario {
 
     public function getCpf() {
         return $this->cpf;
+    }
+
+    public function getCep() {
+        return $this->cep;
     }
 
     public function getNome() {
@@ -41,6 +46,10 @@ class Usuario {
 
     public function setCpf($cpf) {
         $this->cpf = $cpf;
+    }
+
+    public function setCep($cep) {
+        $this->cep = $cep;
     }
 
     public function setNome($nome) {
