@@ -2,6 +2,8 @@
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
+    require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
+    require __DIR__ . "/../../frontEnd/view/footer.html";
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         try {
@@ -22,6 +24,3 @@
             echo "Erro: " . $e->getMessage();
         }
     }
-
-    require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
