@@ -20,6 +20,9 @@ class Usuario {
     }
 
     public function getCpf() {
+        if (empty($cpf)) {
+          throw new Exception("Cpf não pode ser vazio");
+        }
         return $this->cpf;
     }
 

@@ -3,17 +3,24 @@
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require __DIR__ . "/../../frontEnd/view/footer.html";
 
+    $usuarioDAO = new UsuarioDAO();
+
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         $cpf = trim($_POST['cpf']);
         $senha = trim($_POST['senha']);
-        
-        $usuarioDAO = new UsuarioDAO();
+    
+        $usuario = $usuarioDAO->read($cpf);
 
-    $usuario = $usuarioDAO->read($cpf);
+        if (!$usuario) {
+            echo "CPF inválido!";
+        } elseif ($senha !== $usuario->getSenha()) {
+            echo "Senha inválida!";
+        } else {
+            
+            header("Location: /index.php?mensagem=sucess");
+            exit;
+        }
 
-    if ($cpf === $usuario->getCpf() && $senha === $usuario->getSenha()) {
-        echo "Login bem-sucedido!";
-    }
     }
 
     

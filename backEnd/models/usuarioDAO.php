@@ -37,7 +37,7 @@
             $dados = $stmt->fetch(PDO::FETCH_ASSOC);
         
             if (!$dados) return null;
-            $usuario = new Usuario($dados['cpf'],$dados['senha']);
+            $usuario = new Usuario($dados['cpf'],$dados['nome'],$dados['email'],$dados['senha']);
             $usuario->setId($dados['id']);
         
             return $usuario;
