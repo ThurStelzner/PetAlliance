@@ -1,0 +1,140 @@
+<?php
+    include_once('usuarioDAO.php');
+
+
+    $usuarioDAO = new UsuarioDAO();
+
+class Animal {
+    private $donoid;
+    private $nome;
+    private $raca;
+    private $cor;
+    private $sexo;
+    private $tipo;
+    private $porte;
+    private $dt_nascimento;
+    private $peso;
+    private $descricao;
+    private $vacinado;
+    private $certificado;
+    private $id;
+
+    public function __construct($donoid,$nome,$raca,$cor,$sexo,$tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$id = null
+    ) {
+        $this->donoid = $donoid;
+        $this->nome = $nome;
+        $this->raca = $raca;
+        $this->cor = $cor;
+        $this->sexo = $sexo;
+        $this->tipo = $tipo;
+        $this->porte = $porte;
+        $this->dt_nascimento = $dt_nascimento;
+        $this->peso = $peso;
+        $this->descricao = $descricao;
+        $this->vacinado = $vacinado;
+        $this->certificado = $certificado;
+        $this->id = $id;
+    }
+
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getDonoid() {
+        return $this->donoid;
+    }
+
+    public function getNome() {
+        return $this->nome;
+    }
+
+    public function getRaca() {
+        return $this->raca;
+    }
+
+    public function getCor() {
+        return $this->cor;
+    }
+
+    public function getSexo() {
+        return $this->sexo;
+    }
+
+    public function getTipo() {
+        return $this->tipo;
+    }
+
+    public function getPorte() {
+        return $this->porte;
+    }
+
+    public function getDtNascimento() {
+        return $this->dt_nascimento;
+    }
+
+    public function getPeso() {
+        return $this->peso;
+    }
+
+    public function getDescricao() {
+        return $this->descricao;
+    }
+
+    public function getVacinado() {
+        return $this->vacinado;
+    }
+
+    public function getCertificado() {
+        return $this->certificado;
+    }
+
+
+    public function setId($id) {
+        $this->id = $id;
+    }
+
+    public function setDonoid($donoid) {
+        $this->donoid = $donoid;
+    }
+
+    public function setRaca($raca) {
+        $this->raca = $raca;
+    }
+
+    public function setCor($cor) {
+        $this->cor = $cor;
+    }
+
+    public function setSexo($sexo) {
+        $this->sexo = $sexo;
+    }
+
+    public function setTipo($tipo) {
+        $this->tipo = $tipo;
+    }
+
+     public function setPorte($porte) {
+        $this->porte = $porte;
+    }
+    
+     public function setDtNascimento($dt_nascimento) {
+        $this->$dt_nascimento = $dt_nascimento;
+    }
+
+     public function setPeso($peso) {
+        $this->peso = $peso;
+    }
+
+     public function setDescricao($descricao) {
+        $this->descricao = $descricao;
+    }
+
+     public function setVacinado($vacinado) {
+        $this->vacinado = $vacinado;
+    }
+
+     public function setCertificado($certificado) {
+        $this->certificado = $certificado;
+    }
+}

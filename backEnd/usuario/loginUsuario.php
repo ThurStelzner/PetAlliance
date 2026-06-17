@@ -14,7 +14,7 @@
 
         if (!$usuario) {
             echo "CPF não cadastrado!";
-        }elseif ($senha !== $usuario->getSenha()) {
+        }elseif ($cpf !== $usuario->getCpf()) {
             echo "Cpf inválido!";
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";

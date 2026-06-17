@@ -10,5 +10,12 @@
             echo 'Ocorreu um erro';
         }
     }
+    if (isset($_GET['erro'])) {
+        if ($_GET['erro'] === 'acesso_negado') {
+            echo 'Você não pode entrar aqui';
+        } else {
+            echo 'Ocorreu um erro';
+        }
+    }
         
 ?>

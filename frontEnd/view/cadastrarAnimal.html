@@ -1,0 +1,74 @@
+<form method="POST">
+    <h1>Cadastro de Animal</h1>
+
+    <label for="nome">Nome:</label>
+    <input type="text" name="nome" id="nome" minlength=6 maxlength=80 placeholder="Nome do animal" required>
+
+    <label for="raca">Raça:</label>
+    <input type="text" name="raca" id="raca" minlength=6 maxlength=80 placeholder="Raça" required>
+
+    <label for="cor">Cor:</label>
+    <input type="text" name="cor" id="cor" minlength=6 maxlength=80 placeholder="Cor" required>
+
+    <label for="sexo">Sexo:</label>
+    <input type="text" name="sexo" id="sexo" minlength=6 maxlength=80 placeholder="Sexo" required>
+
+    <label for="tipo">Tipo:</label>
+    <input type="text" name="tipo" id="tipo" minlength=6 maxlength=80 placeholder="Tipo do animal" required>
+
+    <label for="porte">Porte:</label>
+    <input type="text" name="porte" id="porte" minlength=6 maxlength=80 placeholder="Porte" required>
+
+    <label for="dt_nascimento">Data de Nascimento:</label>
+    <input type="date" name="dt_nascimento" id="dt_nascimento" required>
+
+    <label for="peso">Peso:</label>
+    <input type="number" step="0.01" name="peso" id="peso" placeholder="Peso" required>
+
+    <label for="descricao">Descrição:</label>
+    <textarea name="descricao" id="descricao" placeholder="Descrição"></textarea>
+
+    <select name="vacinado" required>
+        <option value="1">Sim</option>
+        <option value="0">Não</option>
+    </select>
+
+    <select name="certificado" required>
+        <option value="1">Sim</option>
+        <option value="0">Não</option>
+    </select>
+
+    <button type="submit">Cadastrar</button>
+</form>
+
+<script>
+    const formulario = document.querySelector("form");
+
+    formulario.addEventListener("submit", () => {
+        sessionStorage.setItem("animalNome", document.getElementById("nome").value);
+        sessionStorage.setItem("animalRaca", document.getElementById("raca").value);
+        sessionStorage.setItem("animalCor", document.getElementById("cor").value);
+        sessionStorage.setItem("animalSexo", document.getElementById("sexo").value);
+        sessionStorage.setItem("animalTipo", document.getElementById("tipo").value);
+        sessionStorage.setItem("animalPorte", document.getElementById("porte").value);
+        sessionStorage.setItem("animalNascimento", document.getElementById("dt_nascimento").value);
+        sessionStorage.setItem("animalPeso", document.getElementById("peso").value);
+        sessionStorage.setItem("animalDescricao", document.getElementById("descricao").value);
+        sessionStorage.setItem("animalVacinado", document.getElementById("vacinado").value);
+        sessionStorage.setItem("animalCertificado", document.getElementById("certificado").value);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("nome").value = sessionStorage.getItem("animalNome") || "";
+        document.getElementById("raca").value = sessionStorage.getItem("animalRaca") || "";
+        document.getElementById("cor").value = sessionStorage.getItem("animalCor") || "";
+        document.getElementById("sexo").value = sessionStorage.getItem("animalSexo") || "";
+        document.getElementById("tipo").value = sessionStorage.getItem("animalTipo") || "";
+        document.getElementById("porte").value = sessionStorage.getItem("animalPorte") || "";
+        document.getElementById("dt_nascimento").value = sessionStorage.getItem("animalNascimento") || "";
+        document.getElementById("peso").value = sessionStorage.getItem("animalPeso") || "";
+        document.getElementById("descricao").value = sessionStorage.getItem("animalDescricao") || "";
+        document.getElementById("vacinado").value = sessionStorage.getItem("animalVacinado") || "";
+        document.getElementById("certificado").value = sessionStorage.getItem("animalCertificado") || "";
+    });
+</script>
