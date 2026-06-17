@@ -42,7 +42,7 @@
         //para validar o cep precisamos da API ViaCep
 
         public function cadastrarUsuario(Usuario $usuario) {
-            if(!$this->validaCPF($usuario->getCep()) === false) {
+            if(!$this->validaCPF($usuario->getCpf()) === false) {
                 throw new InvalidArgumentException('CPF Informado é inválido');
             } else {
                 try {
@@ -73,7 +73,7 @@
             $dados = $stmt->fetch(PDO::FETCH_ASSOC);
         
             if (!$dados) return null;
-            $usuario = new Usuario($dados['cpf'],$dados['nome'],$dados['email'],$dados['senha']);
+            $usuario = new Usuario($dados['cpf'],$dados['cep'],$dados['nome'],$dados['email'],$dados['senha']);
             $usuario->setId($dados['id']);
         
             return $usuario;

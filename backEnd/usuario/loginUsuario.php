@@ -7,16 +7,18 @@
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         $cpf = trim($_POST['cpf']);
+        $_SESSION['cpf_digitado'] = trim($_POST['cpf']);
         $senha = trim($_POST['senha']);
     
         $usuario = $usuarioDAO->read($cpf);
 
         if (!$usuario) {
-            echo "CPF inválido!";
+            echo "CPF não cadastrado!";
+        }elseif ($senha !== $usuario->getSenha()) {
+            echo "Cpf inválido!";
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";
-        } else {
-            
+        }else {
             header("Location: /index.php?mensagem=sucess");
             exit;
         }

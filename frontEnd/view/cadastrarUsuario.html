@@ -5,10 +5,39 @@
     <label for="cpf">CPF:</label>
     <input type="text" name="cpf" id="cpf" placeholder="Seu CPF aqui" maxlength="14" minlength="11" required>
     <label for="cep">CEP:</label>
-    <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="9" minlength="8" required>
+    <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="8" minlength="8" required>
     <label for="email">Email:</label>
     <input type="email" name="email" id="email" placeholder="Seu Email aqui" required>
     <label for="senha">Senha:</label>
     <input type="password" name="senha" id="senha" placeholder="Sua Senha aqui" required>
     <button type="submit">Cadastrar</button>
 </form>
+
+<script>
+    const formulario = document.querySelector("form");
+
+    formulario.addEventListener("submit", () => {
+        sessionStorage.setItem("nomeDigitado", document.getElementById("nome").value);
+        sessionStorage.setItem("cpfDigitado", document.getElementById("cpf").value);
+        sessionStorage.setItem("cepDigitado", document.getElementById("cep").value);
+        sessionStorage.setItem("emailDigitado", document.getElementById("email").value);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const nomeSalvo = sessionStorage.getItem("nomeDigitado");
+        const cpfSalvo = sessionStorage.getItem("cpfDigitado");
+        const cepSalvo = sessionStorage.getItem("cepDigitado");
+        const emailSalvo = sessionStorage.getItem("emailDigitado");
+
+
+
+        if (cpfSalvo,emailSalvo,cepSalvo,nomeSalvo) {
+            document.getElementById("nome").value = nomeSalvo;
+            document.getElementById("cpf").value = cpfSalvo;
+            document.getElementById("cep").value = cepSalvo;
+            document.getElementById("email").value = emailSalvo;
+
+        }
+    });
+    
+</script> 

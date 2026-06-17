@@ -2,6 +2,7 @@
 
 class Usuario {
     private $cpf;
+    private $cep;
     private $nome;
     private $email;
     private $senha;
@@ -21,9 +22,6 @@ class Usuario {
     }
 
     public function getCpf() {
-        if (empty($cpf)) {
-          throw new Exception("Cpf não pode ser vazio");
-        }
         return $this->cpf;
     }
 
@@ -48,6 +46,9 @@ class Usuario {
     }
 
     public function setCpf($cpf) {
+        if (empty($cpf)) {
+          throw new Exception("Cpf não pode ser vazio");
+        }
         $this->cpf = $cpf;
     }
 
