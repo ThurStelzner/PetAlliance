@@ -12,7 +12,7 @@
 
         public function cadastrarAnimal(Animal $animal) {
             try {
-                $sql = "INSERT INTO tb_pets (dono_id, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                $sql = "INSERT INTO tb_pets (dono_id, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca,foto_certificado,foto_vacinas) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([
                     $animal->getDonoid(),
@@ -26,7 +26,9 @@
                     $animal->getPeso(),
                     $animal->getDescricao(),
                     $animal->getVacinado(),
-                    $animal->getCertificado()
+                    $animal->getCertificado(),
+                    $animal->getFotoCertificado(),
+                    $animal->getFotoVacinas(),
 
                 ]);
                 $animal->setId($this->pdo->lastInsertId());
@@ -61,11 +63,42 @@
                 $dados['peso'],
                 $dados['descricao'],
                 $dados['vacinado'],
-                $dados['certificado_raca']
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
             );
 
             $animal->setId($dados['id']);
 
             return $animal;
         }
+
+        public function readAll() {
+            $sql = "SELECT * FROM tb_pets ORDER BY nome";
+            $stmt = $this->pdo->query($sql);
+            $animais = [];
+        
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $animal = new Animal(
+                $dados['dono_id'],
+                $dados['nome'],
+                $dados['raca'],
+                $dados['cor'],
+                $dados['sexo'],
+                $dados['tipo'],
+                $dados['porte'],
+                $dados['data_nascimento'],
+                $dados['peso'],
+                $dados['descricao'],
+                $dados['vacinado'],
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
+              );
+              $animal->setId($dados['id']);
+              $animais[] = $animal; // adiciona ao array
+            }
+            
+            return $animais;
+          }
     }

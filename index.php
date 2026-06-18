@@ -7,7 +7,7 @@
         if ($_GET['mensagem'] === 'sucess') {
             echo 'Login foi um sucesso';
         } else {
-            echo 'Ocorreu um erro';
+             echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
         }
     }
     if (isset($_GET['erro'])) {

@@ -5,7 +5,7 @@
     $usuarioDAO = new UsuarioDAO();
 
 class Animal {
-    private $donoid;
+    private $dono_id;
     private $nome;
     private $raca;
     private $cor;
@@ -17,11 +17,14 @@ class Animal {
     private $descricao;
     private $vacinado;
     private $certificado;
+    private $foto_certificado;
+    private $foto_vacina;
+
     private $id;
 
-    public function __construct($donoid,$nome,$raca,$cor,$sexo,$tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$id = null
+    public function __construct($dono_id,$nome,$raca,$cor,$sexo,$tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null
     ) {
-        $this->donoid = $donoid;
+        $this->dono_id = $dono_id;
         $this->nome = $nome;
         $this->raca = $raca;
         $this->cor = $cor;
@@ -33,6 +36,8 @@ class Animal {
         $this->descricao = $descricao;
         $this->vacinado = $vacinado;
         $this->certificado = $certificado;
+        $this->foto_certificado =$foto_certificado;
+        $this->foto_vacina = $foto_vacina;
         $this->id = $id;
     }
 
@@ -42,7 +47,7 @@ class Animal {
     }
 
     public function getDonoid() {
-        return $this->donoid;
+        return $this->dono_id;
     }
 
     public function getNome() {
@@ -89,13 +94,21 @@ class Animal {
         return $this->certificado;
     }
 
+    public function getFotoCertificado() {
+        return $this->foto_certificado;
+    }
+
+    public function getFotoVacinas() {
+        return $this->foto_vacina;
+    }
+
 
     public function setId($id) {
         $this->id = $id;
     }
 
     public function setDonoid($donoid) {
-        $this->donoid = $donoid;
+        $this->dono_id = $donoid;
     }
 
     public function setRaca($raca) {
@@ -132,6 +145,14 @@ class Animal {
 
      public function setVacinado($vacinado) {
         $this->vacinado = $vacinado;
+    }
+
+    public function setFotoCertificado($foto_certificado) {
+        $this->foto_certificado = $foto_certificado;
+    }
+
+    public function setFotoVacina($foto_vacina) {
+        $this->foto_vacina = $foto_vacina;
     }
 
      public function setCertificado($certificado) {

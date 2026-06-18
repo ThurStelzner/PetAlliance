@@ -1,19 +1,19 @@
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <h1>Cadastro de Animal</h1>
 
     <label for="nome">Nome:</label>
-    <input type="text" name="nome" id="nome" minlength="6" maxlength="80" placeholder="Nome do animal" required>
+    <input type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
 
 
     <label for="tipo">Tipo:</label>
-    <input type="text" name="tipo" id="tipo" minlength="6" maxlength="80" placeholder="Tipo do animal" required>
+    <input type="text" name="tipo" id="tipo" minlength="3" maxlength="80" placeholder="Tipo do animal" required>
 
 
     <label for="raca">Raça:</label>
-    <input type="text" name="raca" id="raca" minlength="6" maxlength="80" placeholder="Raça" required>
+    <input type="text" name="raca" id="raca" minlength="3" maxlength="80" placeholder="Raça" required>
 
     <label for="cor">Cor:</label>
-    <input type="text" name="cor" id="cor" minlength="6" maxlength="80" placeholder="Cor" required>
+    <input type="text" name="cor" id="cor" minlength="3" maxlength="80" placeholder="Cor" required>
 
     <label for="sexo">Sexo:</label>
     <select name="sexo" id="sexo" required>
@@ -41,14 +41,14 @@
 
     <label for="vacinado" >Vacinado?</label>
     <select id="vacinado" name="vacinado" required>
-        <option value="" selected disabled>Sim ou não</option>
+        <option value="" style="display: none;" selected disabled>Sim ou não</option>
         <option value="1">Sim</option>
         <option value="0">Não</option>
     </select>
 
     <label for="certificado" >Possui Certificado de raça?</label>
     <select id="certificado" name="certificado" required>
-        <option value="" selected disabled>Sim ou não</option>
+        <option value="" style="display: none;" selected disabled>Sim ou não</option>
         <option value="1">Sim</option>
         <option value="0">Não</option>
     </select>
