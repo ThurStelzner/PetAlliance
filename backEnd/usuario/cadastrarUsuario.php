@@ -15,11 +15,16 @@
             
             $nomeArquivo = "placeholder.webp";
 
-            if(isset($_FILES['imagemPerfil']['name'])) {
+            if(isset($_POST['cadastrarFoto'])) {
+                if(!isset($_FILES['imagemPerfil']) || $_FILES['imagemPerfil']['error'] === UPLOAD_ERR_NO_FILE) {
+                    echo "Selecione uma imagem";
+                    exit();
+                }
                 $extensao  = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     echo 'Tipo de imagem não permitido.';
+                    exit();
                 } else {
                     $dao = new UsuarioDAO();
                     $nomeArquivo = uniqid('prod_') . '.' . $extensao;
