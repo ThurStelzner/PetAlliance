@@ -1,19 +1,26 @@
 <?php
 
 class Usuario {
+    private $imagem;
     private $cpf;
+    private $cep;
     private $nome;
     private $email;
     private $senha;
     private $id;
 
-    public function __construct($cpf, $cep, $nome, $email, $senha, $id = null) {
+    public function __construct($imagem, $cpf, $cep, $nome, $email, $senha, $id = null) {
+        $this->imagem = $imagem;
         $this->cpf = $cpf;
         $this->cep = $cep;
         $this->nome = $nome;
         $this->email = $email;
         $this->senha = $senha;
         $this->id = $id;
+    }
+
+    public function getImagem() {
+        return $this->imagem;
     }
 
     public function getId() {
@@ -42,6 +49,10 @@ class Usuario {
 
     public function setId($id) {
         $this->id = $id;
+    }
+
+    public function setImagem($imagem) {
+        $this->imagem = $imagem;
     }
 
     public function setCpf($cpf) {

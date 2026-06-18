@@ -42,13 +42,14 @@
         //para validar o cep precisamos da API ViaCep
 
         public function cadastrarUsuario(Usuario $usuario) {
-            if(!$this->validaCPF($usuario->getCep()) === false) {
-                throw new InvalidArgumentException('CPF Informado é inválido');
+            if($this->validaCPF($usuario->getCpf()) === false) {
+                throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF Informado é inválido</p>");
             } else {
                 try {
-                    $sql = "INSERT INTO tb_usuarios (cpf, cep, nome, email, senha) VALUES (?,?,?,?,?)";
+                    $sql = "INSERT INTO tb_usuarios (foto_perfil, cpf, cep, nome, email, senha) VALUES (?,?,?,?,?,?)";
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([
+                        $usuario->getImagem(),
                         preg_replace('/[^0-9]/', '', $usuario->getCpf()),
                         preg_replace('/[^0-9]/', '', $usuario->getCep()),
                         $usuario->getNome(),
@@ -59,7 +60,9 @@
                     return $usuario;
                 } catch (PDOException $e) {
                     if($e->errorInfo[1] == 1062) {
-                        throw new InvalidArgumentException("O CPF ou E-mail informado já está cadastrado.");
+                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>O CPF ou E-mail informado já está cadastrado.</p>");
+                    } else if ($e->errorInfo[1] == 1406) {
+                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF ou CEP inválido!</p>");
                     }
                     throw $e;
                 }
