@@ -1,0 +1,25 @@
+<form method="POST">
+    <h1>Login de usuário</h1>
+    <label for="cpf" >Cpf:</label>
+    <input type="text"  name="cpf" id="cpf" placeholder="Seu CPF aqui" maxlength="14" minlength="11" required>
+    <label for="senha">Senha:</label>
+    <input type="password" name="senha" id="senha" maxlength="50" minlength="8" placeholder="Sua Senha aqui" required>
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    const formulario = document.querySelector("form");
+
+    formulario.addEventListener("submit", () => {
+        sessionStorage.setItem("cpfDigitado", document.getElementById("cpf").value);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const cpfSalvo = sessionStorage.getItem("cpfDigitado");
+
+        if (cpfSalvo) {
+            document.getElementById("cpf").value = cpfSalvo;
+        }
+    });
+    
+</script> 

@@ -2,6 +2,7 @@
 
     require __DIR__ . '/frontEnd/view/index.html';
     require __DIR__ . '/frontEnd/view/footer.html';
+    require_once __DIR__ . '/backEnd/controlers/api/animalController.php';
 
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -10,7 +11,9 @@
 
     $metodo = $_SERVER['REQUEST_METHOD'];
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $rotaBase = "/";
+    $rotaBase = "/backEnd";
+
+    $controllerAnimal = new AnimalController();
 
     if(strpos($uri, $rotaBase) === 0) {
         if($metodo === "GET") {
@@ -18,23 +21,7 @@
             if($donoId) {
                 
             } else {
-                // Lógica para listar recursos
-            }
-        } else if($metodo === "POST") {
-            // Lógica para criar um recurso
-        } else if($metodo === "PUT") {
-            if($id) {
-                // Lógica para atualizar um recurso específico
-            } else {
-                http_response_code(400);
-                echo json_encode(["erro" => "ID é obrigatório para atualização"]);
-            }
-        } else if($metodo === "DELETE") {
-            if($id) {
-                // Lógica para deletar um recurso específico
-            } else {
-                http_response_code(400);
-                echo json_encode(["erro" => "ID é obrigatório para exclusão"]);
+                $controllerAnimal->listarAnimais();
             }
         } else {
             http_response_code(405);
@@ -51,6 +38,21 @@
     }
     if(!is_dir($diretorioAnimal)) {
         mkdir($diretorioAnimal, 0755, true);
+    }
+
+    if (isset($_GET['mensagem'])) {
+        if ($_GET['mensagem'] === 'sucess') {
+            echo 'Login foi um sucesso';
+        } else {
+             echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
+        }
+    }
+    if (isset($_GET['erro'])) {
+        if ($_GET['erro'] === 'acesso_negado') {
+            echo 'Você não pode entrar aqui';
+        } else {
+            echo 'Ocorreu um erro';
+        }
     }
 
 ?>

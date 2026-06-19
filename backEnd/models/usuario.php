@@ -56,6 +56,9 @@ class Usuario {
     }
 
     public function setCpf($cpf) {
+        if (empty($cpf)) {
+          throw new Exception("Cpf não pode ser vazio");
+        }
         $this->cpf = $cpf;
     }
 
