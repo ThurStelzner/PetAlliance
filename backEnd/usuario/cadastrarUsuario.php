@@ -38,7 +38,7 @@
             $dao = new UsuarioDAO();
             $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
 
-            header("Location: /index.php");
+            header("Location: /index.php?sucesso=1");
             exit();
         } catch (InvalidArgumentException $e) {
             echo $e->getMessage();

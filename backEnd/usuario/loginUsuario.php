@@ -19,7 +19,7 @@
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";
         }else {
-            header("Location: /index.php?mensagem=sucess");
+            header("Location: /index.php?sucesso=1");
             exit;
         }
 

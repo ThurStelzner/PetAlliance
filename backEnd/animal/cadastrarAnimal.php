@@ -40,7 +40,6 @@
                     
                 } else {
                     $foto_certificado = uniqid('prod_') . '.' . $extensao;
-                
                     move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
                 }
             }
@@ -52,7 +51,6 @@
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $foto_vacina = uniqid('prod_') . '.' . $extensao;
-                
                     move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
                 }
             }
@@ -60,7 +58,7 @@
 
             
             $dao->cadastrarAnimal(new Animal($dono_id,$nome, $raca, $cor, $sexo, $tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_vacina,$foto_certificado));
-            header("Location: /index.php");
+            header("Location: /index.php?sucesso=1");
             exit();
         } catch (InvalidArgumentException $e) {
             echo "Erro: " . $e->getMessage();

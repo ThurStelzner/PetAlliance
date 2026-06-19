@@ -1,3 +1,5 @@
+const params = new URLSearchParams(window.location.search);
+
 const formulario = document.querySelector("form");
     
 const certificado = document.getElementById("certificado");
@@ -5,6 +7,20 @@ const vacinado = document.getElementById("vacinado");
 
 const campoCertificado = document.getElementById("campoCertificado");
 const campoVacinacao = document.getElementById("campoVacinacao");
+
+if (params.get("sucesso") === "1") {
+    [
+        "animalNome",
+        "animalRaca",
+        "animalCor",
+        "animalSexo",
+        "animalTipo",
+        "animalPorte",
+        "animalNascimento",
+        "animalPeso",
+        "animalDescricao"
+    ].forEach(chave => sessionStorage.removeItem(chave));
+}
 
 
 formulario.addEventListener("submit", () => {
@@ -31,12 +47,4 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("descricao").value = sessionStorage.getItem("animalDescricao") || "";
 });
 
-certificado.addEventListener("change", function () {
-    campoCertificado.style.display =
-        this.value === "1" ? "block" : "none";
-});
 
-vacinado.addEventListener("change", function () {
-    campoVacinacao.style.display =
-        this.value === "1" ? "block" : "none";
-});

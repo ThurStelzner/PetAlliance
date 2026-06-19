@@ -1,11 +1,11 @@
 <form method="POST" enctype="multipart/form-data">
     <h1>Cadastro de Animal</h1>
 
-    <label for="nome">Nome:</label>
+    <label for="nome">Nome do animal:</label>
     <input type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
 
 
-    <label for="tipo">Tipo:</label>
+    <label for="tipo">Tipo de animal:</label>
     <input type="text" name="tipo" id="tipo" minlength="3" maxlength="80" placeholder="Tipo do animal" required>
 
 
@@ -17,14 +17,14 @@
 
     <label for="sexo">Sexo:</label>
     <select name="sexo" id="sexo" required>
-        <option value="">Selecione</option>
+        <option value="" selected disabled>Selecione</option>
         <option value="Macho">Macho</option>
         <option value="Fêmea">Fêmea</option>
     </select>
 
     <label for="porte">Porte:</label>
     <select name="porte" id="porte" required>
-        <option value="">Selecione</option>
+        <option value="" selected disabled>Selecione</option>
         <option value="Pequeno">Pequeno</option>
         <option value="Médio">Médio</option>
         <option value="Grande">Grande</option>
@@ -55,15 +55,16 @@
 
     <div id="campoCertificado" style="display:none;">
         <label for="arquivoCertificado">Enviar Certificado:</label>
-        <input type="file" name="arquivoCertificado" id="arquivoCertificado">
+        <input type="file" name="arquivoCertificado" id="arquivoCertificado" required>
     </div>
 
     <div id="campoVacinacao" style="display:none;">
         <label for="arquivoVacinacao">Enviar carteira de vacinação:</label>
-        <input type="file" name="arquivoVacinacao" id="arquivoVacinacao">
+        <input type="file" name="arquivoVacinacao" id="arquivoVacinacao" required>
     </div>
 
     <button type="submit">Cadastrar</button>
 </form>
 
 <script src="../../frontEnd/utils/animalSalvos.js"></script>
+<script src="../../frontEnd/utils/animalFuncoes.js"></script>
