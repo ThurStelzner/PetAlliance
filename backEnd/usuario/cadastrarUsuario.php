@@ -2,6 +2,9 @@
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
+
+    session_start();
+
     require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
 
@@ -29,16 +32,27 @@
                     $dao = new UsuarioDAO();
                     $nomeArquivo = uniqid('prod_') . '.' . $extensao;
                     move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], '../../uploads/usuario/' . $nomeArquivo);
-                    $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));;
-                    header("Location: /index.php");
+                    $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
+
+                    $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
+                    $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
+                    $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
+                    $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+
+                    header("Location: /backEnd/home.php");
                     exit();
                 }
             }
 
             $dao = new UsuarioDAO();
-            $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
+            $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
 
-            header("Location: /index.php");
+            $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
+            $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
+            $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
+            $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+
+            header("Location: /backEnd/home.php");
             exit();
         } catch (InvalidArgumentException $e) {
             echo $e->getMessage();
