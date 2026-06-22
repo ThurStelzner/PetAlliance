@@ -34,7 +34,7 @@
 
             
             $dao->cadastrarAnimal(new Animal($dono_id,$nome, $raca, $cor, $sexo, $tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_vacina,$foto_certificado));
-            header("Location: /home.php?sucesso=1");
+            header("Location: /backEnd/home.php?sucesso=1");
             exit();
         } catch (InvalidArgumentException $e) {
             echo "Erro: " . $e->getMessage();
