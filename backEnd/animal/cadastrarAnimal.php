@@ -5,7 +5,7 @@
     
     if (!isset($_GET['donoid'])) {
       
-        header("Location: /index.php?erro=acesso_negado");
+        header("Location: /home.php?erro=acesso_negado");
         exit;
     }
 
@@ -29,36 +29,12 @@
             $foto_vacina = null;
             $foto_certificado = null;
 
-            if (!empty($_FILES['arquivoCertificado']['name'])) {
-                $extensao  = pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION);
-                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
             
-                if (!in_array(strtolower($extensao), $permitidos)) {
-                    $erro = 'Tipo de imagem não permitido.';
-                    header("Location: /index.php");
-                    exit();
-                    
-                } else {
-                    $foto_certificado = uniqid('prod_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
-                }
-            }
-            if (!empty($_FILES['arquivoVacinacao']['name'])) {
-                $extensao  = pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION);
-                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-            
-                if (!in_array(strtolower($extensao), $permitidos)) {
-                    $erro = 'Tipo de imagem não permitido.';
-                } else {
-                    $foto_vacina = uniqid('prod_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
-                }
-            }
             
 
             
             $dao->cadastrarAnimal(new Animal($dono_id,$nome, $raca, $cor, $sexo, $tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_vacina,$foto_certificado));
-            header("Location: /index.php?sucesso=1");
+            header("Location: /home.php?sucesso=1");
             exit();
         } catch (InvalidArgumentException $e) {
             echo "Erro: " . $e->getMessage();

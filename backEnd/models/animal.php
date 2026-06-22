@@ -164,12 +164,17 @@ class Animal {
         if (!$data || $data->format("Y-m-d") !== $dt_nascimento) {
             throw new Exception("Data de nascimento inválida.");
         }
+        if ($dt_nascimento < '2000-01-01') {
+            echo 'Erro: A data escolhida é menor que a data mínima permitida.';
+        } else {
+            echo 'Sucesso: Data válida!';
+        }
     
         $this->dt_nascimento = $dt_nascimento;
     }
 
     public function setPeso($peso) {
-        if (!is_numeric($peso) || $peso <= 0) {
+        if (!is_numeric($peso) || $peso < 0) {
             throw new Exception("Peso deve ser um número maior que zero.");
         }
     
@@ -201,10 +206,36 @@ class Animal {
 
     public function setFotoCertificado($foto_certificado) {
         $this->foto_certificado = $foto_certificado;
+        if (!empty($_FILES['arquivoCertificado']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                    header("Location: /index.php");
+                    exit();
+                    
+                } else {
+                    $foto_certificado = uniqid('prod_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
+                }
+        }
+            
     }
 
     public function setFotoVacina($foto_vacina) {
         $this->foto_vacina = $foto_vacina;
-    }
+        if (!empty($_FILES['arquivoVacinacao']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                } else {
+                    $foto_vacina = uniqid('prod_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
+                }
+            }
+        }
 
 }
