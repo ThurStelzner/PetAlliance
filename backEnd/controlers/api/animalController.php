@@ -15,6 +15,11 @@
             echo json_encode($animais);
         }
 
+        public function readByDonoId($donoId) {
+            $animais = $this->dao->readByDonoId($donoId);
+            echo json_encode($animais);
+        }
+
         public function criarAnimal() {
             $dados = json_decode(file_get_contents("php://input"), true);
             $animal = new Animal(

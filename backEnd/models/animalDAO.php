@@ -101,4 +101,34 @@
             
             return $animais;
           }
+
+        public function readByDonoId($donoId) {
+            $sql = "SELECT * FROM tb_pets WHERE dono_id = ? ORDER BY nome";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$donoId]);
+            $animais = [];
+        
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $animal = new Animal(
+                $dados['dono_id'],
+                $dados['nome'],
+                $dados['raca'],
+                $dados['cor'],
+                $dados['sexo'],
+                $dados['tipo'],
+                $dados['porte'],
+                $dados['data_nascimento'],
+                $dados['peso'],
+                $dados['descricao'],
+                $dados['vacinado'],
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
+              );
+              $animal->setId($dados['id']);
+              $animais[] = $animal; // adiciona ao array
+            }
+            
+            return $animais;
+        }
     }

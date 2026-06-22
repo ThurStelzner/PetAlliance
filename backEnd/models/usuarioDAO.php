@@ -68,4 +68,18 @@
                 }
             }  
         }
+
+        public function read($cpf) {
+            $sql = "SELECT * FROM tb_usuarios WHERE cpf = ?";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$cpf]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+            if (!$dados) return null;
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['nome'],$dados['email'],$dados['senha']);
+            $usuario->setId($dados['id']);
+        
+            return $usuario;
+        }
     }

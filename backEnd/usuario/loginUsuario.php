@@ -3,10 +3,12 @@
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require __DIR__ . "/../../frontEnd/view/footer.html";
 
+    session_start();
+
     $usuarioDAO = new UsuarioDAO();
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
-        $cpf = trim($_POST['cpf']);
+        $cpf = preg_replace('/[^0-9]/', '', trim($_POST['cpf']));
         $_SESSION['cpf_digitado'] = trim($_POST['cpf']);
         $senha = trim($_POST['senha']);
     
@@ -19,7 +21,11 @@
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";
         }else {
-            header("Location: /index.php?mensagem=sucess");
+            $_SESSION['usuario_id'] = $usuario->getId();
+            $_SESSION['usuario_nome'] = $usuario->getNome();
+            $_SESSION['usuario_email'] = $usuario->getEmail();
+            $_SESSION['usuario_imagem'] = $usuario->getImagem();
+            header("Location: /backEnd/home.php?sucesso=1");
             exit;
         }
 
