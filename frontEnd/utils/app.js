@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL_ANIMAIS = "/backEnd/home.php?route=animais";
+    const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
     const container = document.getElementById("animais-container");
 
     if (!container) {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function carregarAnimais() {
         try {
-            const response = await fetch(API_URL_ANIMAIS);
+            const response = await fetch(API_URL_ANIMAIS, { credentials: 'same-origin' });
             if (!response.ok) {
                 throw new Error(`Erro ao buscar lista de animais: ${response.status}`);
             }

@@ -1,13 +1,10 @@
 <?php
-
-    require_once __DIR__ . "/../../backEnd/models/animalDAO.php";
-    require_once __DIR__ . "/../../backEnd/models/animal.php";
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
-    require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
     require_once __DIR__ . '/../controlers/api/animalController.php';
 
     session_start();
+
+    $donoId = $_GET['donoid'] ?? ($_POST['dono_id'] ?? ($_SESSION['usuario_id'] ?? null));
+    $erro = '';
 
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -19,6 +16,10 @@
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
         header('Content-Type: application/json');
         $controllerAnimal = new AnimalController();
-        $controllerAnimal->readByDonoId($_SESSION['usuario_id']);
+        $controllerAnimal->readByDonoId($donoId);
         exit;
     }
+
+    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
+    require __DIR__ . "/../../frontEnd/view/footer.html";
