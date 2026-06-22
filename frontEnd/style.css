@@ -1,0 +1,52 @@
+body {
+    background-color: #fcfcfc;
+}
+
+.font-display {
+    font-family: 'Outfit', sans-serif;
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.mobile-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+@keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.animate-slide-up {
+    animation: slide-up 0.3s ease-out forwards;
+}
+
+/* Custom scrollbar for terms box */
+#reg-terms-box::-webkit-scrollbar {
+    width: 6px;
+}
+#reg-terms-box::-webkit-scrollbar-track {
+    background: transparent;
+}
+#reg-terms-box::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+#reg-terms-box::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* Badge styles */
+.badge-primary {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary;
+}
+.badge-accent {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/20 text-amber-700;
+}
+.badge-gray {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground;
+}

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAlliance - Encontre seu companheiro ideal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        accent: '#fbbf24',
+                        card: '#ffffff',
+                        secondary: '#f8fafc',
+                        muted: '#f1f5f9',
+                        border: '#e2e8f0',
+                        foreground: '#0f172a',
+                        'muted-foreground': '#64748b',
+                        'input-background': '#ffffff',
+                    },
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-foreground font-sans min-h-screen flex flex-col">
+
+    <!-- NavBar -->
+    <nav class="sticky top-0 z-40 bg-primary text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+            <button onclick="navigateTo('home')" class="flex items-center gap-2 font-display font-bold text-xl text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                Pet<span class="text-accent">Alliance</span>
+            </button>
+
+            <div class="hidden md:flex items-center gap-1">
+                <button onclick="navigateTo('home')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="home">Início</button>
+                <button onclick="navigateTo('members')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="members">Membros</button>
+                <button onclick="navigateTo('my-animals')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="my-animals">Seus Animais</button>
+                <button onclick="navigateTo('profile')" class="nav-link hidden auth-only flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="profile">Perfil</button>
+                <button onclick="navigateTo('favorites')" class="nav-link relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors" data-page="favorites">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <span id="fav-count" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="openMatches()" class="nav-link hidden auth-only relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                    <span id="match-count" class="absolute -top-1 -right-1 w-4 h-4 bg-accent text-amber-900 text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button id="auth-btn" onclick="navigateTo('login')" class="ml-2 bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors">Entrar</button>
+                <button id="logout-btn" onclick="logout()" class="hidden auth-only ml-2 flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="//CANCELED" y1="12" y2="12"/></svg> Sair
+                </button>
+            </div>
+
+            <div class="md:hidden flex items-center gap-1">
+                <button onclick="navigateTo('favorites')" class="relative p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <span id="fav-count-mobile" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="openMatches()" class="hidden auth-only relative p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                    <span id="match-count-mobile" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-accent text-amber-900 text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/20 bg-primary px-4 py-3 space-y-1">
+            <button onclick="navigateTo('home')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="home">Início</button>
+            <button onclick="navigateTo('members')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="members">Membros</button>
+            <button onclick="navigateTo('my-animals')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="my-animals">Seus Animais</button>
+            <button onclick="navigateTo('profile')" class="mobile-nav-link hidden auth-only w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="profile">Perfil</button>
+            <button id="auth-btn-mobile" onclick="navigateTo('login')" class="w-full bg-white text-primary px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors">Entrar</button>
+            <button id="logout-btn-mobile" onclick="logout()" class="hidden auth-only w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2">Sair</button>
+        </div>
+    </nav>
+
+    <!-- Pages Container -->
+    <div id="page-content" class="flex-1 flex flex-col">
+        <!-- HOME PAGE -->
+        <section id="page-home" class="page flex-1 flex flex-col">
+            <div class="bg-gradient-to-br from-primary/10 to-background py-12 px-4 sm:px-6 text-center">
+                <h1 class="font-display text-4xl sm:text-5xl font-bold text-foreground mb-3">
+                    Encontre seu <span class="text-primary">companheiro</span> ideal
+                </h1>
+                <p class="text-muted-foreground text-lg max-w-xl mx-auto">
+                    Conectamos donos apaixonados por seus animais. Explore, conheça e faça conexões reais.
+                </p>
+            </div>
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 w-full">
+                <h2 class="font-display text-2xl font-semibold text-foreground mb-6">Animais Cadastrados</h2>
+                <div id="home-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Animal cards will be injected here -->
+                </div>
+                <div id="home-loader" class="flex justify-center py-10">
+                    <div class="flex gap-2 items-center text-muted-foreground text-sm">
+                        <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        Carregando mais animais...
+                    </div>
+                </div>
+            </div>
+            <footer class="border-t border-border bg-card mt-8">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-2 font-display font-bold text-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg> PetAlliance</div>
+                    <p class="text-sm text-muted-foreground text-center">© 2026 PetAlliance. Feito com amor pelos animais.</p>
+                    <div class="flex gap-4 text-sm text-muted-foreground">
+                        <a href="#" class="hover:text-foreground transition-colors">Termos</a>
+                        <a href="#" class="hover:text-foreground transition-colors">Privacidade</a>
+                        <a href="#" class="hover:text-foreground transition-colors">Contato</a>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- FAVORITES PAGE -->
+        <section id="page-favorites" class="page hidden flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-10 w-full">
+            <div class="flex items-center gap-3 mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart text-red-500"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <h1 class="font-display text-2xl sm:text-3xl font-bold text-foreground">Animais Favoritos</h1>
+            </div>
+            <div id="favorites-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Fav cards injected here -->
+            </div>
+            <div id="favorites-empty" class="hidden text-center py-20 border-2 border-dashed border-border rounded-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart mx-auto text-muted-foreground/30 mb-3"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <p class="text-muted-foreground">Você ainda não favoritou nenhum animal.</p>
+                <p class="text-sm text-muted-foreground mt-1">Clique no coração nos cards para salvar seus favoritos.</p>
+            </div>
+        </section>
+
+        <!-- MEMBERS PAGE -->
+        <section id="page-members" class="page hidden flex-1 flex flex-col">
+            <div class="bg-gradient-to-br from-primary/10 to-background py-10 px-4 sm:px-6 text-center border-b border-border">
+                <div class="inline-flex items-center gap-2 bg-accent/20 text-amber-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Comunidade Premium
+                </div>
+                <h1 class="font-display text-3xl sm:text-4xl font-bold text-foreground mb-3">Ver Os Membros</h1>
+                <p class="text-muted-foreground max-w-lg mx-auto">Conheça os animais de quem faz parte da nossa comunidade e escolha seu plano.</p>
+            </div>
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 w-full">
+                <div class="text-center mb-8">
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-foreground mb-2">Seja Membro</h2>
+                    <p class="text-muted-foreground">Escolha o plano ideal e comece a publicar seus animais</p>
+                </div>
+                <div id="plans-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                    <!-- Plans injected here -->
+                </div>
+                <div id="selected-plan-banner" class="hidden flex flex-col sm:flex-row items-center justify-between gap-4 bg-primary/5 border border-primary/20 rounded-2xl px-6 py-4 mb-12">
+                    <div>
+                        <p class="font-semibold text-foreground">Plano <span id="selected-plan-name" class="text-primary"></span> selecionado</p>
+                        <p id="selected-plan-desc" class="text-sm text-muted-foreground"></p>
+                    </div>
+                    <button onclick="openCheckout()" class="shrink-0 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Ir para pagamento
+                    </button>
+                </div>
+                <div class="border-t border-border pt-10">
+                    <h2 class="font-display text-2xl font-semibold text-foreground mb-6">Animais dos Membros</h2>
+                    <div id="members-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Member cards injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE PAGE -->
+        <section id="page-profile" class="page hidden flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 w-full">
+            <div class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div class="h-28 bg-gradient-to-r from-primary to-primary/70" />
+                <div class="px-6 pb-6">
+                    <div class="flex items-end gap-4 -mt-10 mb-5">
+                        <div class="relative shrink-0">
+                            <div id="profile-avatar-container" class="w-20 h-20 rounded-full border-4 border-card bg-muted overflow-hidden shadow-md">
+                                <div class="w-full h-full flex items-center justify-center bg-primary/10"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                            </div>
+                            <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="hidden absolute -bottom-1 -right-1 w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                            </button>
+                            <input id="avatar-input" type="file" accept="image/*" class="hidden" onchange="handleProfileAvatar(event)">
+                        </div>
+                        <div class="pb-1 min-w-0 flex-1">
+                            <h2 id="profile-name" class="font-display text-2xl font-bold text-foreground truncate">Carregando...</h2>
+                            <p id="profile-email" class="text-sm text-muted-foreground truncate">carregando@email.com</p>
+                        </div>
+                        <button id="profile-edit-btn" onclick="toggleProfileEdit()" class="bg-secondary text-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:bg-muted transition-colors">Editar</button>
+                    </div>
+                    <div id="profile-details" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-secondary rounded-xl p-4">
+                                <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CPF</p>
+                                <p id="profile-cpf" class="text-sm font-semibold text-foreground">-</p>
+                            </div>
+                            <div class="bg-secondary rounded-xl p-4">
+                                <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CEP</p>
+                                <p id="profile-cep" class="text-sm font-semibold text-foreground">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="profile-edit-form" class="hidden space-y-4">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-foreground mb-1.5">Nome Completo</label>
+                                <input id="edit-name" type="text" class="w-full bg-input-background rounded-xl px-4 py-2.5 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-foreground mb-1.5">Email</label>
+                                <input id="edit-email" type="email" class="w-full bg-input-background rounded-xl px-4 py-2.5 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="saveProfile()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Salvar</button>
+                            <button onclick="toggleProfileEdit()" class="flex-1 bg-secondary text-foreground py-2.5 rounded-xl font-semibold hover:bg-muted transition-colors">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOGIN PAGE -->
+        <section id="page-login" class="page hidden flex-1 flex items-center justify-center px-4 py-12">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8">
+                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+                    <h1 class="font-display text-3xl font-bold text-foreground mb-1">Bem-vindo de volta</h1>
+                    <p class="text-muted-foreground">Entre com seu CPF e senha</p>
+                </div>
+                <form onsubmit="handleLogin(event)" class="bg-card rounded-2xl border border-border p-6 sm:p-8 space-y-4 shadow-sm">
+                    <div id="login-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">CPF ou senha inválidos.</div>
+                    <div>
+                        <label class="block text-sm font-semibold text-foreground mb-1.5">CPF</label>
+                        <input id="login-cpf" type="text" placeholder="000.000.000-00" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-foreground mb-1.5">Senha</label>
+                        <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Entrar</button>
+                    <p class="text-center text-sm text-muted-foreground">
+                        Não tem conta? <button type="button" onclick="navigateTo('register')" class="text-primary font-semibold hover:underline">Cadastre-se</button>
+                    </p>
+                </form>
+            </div>
+        </section>
+
+        <!-- REGISTER PAGE -->
+        <section id="page-register" class="page hidden flex-1 flex items-center justify-center px-4 py-12">
+            <div class="w-full max-w-lg">
+                <div class="text-center mb-8">
+                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+                    <h1 class="font-display text-3xl font-bold text-foreground mb-1">Crie sua conta</h1>
+                    <p class="text-muted-foreground">Junte-se à comunidade PetAlliance</p>
+                </div>
+                <form onsubmit="handleRegister(event)" class="bg-card rounded-2xl border border-border p-6 sm:p-8 space-y-5 shadow-sm">
+                    <div id="reg-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"></div>
+                    <div class="flex items-center gap-5 p-4 bg-secondary rounded-2xl">
+                        <div class="relative shrink-0">
+                            <div id="reg-avatar-preview" class="w-20 h-20 rounded-full bg-muted border-2 border-border overflow-hidden flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-muted-foreground"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <button type="button" onclick="document.getElementById('reg-avatar-input').click()" class="absolute -bottom-1 -right-1 w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                            </button>
+                            <input id="reg-avatar-input" type="file" accept="image/*" class="hidden" onchange="handleRegAvatar(event)">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p id="reg-display-name" class="text-sm font-semibold text-foreground mb-0.5">Seu nome aqui</p>
+                            <p id="reg-display-email" class="text-xs text-muted-foreground truncate">seu@email.com</p>
+                            <button type="button" onclick="document.getElementById('reg-avatar-input').click()" class="mt-2 text-xs text-primary font-medium hover:underline flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Adicionar foto
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">Nome Completo</label>
+                            <input id="reg-name" type="text" placeholder="João Silva" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">Email</label>
+                            <input id="reg-email" type="email" placeholder="joao@email.com" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">CPF</label>
+                            <input id="reg-cpf" type="text" placeholder="000.000.000-00" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">CEP</label>
+                            <input id="reg-cep" type="text" placeholder="00000-000" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">Senha</label>
+                            <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-foreground mb-2">Termos de Uso <span class="text-red-500">*</span></p>
+                        <div id="reg-terms-box" onscroll="handleTermsScroll(event)" class="h-40 overflow-y-auto bg-secondary rounded-xl px-4 py-3 text-xs text-muted-foreground leading-relaxed border border-border whitespace-pre-wrap">
+                            AUSÊNCIA DE GARANTIA DE SUCESSO DA MONTA... (Ver script.js para texto completo)
+                        </div>
+                        <p id="reg-terms-hint" class="text-[11px] text-muted-foreground mt-1.5">Role até o final para aceitar os termos.</p>
+                        <label id="reg-terms-label" class="flex items-start gap-3 mt-3 cursor-pointer opacity-50 pointer-events-none">
+                            <input id="reg-terms-check" type="checkbox" class="w-4 h-4 accent-primary mt-0.5 shrink-0">
+                            <span class="text-sm text-foreground">Li e aceito os <strong>Termos de Uso</strong> e a <strong>Política de Privacidade</strong> do PetAlliance.</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Criar Conta</button>
+                    <p class="text-center text-sm text-muted-foreground">
+                        Já tem conta? <button type="button" onclick="navigateTo('login')" class="text-primary font-semibold hover:underline">Entrar</button>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div id="modal-content" class="relative bg-card w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl shadow-2xl">
+            <!-- Modal content injected here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
