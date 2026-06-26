@@ -3,6 +3,13 @@
 
 (function () {
   // --- Mock data (trimmed from original React source) ---
+  const PLANS = [
+    { id: 'basic', name: 'Iniciante', price: 'R$ <spam class="dindin"> 7,50 </spam>/mês', features: ['5 Animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
+    { id: 'standard', name: 'Standard', price: 'R$ 15,00/mês', features: ['10 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
+    { id: 'premium', name: 'Premium', price: 'R$ 30,00/mês', features: ['20 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
+    { id: 'vip', name: 'VIP', price: 'R$ 45,00/mês', features: ['30 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
+  ];
+
   const PETS = [
     { id: 1, ownerName: "Mariana Costa", photo: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=600&fit=crop&auto=format", name: "Thor", breed: "Golden Retriever", type: "Cachorro", birthDate: "2021-03-14", weight: "34 kg", vaccinated: true },
     { id: 2, ownerName: "Lucas Ferreira", photo: "https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=600&h=600&fit=crop&auto=format", name: "Mel", breed: "Bulldog Francês", type: "Cachorro", birthDate: "2022-07-20", weight: "10 kg", vaccinated: true },
@@ -39,6 +46,7 @@
     updateNavActive();
     if (page === 'home') renderHomeGrid();
     if (page === 'favorites') renderFavoritesGrid();
+    if (page === 'members') renderPlans();
   }
 
   function updateNavActive() {
@@ -51,9 +59,9 @@
   // --- Renderers ---
   function createCard(pet) {
     const div = document.createElement('div');
-    div.className = 'bg-card rounded-2xl overflow-hidden shadow-sm border border-border';
+    div.className = 'card';
     div.innerHTML = `
-      <div class="w-full h-44 overflow-hidden bg-muted">
+      <div class="pet-card-media">
         <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
       </div>
       <div class="p-4">
@@ -62,21 +70,20 @@
             <p class="font-semibold text-foreground truncate">${pet.name} <span class="text-sm text-muted-foreground">• ${pet.breed}</span></p>
             <p class="text-xs text-muted-foreground mt-1">${calcAge(pet.birthDate)} • ${pet.weight}</p>
           </div>
-          <div class="flex flex-col items-end gap-2">
-            <button class="fav-btn p-2 rounded-lg text-red-500" aria-label="favorite" data-id="${pet.id}">♥</button>
-            <button class="view-btn bg-primary text-white px-3 py-1 rounded-lg text-sm" data-id="${pet.id}">Ver</button>
+          <div class="flex flex-row items-center gap-2">
+            <button class="view-btn btn-primary pet-card-view-btn" data-id="${pet.id}">Ver</button>
+            <button class="fav-btn pet-card-fav-btn" aria-label="favorite" data-id="${pet.id}">♥</button>
           </div>
         </div>
       </div>
     `;
     // favorite state
     const favBtn = qs('.fav-btn', div);
-    if (state.favorites.includes(pet.id)) favBtn.classList.add('text-white', 'bg-red-500');
+    if (state.favorites.includes(pet.id)) favBtn.classList.add('is-favorite');
     favBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleFavorite(pet.id);
-      favBtn.classList.toggle('text-white');
-      favBtn.classList.toggle('bg-red-500');
+      favBtn.classList.toggle('is-favorite');
     });
     qs('.view-btn', div).addEventListener('click', () => openPetModal(pet));
     return div;
@@ -104,6 +111,44 @@
     favs.forEach(p => grid.appendChild(createCard(p)));
   }
 
+  function renderPlans() {
+    const grid = qs('#plans-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    PLANS.forEach(plan => {
+      const div = document.createElement('div');
+      div.className = 'plan-card cursor-pointer hover:border-primary transition-all p-4 border rounded-2xl bg-card shadow-sm';
+      div.innerHTML = `
+        <h3 class="font-bold text-foreground">${plan.name}</h3>
+        <p class="text-xl font-bold text-primary my-2">${plan.price}</p>
+        <p class="text-xs text-muted-foreground mb-4">${plan.desc}</p>
+        <ul class="text-xs space-y-1 text-muted-foreground mb-4">
+          ${plan.features.map(f => `<li>• ${f}</li>`).join('')}
+        </ul>
+        <button class="w-full py-2 text-xs font-semibold rounded-lg bg-secondary hover:bg-muted transition-colors">Selecionar</button>
+      `;
+      div.onclick = () => selectPlan(plan);
+      grid.appendChild(div);
+    });
+  }
+
+  function selectPlan(plan) {
+    const banner = qs('#selected-plan-banner');
+    const nameEl = qs('#selected-plan-name');
+    const descEl = qs('#selected-plan-desc');
+    
+    if (banner) {
+      banner.classList.remove('hidden');
+      nameEl.textContent = plan.name;
+      descEl.textContent = plan.desc;
+      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function openCheckout() {
+    alert('Redirecionando para o checkout de pagamento...');
+  }
+
   // --- Favorites ---
   function toggleFavorite(id) {
     const idx = state.favorites.indexOf(id);
@@ -125,10 +170,11 @@
     const modal = qs('#modal-container');
     const content = qs('#modal-content');
     modal.classList.remove('hidden');
+    modal.classList.add('open');
     content.innerHTML = `
       <div class="p-6">
         <div class="flex items-start gap-4">
-          <div class="w-36 h-36 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+          <div class="pet-card-modal-media">
             <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
@@ -152,14 +198,14 @@
     qs('#modal-chat').addEventListener('click', () => openChat(pet));
   }
 
-  function closeModal() { qs('#modal-container').classList.add('hidden'); qs('#modal-content').innerHTML = ''; }
+  function closeModal() { const modal = qs('#modal-container'); modal.classList.add('hidden'); modal.classList.remove('open'); qs('#modal-content').innerHTML = ''; }
 
   // --- Chat simple ---
   function openChat(pet) {
     openPetModal(pet); // reuse modal then replace content
     const content = qs('#modal-content');
     content.innerHTML = `
-      <div class="p-4 flex flex-col h-[60vh]">
+      <div class="modal-chat-shell">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-10 h-10 rounded-full overflow-hidden"><img src="${pet.photo}" class="w-full h-full object-cover"></div>
           <div>
@@ -167,7 +213,7 @@
             <div class="text-xs text-muted-foreground">sobre ${pet.name}</div>
           </div>
         </div>
-        <div id="chat-log" class="flex-1 overflow-y-auto bg-secondary rounded-xl p-3 mb-3"></div>
+        <div id="chat-log" class="modal-chat-log"></div>
         <div class="flex gap-2">
           <input id="chat-input" class="flex-1 bg-input-background rounded-xl px-3 py-2 border border-border" placeholder="Escreva uma mensagem...">
           <button id="chat-send" class="bg-primary text-white px-4 py-2 rounded-xl">Enviar</button>
@@ -177,8 +223,8 @@
     const log = qs('#chat-log');
     function add(msg, who) {
       const el = document.createElement('div');
-      el.className = `mb-2 ${who==='me'?'text-right':''}`;
-      el.innerHTML = `<div class="inline-block rounded-2xl px-3 py-2 ${who==='me'?'bg-primary text-white':'bg-card text-foreground border border-border'}">${msg}</div>`;
+      el.className = `modal-chat-message ${who==='me'?'me':''}`;
+      el.innerHTML = `<div class="modal-chat-bubble ${who==='me'?'me':'them'}">${msg}</div>`;
       log.appendChild(el);
       log.scrollTop = log.scrollHeight;
     }
@@ -230,7 +276,7 @@
   }
 
   // --- Mobile menu ---
-  function toggleMenu() { const m = qs('#mobile-menu'); m.classList.toggle('hidden'); }
+  function toggleMenu() { const m = qs('#mobile-menu'); m.classList.toggle('open'); }
 
   // --- Init ---
   function init() {
@@ -238,6 +284,7 @@
     qsa('[onclick^="navigateTo("]') .forEach?.(() => {}); // noop to avoid lint
     window.navigateTo = navigateTo; // allow inline handlers in HTML to call navigateTo
     window.openMatches = () => alert('Matches (simplified)');
+    window.openCheckout = openCheckout;
     window.toggleMenu = toggleMenu;
     window.logout = logout;
     window.handleLogin = handleLogin;

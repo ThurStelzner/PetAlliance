@@ -1,0 +1,50 @@
+/* Estilos do cartão de animal */
+.pet-card-media {
+  width: 100%;
+  height: 11rem;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+.pet-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pet-card-fav-btn {
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  color: #ef4444;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.pet-card-fav-btn.is-favorite {
+  color: white;
+  background-color: #ef4444;
+}
+
+.pet-card-view-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.pet-card-modal-media {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background-color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.pet-card-modal-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

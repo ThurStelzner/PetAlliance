@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PetAlliance - Encontre seu companheiro ideal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/forms.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/cartao_animal.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/modal.css">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
@@ -31,69 +39,69 @@
         }
     </script>
 </head>
-<body class="bg-background text-foreground font-sans min-h-screen flex flex-col">
+<body class="bg-background text-foreground font-sans min-h-screen flex flex-col page-shell">
 
     <!-- NavBar -->
-    <nav class="sticky top-0 z-40 bg-primary text-white shadow-md">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-            <button onclick="navigateTo('home')" class="flex items-center gap-2 font-display font-bold text-xl text-white">
-                <img src="../../../img/pata.png" alt="Logo PetAlliance" class="w-6 h-6 object-contain">
-                Pet<span class="text-accent">Alliance</span>
+    <nav class="navbar sticky top-0 z-40 bg-primary text-white shadow-md">
+        <div class="navbar-inner max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+            <button onclick="navigateTo('home')" class="navbar-brand flex items-center gap-2 font-display font-bold text-xl text-white">
+                <img src="./pata.png" alt="Logo PetAlliance">
+                Pet<span class="navbar-brand-accent">Alliance</span>
             </button>
 
-            <div class="hidden md:flex items-center gap-1">
-                <button onclick="navigateTo('home')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="home">Início</button>
-                <button onclick="navigateTo('members')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="members">Membros</button>
-                <button onclick="navigateTo('my-animals')" class="nav-link flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="my-animals">Seus Animais</button>
-                <button onclick="navigateTo('profile')" class="nav-link hidden auth-only flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-page="profile">Perfil</button>
-                <button onclick="navigateTo('favorites')" class="nav-link relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors" data-page="favorites">
+            <div class="navbar-links md:flex items-center gap-1">
+                <button onclick="navigateTo('home')" class="nav-link navbar-link" data-page="home">Início</button>
+                <button onclick="navigateTo('members')" class="nav-link navbar-link" data-page="members">Membros</button>
+                <button onclick="navigateTo('my-animals')" class="nav-link navbar-link" data-page="my-animals">Seus Animais</button>
+                <button onclick="navigateTo('profile')" class="nav-link navbar-link hidden auth-only" data-page="profile">Perfil</button>
+                <button onclick="navigateTo('favorites')" class="nav-link navbar-link" data-page="favorites">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                    <span id="fav-count" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                    <span id="fav-count" class="nav-badge hidden">0</span>
                 </button>
-                <button onclick="openMatches()" class="nav-link hidden auth-only relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                <button onclick="openMatches()" class="nav-link navbar-link hidden auth-only">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
-                    <span id="match-count" class="absolute -top-1 -right-1 w-4 h-4 bg-accent text-amber-900 text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                    <span id="match-count" class="nav-badge match hidden">0</span>
                 </button>
-                <button id="auth-btn" onclick="navigateTo('login')" class="ml-2 bg-white text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors">Entrar</button>
-                <button id="logout-btn" onclick="logout()" class="hidden auth-only ml-2 flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors">
+                <button id="auth-btn" onclick="navigateTo('login')" class="navbar-auth-btn">Entrar</button>
+                <button id="logout-btn" onclick="logout()" class="navbar-logout-btn hidden auth-only">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="//CANCELED" y1="12" y2="12"/></svg> Sair
                 </button>
             </div>
 
-            <div class="md:hidden flex items-center gap-1">
-                <button onclick="navigateTo('favorites')" class="relative p-2 rounded-lg hover:bg-white/10 transition-colors">
+            <div class="navbar-actions-mobile md:hidden flex items-center gap-1">
+                <button onclick="navigateTo('favorites')" class="navbar-icon-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                    <span id="fav-count-mobile" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                    <span id="fav-count-mobile" class="nav-badge hidden">0</span>
                 </button>
-                <button onclick="openMatches()" class="hidden auth-only relative p-2 rounded-lg hover:bg-white/10 transition-colors">
+                <button onclick="openMatches()" class="navbar-icon-btn hidden auth-only">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
-                    <span id="match-count-mobile" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-accent text-amber-900 text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                    <span id="match-count-mobile" class="nav-badge match hidden">0</span>
                 </button>
-                <button onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
+                <button onclick="toggleMenu()" class="navbar-icon-btn">
                     <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden border-t border-white/20 bg-primary px-4 py-3 space-y-1">
-            <button onclick="navigateTo('home')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="home">Início</button>
-            <button onclick="navigateTo('members')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="members">Membros</button>
-            <button onclick="navigateTo('my-animals')" class="mobile-nav-link w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="my-animals">Seus Animais</button>
-            <button onclick="navigateTo('profile')" class="mobile-nav-link hidden auth-only w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2" data-page="profile">Perfil</button>
-            <button id="auth-btn-mobile" onclick="navigateTo('login')" class="w-full bg-white text-primary px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors">Entrar</button>
-            <button id="logout-btn-mobile" onclick="logout()" class="hidden auth-only w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2">Sair</button>
+        <div id="mobile-menu" class="mobile-menu hidden md:hidden border-t border-white/20 bg-primary px-4 py-3 space-y-1">
+            <button onclick="navigateTo('home')" class="mobile-nav-link" data-page="home">Início</button>
+            <button onclick="navigateTo('members')" class="mobile-nav-link" data-page="members">Membros</button>
+            <button onclick="navigateTo('my-animals')" class="mobile-nav-link" data-page="my-animals">Seus Animais</button>
+            <button onclick="navigateTo('profile')" class="mobile-nav-link hidden auth-only" data-page="profile">Perfil</button>
+            <button id="auth-btn-mobile" onclick="navigateTo('login')" class="navbar-auth-btn mobile-full">Entrar</button>
+            <button id="logout-btn-mobile" onclick="logout()" class="navbar-logout-btn mobile-full hidden auth-only">Sair</button>
         </div>
     </nav>
 
     <!-- Pages Container -->
-    <div id="page-content" class="flex-1 flex flex-col">
+    <div id="page-content" class="page-shell flex-1 flex flex-col">
         <!-- HOME PAGE -->
-        <section id="page-home" class="page flex-1 flex flex-col">
-            <div class="bg-gradient-to-br from-primary/10 to-background py-12 px-4 sm:px-6 text-center">
-                <h1 class="font-display text-4xl sm:text-5xl font-bold text-foreground mb-3">
+        <section id="page-home" class="page page-shell flex-1 flex flex-col">
+            <div class="hero-card bg-gradient-to-br from-primary/10 to-background py-12 px-4 sm:px-6 text-center">
+                <h1 class="hero-title">
                     Encontre seu <span class="text-primary">companheiro</span> ideal
                 </h1>
-                <p class="text-muted-foreground text-lg max-w-xl mx-auto">
+                <p class="hero-text">
                     Conectamos donos apaixonados por seus animais. Explore, conheça e faça conexões reais.
                 </p>
             </div>
@@ -109,8 +117,8 @@
                     </div>
                 </div>
             </div>
-            <footer class="border-t border-border bg-card mt-8">
-                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <footer class="panel border-t border-border bg-card mt-8 section-space-sm">
+                <div class="container max-w-6xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="flex items-center gap-2 font-display font-bold text-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg> PetAlliance</div>
                     <p class="text-sm text-muted-foreground text-center">© 2026 PetAlliance. Feito com amor pelos animais.</p>
                     <div class="flex gap-4 text-sm text-muted-foreground">
@@ -140,7 +148,7 @@
 
         <!-- MEMBERS PAGE -->
         <section id="page-members" class="page hidden flex-1 flex flex-col">
-            <div class="bg-gradient-to-br from-primary/10 to-background py-10 px-4 sm:px-6 text-center border-b border-border">
+            <div class="hero-card hero-card-members bg-gradient-to-br from-primary/10 to-background py-10 px-4 sm:px-6 text-center border-b border-border">
                 <div class="inline-flex items-center gap-2 bg-accent/20 text-amber-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Comunidade Premium
                 </div>
@@ -175,7 +183,7 @@
 
         <!-- PROFILE PAGE -->
         <section id="page-profile" class="page hidden flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 w-full">
-            <div class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div class="panel bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div class="h-28 bg-gradient-to-r from-primary to-primary/70" />
                 <div class="px-6 pb-6">
                     <div class="flex items-end gap-4 -mt-10 mb-5">
@@ -228,17 +236,15 @@
 
         <!-- LOGIN PAGE -->
         <section id="page-login" class="page hidden flex-1 flex items-center justify-center px-4 py-12">
-            <div class="w-full max-w-md">
+            <div class="auth-card w-full max-w-md">
                 <div class="text-center mb-8">
-                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary">
-                            <div class='imagem_logo' href="..//img/pata.png"></div>
-                        </svg>
+                    <div class="auth-card-icon">
+                        <img src="pata.png" alt="Ícone de pata" class="w-7 h-7 object-contain">
                     </div>
-                    <h1 class="font-display text-3xl font-bold text-foreground mb-1">Bem-vindo de volta</h1>
-                    <p class="text-muted-foreground">Entre com seu CPF e senha</p>
+                    <h1 class="auth-card-title">Bem-vindo de volta</h1>
+                    <p class="auth-card-subtitle">Entre com seu CPF e senha</p>
                 </div>
-                <form onsubmit="handleLogin(event)" class="bg-card rounded-2xl border border-border p-6 sm:p-8 space-y-4 shadow-sm">
+                <form onsubmit="handleLogin(event)" class="auth-card-form space-y-4">
                     <div id="login-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">CPF ou senha inválidos.</div>
                     <div>
                         <label class="block text-sm font-semibold text-foreground mb-1.5">CPF</label>
@@ -258,13 +264,13 @@
 
         <!-- REGISTER PAGE -->
         <section id="page-register" class="page hidden flex-1 flex items-center justify-center px-4 py-12">
-            <div class="w-full max-w-lg">
+            <div class="auth-card auth-card-wide w-full max-w-lg">
                 <div class="text-center mb-8">
-                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
-                    <h1 class="font-display text-3xl font-bold text-foreground mb-1">Crie sua conta</h1>
-                    <p class="text-muted-foreground">Junte-se à comunidade PetAlliance</p>
+                    <div class="auth-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+                    <h1 class="auth-card-title">Crie sua conta</h1>
+                    <p class="auth-card-subtitle">Junte-se à comunidade PetAlliance</p>
                 </div>
-                <form onsubmit="handleRegister(event)" class="bg-card rounded-2xl border border-border p-6 sm:p-8 space-y-5 shadow-sm">
+                <form onsubmit="handleRegister(event)" class="auth-card-form space-y-5">
                     <div id="reg-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"></div>
                     <div class="flex items-center gap-5 p-4 bg-secondary rounded-2xl">
                         <div class="relative shrink-0">
@@ -308,11 +314,11 @@
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-foreground mb-2">Termos de Uso <span class="text-red-500">*</span></p>
-                        <div id="reg-terms-box" onscroll="handleTermsScroll(event)" class="h-40 overflow-y-auto bg-secondary rounded-xl px-4 py-3 text-xs text-muted-foreground leading-relaxed border border-border whitespace-pre-wrap">
+                        <div id="reg-terms-box" onscroll="handleTermsScroll(event)" class="terms-box">
                             AUSÊNCIA DE GARANTIA DE SUCESSO DA MONTA... (Ver script.js para texto completo)
                         </div>
-                        <p id="reg-terms-hint" class="text-[11px] text-muted-foreground mt-1.5">Role até o final para aceitar os termos.</p>
-                        <label id="reg-terms-label" class="flex items-start gap-3 mt-3 cursor-pointer opacity-50 pointer-events-none">
+                        <p id="reg-terms-hint" class="terms-hint">Role até o final para aceitar os termos.</p>
+                        <label id="reg-terms-label" class="terms-label">
                             <input id="reg-terms-check" type="checkbox" class="w-4 h-4 accent-primary mt-0.5 shrink-0">
                             <span class="text-sm text-foreground">Li e aceito os <strong>Termos de Uso</strong> e a <strong>Política de Privacidade</strong> do PetAlliance.</span>
                         </label>
@@ -327,9 +333,9 @@
     </div>
 
     <!-- Modals Container -->
-    <div id="modal-container" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div id="modal-content" class="relative bg-card w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[88vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl shadow-2xl">
+    <div id="modal-container" class="modal-shell hidden">
+        <div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
+        <div id="modal-content" class="modal-content">
             <!-- Modal content injected here -->
         </div>
     </div>
