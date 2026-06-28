@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . '/../backEnd/controlers/api/animalController.php';
+    require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
 
     session_start();
 
@@ -17,19 +17,16 @@
         exit;
     }
 
+    if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'detalhes_animal' && isset($_GET['id'])) {
+        header('Content-Type: application/json');
+        $controllerAnimal = new AnimalController();
+        $controllerAnimal->read($_GET['id']);
+        exit;
+    }
+
     require __DIR__ . '/../frontEnd/view/navBar.html';
     require __DIR__ . '/../frontEnd/view/home.html';
     require __DIR__ . '/../frontEnd/view/footer.html';
-
-    $diretorioUsuario = 'uploads/usuario';
-    $diretorioAnimal = 'uploads/animais';
-
-    if(!is_dir($diretorioUsuario)) {
-        mkdir($diretorioUsuario, 0755, true);
-    }
-    if(!is_dir($diretorioAnimal)) {
-        mkdir($diretorioAnimal, 0755, true);
-    }
 
     if (isset($_GET['mensagem'])) {
         if ($_GET['mensagem'] === 'animal_cadastrado') {

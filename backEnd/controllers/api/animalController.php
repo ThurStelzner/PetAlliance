@@ -10,6 +10,11 @@
             $this->dao = new AnimalDAO();
         }
 
+        public function read($id) {
+            $animal = $this->dao->read($id);
+            echo json_encode($animal);
+        }
+
         public function listarAnimais() {
             $animais = $this->dao->readAll();
             echo json_encode($animais);
@@ -24,6 +29,7 @@
             $dados = json_decode(file_get_contents("php://input"), true);
             $animal = new Animal(
                 $dados['dono_id'],
+                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],

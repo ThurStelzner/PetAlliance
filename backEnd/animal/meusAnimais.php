@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . '/../controlers/api/animalController.php';
+    require_once __DIR__ . '/../controllers/api/animalController.php';
 
     session_start();
 
