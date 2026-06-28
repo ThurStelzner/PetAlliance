@@ -130,7 +130,7 @@ class Animal implements JsonSerializable {
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
-                    $foto_pet = uniqid('prod_') . '.' . $extensao;
+                    $foto_pet = uniqid('pet_') . '.' . $extensao;
                     move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $foto_pet);
                 }
             }
@@ -233,7 +233,7 @@ class Animal implements JsonSerializable {
                     exit();
                     
                 } else {
-                    $foto_certificado = uniqid('prod_') . '.' . $extensao;
+                    $foto_certificado = uniqid('cert_') . '.' . $extensao;
                     move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
                 }
         }
@@ -249,7 +249,7 @@ class Animal implements JsonSerializable {
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
-                    $foto_vacina = uniqid('prod_') . '.' . $extensao;
+                    $foto_vacina = uniqid('vaci_') . '.' . $extensao;
                     move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
                 }
             }

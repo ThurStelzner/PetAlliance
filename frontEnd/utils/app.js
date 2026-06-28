@@ -125,10 +125,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button type="button" class="modal-close">×</button>
                     <img src="/uploads/animais/${fotoAnimal}" alt="${animal.nome || 'Animal'}" style="max-width: 10rem; height: 10rem; object-fit: cover;" class="modal-animal-image" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
                     <h3>${animal.nome || "Sem nome"}</h3>
+                    <p><strong>Idade:</strong> ${animal.idade || "Não informada"}</p>
                     <p><strong>Descrição:</strong> ${animal.descricao || "Não informada"}</p>
                     <p><strong>Sexo:</strong> ${animal.sexo || "Não informado"}</p>
                     <p><strong>Raça:</strong> ${animal.raca || "Não informada"}</p>
-                    <p><strong>Tipo:</strong> ${animal.tipo || "Não informado"}</p>
+                    <p><strong>Tipo:</strong> ${animal.tipo  || "Não informado"}</p>
+                    <p><strong>Peso:</strong> ${animal.peso || "Não informado"} Kg</p>
+                    <p><strong>Vacinado:</strong> ${animal.vacinado == 1 ? "Sim" : "Não"}</p>
+                    <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
                     <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
                     <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
                 </div>

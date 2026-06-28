@@ -17,7 +17,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $fotoPet = trim($_POST['foto_pet'] ?? '');
+            $fotoPet = null;
             if (!empty($_FILES['arquivoFotoPet']['name'])) {
                 $extensao = strtolower(pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
