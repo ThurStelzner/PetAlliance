@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${animal.porte || "Não informado"}</p>
                     <p>${animal.sexo || "Não informado"}</p>
                     <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
+                    <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">Favoritar</button>
                 `;
                 container.appendChild(card);
             });
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             openModal(`
                 <div class="modal-content">
                     <button type="button" class="modal-close">×</button>
-                    <img src="/uploads/animais/${fotoAnimal}" alt="${animal.nome || 'Animal'}" style="max-width: 10rem; height: 10rem; object-fit: cover;" class="modal-animal-image" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
+                    <img src="/uploads/animais/${fotoAnimal}" alt="Foto de ${animal.nome || 'Animal'}" style="max-width: 10rem; height: 10rem; object-fit: cover;" class="modal-animal-image" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
                     <h3>${animal.nome || "Sem nome"}</h3>
                     <p><strong>Data de Nascimento:</strong> ${animal.data_nascimento || "Não informada"}</p>
                     <p><strong>Descrição:</strong> ${animal.descricao || "Não informada"}</p>
