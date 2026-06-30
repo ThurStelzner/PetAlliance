@@ -33,13 +33,13 @@ async function validarCep() {
 function avancar() {
     document.getElementById('etapa1').style.display = 'none';
     document.getElementById('etapa2').style.display = 'block';
-    localStorage.setItem('etapa', 'etapa2');
+    sessionStorage.setItem('etapa', 'etapa2');
 }
 
 function voltar() {
     document.getElementById('etapa2').style.display = 'none';
     document.getElementById('etapa1').style.display = 'block';
-    localStorage.setItem('etapa', 'etapa1');
+    sessionStorage.setItem('etapa', 'etapa1');
 }
 
 function limparFoto() {

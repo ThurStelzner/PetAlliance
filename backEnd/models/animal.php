@@ -1,18 +1,15 @@
 <?php
-    include_once('usuarioDAO.php');
 
-
-    $usuarioDAO = new UsuarioDAO();
-
-class Animal {
+class Animal implements JsonSerializable {
     private $dono_id;
+    private $foto_pet;
     private $nome;
     private $raca;
     private $cor;
     private $sexo;
     private $tipo;
     private $porte;
-    private $dt_nascimento;
+    private $data_nascimento;
     private $peso;
     private $descricao;
     private $vacinado;
@@ -22,16 +19,17 @@ class Animal {
 
     private $id;
 
-    public function __construct($dono_id,$nome,$raca,$cor,$sexo,$tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null
     ) {
         $this->dono_id = $dono_id;
+        $this->foto_pet = $foto_pet;
         $this->nome = $nome;
         $this->raca = $raca;
         $this->cor = $cor;
         $this->sexo = $sexo;
         $this->tipo = $tipo;
         $this->porte = $porte;
-        $this->dt_nascimento = $dt_nascimento;
+        $this->data_nascimento = $data_nascimento;
         $this->peso = $peso;
         $this->descricao = $descricao;
         $this->vacinado = $vacinado;
@@ -48,6 +46,10 @@ class Animal {
 
     public function getDonoid() {
         return $this->dono_id;
+    }
+
+    public function getFotoPet() {
+        return $this->foto_pet;
     }
 
     public function getNome() {
@@ -74,8 +76,8 @@ class Animal {
         return $this->porte;
     }
 
-    public function getDtNascimento() {
-        return $this->dt_nascimento;
+    public function getDataNascimento() {
+        return $this->data_nascimento;
     }
 
     public function getPeso() {
@@ -119,6 +121,21 @@ class Animal {
         $this->dono_id = (int) $donoid;
     }
     
+    public function setFotoPet($foto_pet){
+        $this->foto_pet = $foto_pet;
+        if (!empty($_FILES['arquivoFotoPet']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                } else {
+                    $foto_pet = uniqid('pet_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $foto_pet);
+                }
+            }
+    }
+
     public function setRaca($raca) {
         $raca = trim($raca);
 
@@ -170,7 +187,7 @@ class Animal {
             echo 'Sucesso: Data válida!';
         }
     
-        $this->dt_nascimento = $dt_nascimento;
+        $this->data_nascimento = $dt_nascimento;
     }
 
     public function setPeso($peso) {
@@ -216,7 +233,7 @@ class Animal {
                     exit();
                     
                 } else {
-                    $foto_certificado = uniqid('prod_') . '.' . $extensao;
+                    $foto_certificado = uniqid('cert_') . '.' . $extensao;
                     move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
                 }
         }
@@ -232,10 +249,30 @@ class Animal {
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
-                    $foto_vacina = uniqid('prod_') . '.' . $extensao;
+                    $foto_vacina = uniqid('vaci_') . '.' . $extensao;
                     move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
                 }
             }
         }
 
+    public function jsonSerialize(): array {
+        return [
+            'id' => $this->id,
+            'dono_id' => $this->dono_id,
+            'foto_pet' => $this->foto_pet,
+            'nome' => $this->nome,
+            'raca' => $this->raca,
+            'cor' => $this->cor,
+            'sexo' => $this->sexo,
+            'tipo' => $this->tipo,
+            'porte' => $this->porte,
+            'data_nascimento' => $this->data_nascimento,
+            'peso' => $this->peso,
+            'descricao' => $this->descricao,
+            'vacinado' => $this->vacinado,
+            'certificado' => $this->certificado,
+            'foto_certificado' => $this->foto_certificado,
+            'foto_vacina' => $this->foto_vacina,
+        ];
+    }
 }

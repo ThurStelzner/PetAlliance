@@ -12,17 +12,18 @@
 
         public function cadastrarAnimal(Animal $animal) {
             try {
-                $sql = "INSERT INTO tb_pets (dono_id, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca,foto_certificado,foto_vacinas) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                $sql = "INSERT INTO tb_pets (dono_id, foto_pet, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca, foto_certificado, foto_vacinas) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([
                     $animal->getDonoid(),
+                    $animal->getFotoPet(),
                     $animal->getNome(),
                     $animal->getRaca(),
                     $animal->getCor(),
                     $animal->getSexo(),
                     $animal->getTipo(),
                     $animal->getPorte(),
-                    $animal->getDtNascimento(),
+                    $animal->getDataNascimento(),
                     $animal->getPeso(),
                     $animal->getDescricao(),
                     $animal->getVacinado(),
@@ -53,13 +54,14 @@
 
             $animal = new Animal(
                 $dados['dono_id'],
+                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
                 $dados['sexo'],
                 $dados['tipo'],
                 $dados['porte'],
-                $dados['dt_nascimento'],
+                $dados['data_nascimento'],
                 $dados['peso'],
                 $dados['descricao'],
                 $dados['vacinado'],
@@ -81,6 +83,7 @@
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
               $animal = new Animal(
                 $dados['dono_id'],
+                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -101,4 +104,35 @@
             
             return $animais;
           }
+
+        public function readByDonoId($donoId) {
+            $sql = "SELECT * FROM tb_pets WHERE dono_id = ? ORDER BY nome";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$donoId]);
+            $animais = [];
+        
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $animal = new Animal(
+                $dados['dono_id'],
+                $dados['foto_pet'],
+                $dados['nome'],
+                $dados['raca'],
+                $dados['cor'],
+                $dados['sexo'],
+                $dados['tipo'],
+                $dados['porte'],
+                $dados['data_nascimento'],
+                $dados['peso'],
+                $dados['descricao'],
+                $dados['vacinado'],
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
+              );
+              $animal->setId($dados['id']);
+              $animais[] = $animal; // adiciona ao array
+            }
+            
+            return $animais;
+        }
     }

@@ -1,6 +1,9 @@
 <form method="POST" enctype="multipart/form-data">
     <h1>Cadastro de Animal</h1>
 
+    <label for="foto_pet">Foto do animal:</label>
+    <input type="file" name="arquivoFotoPet" id="foto_pet" required>
+
     <label for="nome">Nome do animal:</label>
     <input type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
 
@@ -66,7 +69,5 @@
     <button type="submit">Cadastrar</button>
 </form>
 
-
-<script src="../utils/animalSalvos.js"></script>
-<script src="../utils/animalFuncoes.js"></script>
-<script src="../utils/animalValidacao.js"></script>
+<script src="../../frontEnd/utils/animalSalvos.js"></script>
+<script src="../../frontEnd/utils/animalFuncoes.js"></script>
