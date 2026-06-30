@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
+    require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
 
     session_start();
 
@@ -9,6 +10,18 @@
 
     $metodo = $_SERVER['REQUEST_METHOD'];
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    $usuarioDAO = new UsuarioDAO();
+
+    if (!isset($_SESSION['usuario_cpf'])) {
+        die("Usuário não está logado.");
+    }
+
+    $cpf = $_SESSION['usuario_cpf'];
+    $usuario = $usuarioDAO->read($cpf);
+
+    $ehAdmin = $usuario && $usuario->getTipo() == 1;
+
 
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
         header('Content-Type: application/json');
@@ -43,3 +56,8 @@
         }
     }
 ?>
+
+<script>
+    window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
+</script>
+
