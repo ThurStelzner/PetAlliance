@@ -41,6 +41,50 @@
                 throw $e;
             }
         }
+
+        public function favoritarAnimal($usuarioId, $petId) {
+            $sql = "INSERT INTO tb_favoritos (id_pet, id_usuario) VALUES (?,?)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$petId, $usuarioId]);
+        }
+
+        public function listarFavoritos($id) {
+            try {
+                $sql = "SELECT * FROM tb_pets p 
+                    INNER JOIN tb_favoritos pf 
+                    ON p.id = pf.id_pet WHERE pf.id_usuario = ?
+                ";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$id]);
+                $animais = [];
+            
+                while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $animal = new Animal(
+                    $dados['dono_id'],
+                    $dados['foto_pet'],
+                    $dados['nome'],
+                    $dados['raca'],
+                    $dados['cor'],
+                    $dados['sexo'],
+                    $dados['tipo'],
+                    $dados['porte'],
+                    $dados['data_nascimento'],
+                    $dados['peso'],
+                    $dados['descricao'],
+                    $dados['vacinado'],
+                    $dados['certificado_raca'],
+                    $dados['foto_certificado'],
+                    $dados['foto_vacinas'],
+                );
+                $animal->setId($dados['id']);
+                $animais[] = $animal;
+                }
+                return $animais;
+            } catch (PDOException $e) {
+                throw $e;
+            }
+        }
+
         public function read($id) {
             $sql = "SELECT * FROM tb_pets WHERE id = ?";
 

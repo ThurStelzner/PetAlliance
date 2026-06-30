@@ -25,6 +25,21 @@
             echo json_encode($animais);
         }
 
+        public function listarAnimaisFavoritos($id) {
+            $favoritos = $this->dao->listarFavoritos($id);
+            echo json_encode($favoritos);
+        }
+
+        public function favoritarAnimal($usuarioId, $petId) {
+            $dados = json_decode(file_get_contents("php://input"), true);
+            try {
+                $animalFavoritado = $this->dao->favoritarAnimal($usuarioId, $petId);
+                echo json_encode($animalFavoritado);
+            } catch (Exeption $e) {
+                echo json_encode(["erro" => "Erro ao favoritar animal: " . $e->getMessage()]);
+            }
+        }
+
         public function criarAnimal() {
             $dados = json_decode(file_get_contents("php://input"), true);
             $animal = new Animal(

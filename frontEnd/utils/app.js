@@ -48,6 +48,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.addEventListener("click", (event) => {
         const target = event.target;
+        const button = target instanceof Element ? target.closest(".favoritar-btn") : null;
+        if (!button) {
+            return;
+        }
+
+        const animalId = button.dataset.animalId;
+        if(animalId) {
+            try{
+                fetch(`/backEnd/home.php?route=favoritar_animal&idAnimal=${animalId}`);
+            } catch (error) {
+                console.error("Erro ao buscar dados do animal:", error);
+            }
+        }
+    });
+
+    container.addEventListener("click", (event) => {
+        const target = event.target;
         const button = target instanceof Element ? target.closest(".detalhes-btn") : null;
         if (!button) {
             return;

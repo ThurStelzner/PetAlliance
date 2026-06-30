@@ -39,8 +39,6 @@
 
         }
 
-        //para validar o cep precisamos da API ViaCep
-
         public function cadastrarUsuario(Usuario $usuario) {
             if($this->validaCPF($usuario->getCpf()) === false) {
                 throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF Informado é inválido</p>");
