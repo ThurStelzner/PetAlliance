@@ -19,6 +19,131 @@
   ];
 
   // --- Helpers ---
+  // Máscaras de entrada
+  function maskCPF(event) {
+    let input = event.target;
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    if (value.length <= 3) {
+      input.value = value;
+    } else if (value.length <= 6) {
+      input.value = value.slice(0, 3) + '.' + value.slice(3);
+    } else if (value.length <= 9) {
+      input.value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6);
+    } else {
+      input.value = value.slice(0, 3) + '.' + value.slice(3, 6) + '.' + value.slice(6, 9) + '-' + value.slice(9);
+    }
+  }
+
+  function maskPhone(event) {
+    let input = event.target;
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    if (value.length <= 2) {
+      input.value = value;
+    } else if (value.length <= 7) {
+      input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
+    } else {
+      input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7);
+    }
+  }
+
+  function maskCEP(event) {
+    let input = event.target;
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+    if (value.length <= 5) {
+      input.value = value;
+    } else {
+      input.value = value.slice(0, 5) + '-' + value.slice(5);
+    }
+  }
+
+  // Validações
+  function validateEmail(email) {
+    return email.includes('@') && email.includes('.');
+  }
+
+  function validateCPF(cpf) {
+    const value = cpf.replace(/\D/g, '');
+    return value.length === 11;
+  }
+
+  function validatePhone(phone) {
+    const value = phone.replace(/\D/g, '');
+    return value.length === 11;
+  }
+
+  function validateCEP(cep) {
+    const value = cep.replace(/\D/g, '');
+    return value.length === 8;
+  }
+
+  function validateOnlyNumbers(value) {
+    return /^\d*$/.test(value.replace(/\D/g, ''));
+  }
+
+  function showErrorAlert(message) {
+    alert('❌ Erro no cadastro:\n\n' + message);
+  }
+
+  // --- Termos de Uso ---
+  let termsScrolled = false;
+  let termsContent = '';
+
+  function loadTerms() {
+    fetch('./TERMOS_DE_USO.txt')
+      .then(response => response.text())
+      .then(text => {
+        termsContent = text;
+      })
+      .catch(() => {
+        termsContent = 'Erro ao carregar os termos de uso. Por favor, tente novamente mais tarde.';
+      });
+  }
+
+  function openTermsModal() {
+    const modal = qs('#terms-modal');
+    const contentEl = qs('#terms-content-text');
+    contentEl.textContent = termsContent;
+    modal.classList.remove('hidden');
+    termsScrolled = false;
+    qs('#terms-accept-btn').disabled = true;
+    qs('#terms-scroll-hint').classList.remove('hidden');
+  }
+
+  function openPrivacyModal() {
+    alert('🔒 Política de Privacidade\n\nSeus dados pessoais são protegidos conforme a LGPD. Utilizamos suas informações para:\n\n• Criar e manter sua conta\n• Conectar você com outros proprietários de animais\n• Melhorar nossos serviços\n• Enviar comunicações importantes\n\nNunca compartilhamos dados pessoais com terceiros sem seu consentimento.\n\nPara mais detalhes, entre em contato conosco.');
+  }
+
+  function closeTermsModal() {
+    const modal = qs('#terms-modal');
+    modal.classList.add('hidden');
+    termsScrolled = false;
+  }
+
+  function handleTermsModalScroll(event) {
+    const contentDiv = event.target;
+    const isAtBottom = contentDiv.scrollHeight - contentDiv.scrollTop - contentDiv.clientHeight < 10;
+    
+    if (isAtBottom && !termsScrolled) {
+      termsScrolled = true;
+      qs('#terms-accept-btn').disabled = false;
+      qs('#terms-scroll-hint').classList.add('hidden');
+    }
+  }
+
+  function acceptTerms() {
+    qs('#terms-modal').classList.add('hidden');
+    qs('#reg-terms-check').disabled = false;
+    qs('#reg-terms-check').checked = true;
+    qs('#reg-terms-label').classList.remove('bg-blue-50', 'border-blue-200');
+    qs('#reg-terms-label').classList.add('bg-green-50', 'border-green-200');
+    qs('#reg-terms-hint').textContent = '✅ Termos de Uso aceitos';
+    qs('#reg-terms-hint').classList.remove('text-blue-600');
+    qs('#reg-terms-hint').classList.add('text-green-600');
+  }
+
   function calcAge(bd) {
     const diff = Date.now() - new Date(bd).getTime();
     const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
@@ -249,14 +374,62 @@
 
   function handleRegister(e) {
     if (e) e.preventDefault();
-    // very small register flow: store basic info
+    
     const name = qs('#reg-name').value.trim();
     const email = qs('#reg-email').value.trim();
     const cpf = qs('#reg-cpf').value.trim();
-    if (!name || !email || !cpf) { qs('#reg-error').textContent = 'Preencha os campos obrigatórios.'; qs('#reg-error').classList.remove('hidden'); return; }
-    state.user = { nome: name, email, cpf };
+    const phone = qs('#reg-phone').value.trim();
+    const cep = qs('#reg-cep').value.trim();
+    const password = qs('#reg-password').value.trim();
+    const termsCheck = qs('#reg-terms-check').checked;
+
+    // Validações
+    if (!name || !email || !cpf || !phone || !cep || !password) { 
+      showErrorAlert('Por favor, preencha todos os campos obrigatórios.');
+      return; 
+    }
+
+    if (name.length < 3) {
+      showErrorAlert('O nome deve ter pelo menos 3 caracteres.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      showErrorAlert('Email inválido.\n\nO email deve conter @ e . (exemplo: seu@email.com)');
+      return;
+    }
+
+    if (!validateCPF(cpf)) {
+      showErrorAlert('CPF inválido.\n\nDigite um CPF válido no formato: 000.000.000-00');
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      showErrorAlert('Telefone inválido.\n\nDigite um telefone válido no formato: (00) 00000-0000');
+      return;
+    }
+
+    if (!validateCEP(cep)) {
+      showErrorAlert('CEP inválido.\n\nDigite um CEP válido no formato: 00000-000');
+      return;
+    }
+
+    if (password.length < 6) {
+      showErrorAlert('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    if (!termsCheck) {
+      showErrorAlert('Você deve aceitar os Termos de Uso e a Política de Privacidade.');
+      return;
+    }
+
+    // Se passou em todas as validações, registrar
+    state.user = { nome: name, email, cpf, phone, cep };
     localStorage.setItem('pa:user', JSON.stringify(state.user));
+    qs('#reg-error').classList.add('hidden');
     updateAuthUI();
+    alert('✅ Cadastro realizado com sucesso!');
     navigateTo('home');
   }
 
@@ -275,6 +448,51 @@
     }
   }
 
+  // --- Avatar handlers ---
+  function handleRegAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = qs('#reg-avatar-preview img') || document.createElement('img');
+      if (!qs('#reg-avatar-preview img')) {
+        qs('#reg-avatar-preview').innerHTML = '';
+        qs('#reg-avatar-preview').appendChild(img);
+      }
+      img.src = e.target.result;
+      img.classList.add('w-full', 'h-full', 'object-cover');
+      qs('#reg-display-name').textContent = qs('#reg-name').value || 'Seu nome aqui';
+      qs('#reg-display-email').textContent = qs('#reg-email').value || 'seu@email.com';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleProfileAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const container = qs('#profile-avatar-container');
+      container.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleTermsScroll(event) {
+    const box = event.target;
+    const label = qs('#reg-terms-label');
+    const hint = qs('#reg-terms-hint');
+    const checkbox = qs('#reg-terms-check');
+    const isAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 10;
+    
+    if (isAtBottom) {
+      hint.classList.add('hidden');
+      label.style.opacity = '1';
+      label.style.pointerEvents = 'auto';
+      checkbox.disabled = false;
+    }
+  }
+
   // --- Mobile menu ---
   function toggleMenu() { const m = qs('#mobile-menu'); m.classList.toggle('open'); }
 
@@ -290,10 +508,37 @@
     window.handleLogin = handleLogin;
     window.handleRegister = handleRegister;
     window.closeModal = closeModal;
+    // Expor funções de máscaras e validações
+    window.maskCPF = maskCPF;
+    window.maskPhone = maskPhone;
+    window.maskCEP = maskCEP;
+    window.validateEmail = validateEmail;
+    window.validateCPF = validateCPF;
+    window.validatePhone = validatePhone;
+    window.validateCEP = validateCEP;
+    window.showErrorAlert = showErrorAlert;
+    window.handleRegAvatar = handleRegAvatar;
+    window.handleProfileAvatar = handleProfileAvatar;
+    window.handleTermsScroll = handleTermsScroll;
+    // Funções de termos de uso
+    window.openTermsModal = openTermsModal;
+    window.openPrivacyModal = openPrivacyModal;
+    window.closeTermsModal = closeTermsModal;
+    window.acceptTerms = acceptTerms;
+    window.handleTermsModalScroll = handleTermsModalScroll;
     // attach file handlers where used
     qs('#auth-btn')?.addEventListener('click', () => navigateTo('login'));
     qs('#auth-btn-mobile')?.addEventListener('click', () => navigateTo('login'));
     qs('#logout-btn')?.addEventListener('click', logout);
+
+    // Adicionar listener para scroll do modal de termos
+    const termsContentDiv = qs('#terms-content-text')?.parentElement;
+    if (termsContentDiv) {
+      termsContentDiv.addEventListener('scroll', handleTermsModalScroll);
+    }
+
+    // Carregar termos
+    loadTerms();
 
     // navigation via data attributes
     qsa('.nav-link').forEach(b => b.addEventListener('click', () => navigateTo(b.dataset.page)));
