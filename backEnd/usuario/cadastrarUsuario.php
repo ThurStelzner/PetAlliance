@@ -7,7 +7,7 @@
 
     require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
-
+    
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         try {
             $nome = trim($_POST['nome'] ?? "");

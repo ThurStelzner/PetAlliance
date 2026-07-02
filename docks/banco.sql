@@ -97,15 +97,15 @@ CREATE TABLE tb_pagamentos (
 
 -- DENÚNCIAS
 CREATE TABLE tb_denuncias (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
-    usuario_id BIGINT UNSIGNED NULL,
-    animal_id BIGINT UNSIGNED NULL,
-    descricao TEXT,
-    resolvido BOOLEAN DEFAULT FALSE,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (animal_id) REFERENCES tb_pets(id)
-);
+     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+     usuario_id BIGINT UNSIGNED NOT NULL,
+     tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
+     alvo_id BIGINT UNSIGNED NULL,
+     descricao TEXT NOT NULL,
+     resolvido TINYINT(1) NOT NULL DEFAULT 0,
+     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+ )
 
 CREATE TABLE tb_favoritos (
 	id_pet BIGINT UNSIGNED,
