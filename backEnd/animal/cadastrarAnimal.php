@@ -9,7 +9,12 @@
     $erro = '';
 
     if (!$donoId) {
-        header("Location: /backEnd/home.php?erro=acesso_negado");
+        $_SESSION['flash'] = [
+            'mensagem' => 'Acesso negado',
+            'sucesso' => false,
+            'tipo' => 'erro'
+        ];
+        header("Location: /backEnd/home.php");
         exit;
     }
 
@@ -99,7 +104,12 @@
             );
 
             $dao->cadastrarAnimal($animal);
-            header('Location: /backEnd/home.php?mensagem=animal_cadastrado&sucesso=1');
+            $_SESSION['flash'] = [
+                'mensagem' => 'Animal cadastrado com sucesso',
+                'sucesso' => true,
+                'tipo' => 'sucesso'
+            ];
+            header('Location: /backEnd/home.php');
             exit;
         } catch (InvalidArgumentException $e) {
             $erro = $e->getMessage();

@@ -6,7 +6,7 @@
     $usuarioDAO = new UsuarioDAO();
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
-        $cpf = trim($_POST['cpf']);
+        $cpf = preg_replace('/[^0-9]/', '', trim($_POST['cpf']));
         $_SESSION['cpf_digitado'] = trim($_POST['cpf']);
         $senha = trim($_POST['senha']);
     
@@ -19,7 +19,11 @@
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";
         }else {
-            header("Location: /index.php?mensagem=sucess");
+            header("Location: /backEnd/home.php");
+            $_SESSION['usuario_id'] = $usuario->getId();
+            $_SESSION['usuario_nome'] = $usuario->getNome();
+            $_SESSION['usuario_email'] = $usuario->getEmail();
+            $_SESSION['usuario_imagem'] = $usuario->getImagem();
             exit;
         }
 

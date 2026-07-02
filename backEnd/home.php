@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once __DIR__ . '/../backEnd/controlers/api/animalController.php';
 
     header("Access-Control-Allow-Origin: *");
@@ -15,6 +16,13 @@
         exit;
     }
 
+    $flashMessage = $_SESSION['flash'] ?? null;
+    unset($_SESSION['flash']);
+
+    if ($flashMessage) {
+        echo '<script>window.flashMessage = ' . json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ';</script>';
+    }
+
     require __DIR__ . '/../frontEnd/view/navBar.html';
     require __DIR__ . '/../frontEnd/view/home.html';
     require __DIR__ . '/../frontEnd/view/footer.html';
@@ -27,20 +35,5 @@
     }
     if(!is_dir($diretorioAnimal)) {
         mkdir($diretorioAnimal, 0755, true);
-    }
-
-    if (isset($_GET['mensagem'])) {
-        if ($_GET['mensagem'] === 'sucess') {
-            echo 'Login foi um sucesso';
-        } else {
-             echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
-        }
-    }
-    if (isset($_GET['erro'])) {
-        if ($_GET['erro'] === 'acesso_negado') {
-            echo 'Você não pode entrar aqui';
-        } else {
-            echo 'Ocorreu um erro';
-        }
     }
 ?>

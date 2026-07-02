@@ -41,40 +41,38 @@
             }
         }
         public function read($id) {
-            $sql = "SELECT * FROM tb_pets WHERE id = ?";
+            $sql = "SELECT * FROM tb_pets WHERE dono_id = ?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$id]);
-            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+            $animais = [];
 
-            if (!$dados) {
-                return null;
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $animal = new Animal(
+                    $dados['dono_id'],
+                    $dados['nome'],
+                    $dados['raca'],
+                    $dados['cor'],
+                    $dados['sexo'],
+                    $dados['tipo'],
+                    $dados['porte'],
+                    $dados['data_nascimento'],
+                    $dados['peso'],
+                    $dados['descricao'],
+                    $dados['vacinado'],
+                    $dados['certificado_raca'],
+                    $dados['foto_certificado'],
+                    $dados['foto_vacinas']
+                );
+                $animal->setId($dados['id']);
+                $animais[] = $animal;
             }
-
-            $animal = new Animal(
-                $dados['dono_id'],
-                $dados['nome'],
-                $dados['raca'],
-                $dados['cor'],
-                $dados['sexo'],
-                $dados['tipo'],
-                $dados['porte'],
-                $dados['dt_nascimento'],
-                $dados['peso'],
-                $dados['descricao'],
-                $dados['vacinado'],
-                $dados['certificado_raca'],
-                $dados['foto_certificado'],
-                $dados['foto_vacinas'],
-            );
-
-            $animal->setId($dados['id']);
-
-            return $animal;
+            
+            return $animais;
         }
 
         public function readAll() {
-            $sql = "SELECT * FROM tb_pets ORDER BY nome";
+            $sql = "SELECT * FROM tb_pets";
             $stmt = $this->pdo->query($sql);
             $animais = [];
         

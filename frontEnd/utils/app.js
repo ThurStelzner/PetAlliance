@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL_ANIMAIS = "/backEnd/home.php?route=animais";
+    const API_URL_ANIMAIS = "/api/animais";
     const container = document.getElementById("animais-container");
 
     if (!container) {

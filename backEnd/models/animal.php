@@ -100,47 +100,91 @@ class Animal implements JsonSerializable {
 
 
     public function setId($id) {
-        $this->id = $id;
+        if (!filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
+            throw new Exception("ID inválido.");
+        }
+    
+        $this->id = (int) $id;
     }
 
     public function setDonoid($donoid) {
-        $this->dono_id = $donoid;
+        if (!filter_var($donoid, FILTER_VALIDATE_INT) || $donoid <= 0) {
+            throw new Exception("ID do dono inválido.");
+        }
+    
+        $this->dono_id = (int) $donoid;
     }
-
+    
     public function setRaca($raca) {
+        $raca = trim($raca);
+
+        if ($raca === '') {
+            throw new Exception("Raça não pode ser vazia.");
+        }
+    
+        if (mb_strlen($raca) > 80) {
+            throw new Exception("Raça pode ter no máximo 80 caracteres.");
+        }
         $this->raca = $raca;
     }
 
-    public function setCor($cor) {
-        $this->cor = $cor;
-    }
-
     public function setSexo($sexo) {
+        if (!in_array($sexo, ["Macho", "Fêmea"], true)) {
+            throw new Exception("Sexo inválido.");
+        }
         $this->sexo = $sexo;
     }
 
     public function setTipo($tipo) {
+        if (empty($tipo)) {
+            throw new Exception("Tipo não pode ser vazio.");
+        }
         $this->tipo = $tipo;
     }
 
-     public function setPorte($porte) {
+    public function setPorte($porte) {
+        if (!in_array($porte, ["Pequeno", "Médio", "Grande"], true)) {
+            throw new Exception("Porte inválido.");
+        }
+    
         $this->porte = $porte;
     }
     
-     public function setDtNascimento($dt_nascimento) {
+    public function setDtNascimento($dt_nascimento) {
+        if (empty($dt_nascimento)) {
+            throw new Exception("Data de nascimento não pode ser vazia.");
+        }
+    
+        $data = DateTime::createFromFormat("Y-m-d", $dt_nascimento);
+    
+        if (!$data || $data->format("Y-m-d") !== $dt_nascimento) {
+            throw new Exception("Data de nascimento inválida.");
+        }
+    
         $this->dt_nascimento = $dt_nascimento;
     }
 
-     public function setPeso($peso) {
+    public function setPeso($peso) {
+        if (!is_numeric($peso) || $peso <= 0) {
+            throw new Exception("Peso deve ser um número maior que zero.");
+        }
+    
         $this->peso = $peso;
     }
 
      public function setDescricao($descricao) {
+            if (empty($descricao)) {
+                throw new Exception("Descrição não pode ser vazia.");
+            }
         $this->descricao = $descricao;
     }
 
-     public function setVacinado($vacinado) {
-        $this->vacinado = $vacinado;
+    public function setVacinado($vacinado) {
+        if (!in_array($vacinado, [0, 1, "0", "1"], true)) {
+            throw new Exception("Valor de vacinação inválido.");
+        }
+    
+        $this->vacinado = (int) $vacinado;
     }
 
     public function setFotoCertificado($foto_certificado) {
