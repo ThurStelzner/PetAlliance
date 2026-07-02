@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${animal.porte || "Não informado"}</p>
                     <p>${animal.sexo || "Não informado"}</p>
                     <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
-                    <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">Favoritar</button>
+                    <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>
                 `;
                 container.appendChild(card);
             });
@@ -54,8 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const animalId = button.dataset.animalId;
-        if(animalId) {
-            try{
+        if (animalId) {
+            const estaFavoritado = button.textContent.trim() === "Remover dos Favoritos";
+            button.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
+
+            try {
                 fetch(`/backEnd/home.php?route=favoritar_animal&idAnimal=${animalId}`);
             } catch (error) {
                 console.error("Erro ao buscar dados do animal:", error);

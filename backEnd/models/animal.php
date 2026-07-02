@@ -18,8 +18,9 @@ class Animal implements JsonSerializable {
     private $foto_vacina;
 
     private $id;
+    private $favoritado;
 
-    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null,$favoritado = false
     ) {
         $this->dono_id = $dono_id;
         $this->foto_pet = $foto_pet;
@@ -37,6 +38,7 @@ class Animal implements JsonSerializable {
         $this->foto_certificado =$foto_certificado;
         $this->foto_vacina = $foto_vacina;
         $this->id = $id;
+        $this->favoritado = (bool) $favoritado;
     }
 
 
@@ -111,6 +113,14 @@ class Animal implements JsonSerializable {
         }
     
         $this->id = (int) $id;
+    }
+
+    public function getFavoritado() {
+        return $this->favoritado;
+    }
+
+    public function setFavoritado($favoritado) {
+        $this->favoritado = (bool) $favoritado;
     }
 
     public function setDonoid($donoid) {
@@ -273,6 +283,7 @@ class Animal implements JsonSerializable {
             'certificado' => $this->certificado,
             'foto_certificado' => $this->foto_certificado,
             'foto_vacina' => $this->foto_vacina,
+            'favoritado' => $this->favoritado,
         ];
     }
 }

@@ -8,11 +8,12 @@
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
     $metodo = $_SERVER['REQUEST_METHOD'];
+    $usuarioId = $_SESSION['usuario_id'];
 
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
         header('Content-Type: application/json');
         $controllerAnimal = new AnimalController();
-        $controllerAnimal->listarAnimais();
+        $controllerAnimal->listarAnimais($usuarioId);
         exit;
     }
 
@@ -24,10 +25,9 @@
     }
 
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'favoritar_animal' && isset($_GET['idAnimal'])) {
-        $usuarioId = $_SESSION['usuario_id'];
         header('Content-Type: application/json');
         $controllerAnimal = new AnimalController();
-        $controllerAnimal->favoritarAnimal($usuarioId, intval($_GET['idAnimal']));
+        $controllerAnimal->favoritarAnimal($usuarioId, $_GET['idAnimal']);
         exit;
     }
 

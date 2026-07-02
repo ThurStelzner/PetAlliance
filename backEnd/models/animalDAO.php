@@ -43,9 +43,22 @@
         }
 
         public function favoritarAnimal($usuarioId, $petId) {
-            $sql = "INSERT INTO tb_favoritos (id_pet, id_usuario) VALUES (?,?)";
+            $sql = "SELECT 1 FROM tb_favoritos WHERE id_usuario = ? AND id_pet = ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$petId, $usuarioId]);
+            $stmt->execute([$usuarioId, $petId]);
+            $favorito = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($favorito) {
+                $sqlDelete = "DELETE FROM tb_favoritos WHERE id_usuario = ? AND id_pet = ?";
+                $stmtDelete = $this->pdo->prepare($sqlDelete);
+                $stmtDelete->execute([$usuarioId, $petId]);
+                return false;
+            }
+
+            $sqlInsert = "INSERT INTO tb_favoritos (id_pet, id_usuario) VALUES (?, ?)";
+            $stmtInsert = $this->pdo->prepare($sqlInsert);
+            $stmtInsert->execute([$petId, $usuarioId]);
+            return true;
         }
 
         public function listarFavoritos($id) {
@@ -56,9 +69,14 @@
                 ";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([$id]);
+                $dados = $stmt->fetch(PDO::FETCH_ASSOC);
                 $animais = [];
-            
-                while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                if(!$dados) {
+                    echo "ErroFavoritos";
+                }
+
+                while ($dados) {
                 $animal = new Animal(
                     $dados['dono_id'],
                     $dados['foto_pet'],
@@ -119,9 +137,18 @@
             return $animal;
         }
 
-        public function readAll() {
-            $sql = "SELECT * FROM tb_pets ORDER BY nome";
-            $stmt = $this->pdo->query($sql);
+        public function readAll($usuarioId) {
+            $sql = "SELECT p.*, 
+                    EXISTS (
+                        SELECT 1
+                        FROM tb_favoritos f
+                        WHERE f.id_pet = p.id
+                            AND f.id_usuario = ?
+                    ) AS favoritado
+                FROM tb_pets p
+                ORDER BY p.nome;";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuarioId]);
             $animais = [];
         
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -141,8 +168,9 @@
                 $dados['certificado_raca'],
                 $dados['foto_certificado'],
                 $dados['foto_vacinas'],
+                $dados['id'] ?? null,
+                $dados['favoritado'] ?? 0
               );
-              $animal->setId($dados['id']);
               $animais[] = $animal; // adiciona ao array
             }
             

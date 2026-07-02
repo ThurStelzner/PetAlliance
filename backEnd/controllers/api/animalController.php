@@ -15,8 +15,8 @@
             echo json_encode($animal);
         }
 
-        public function listarAnimais() {
-            $animais = $this->dao->readAll();
+        public function listarAnimais($id) {
+            $animais = $this->dao->readAll($id);
             echo json_encode($animais);
         }
 
@@ -35,7 +35,7 @@
             try {
                 $animalFavoritado = $this->dao->favoritarAnimal($usuarioId, $petId);
                 echo json_encode($animalFavoritado);
-            } catch (Exeption $e) {
+            } catch (Exception $e) {
                 echo json_encode(["erro" => "Erro ao favoritar animal: " . $e->getMessage()]);
             }
         }
