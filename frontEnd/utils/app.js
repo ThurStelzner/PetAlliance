@@ -22,6 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const animais = Array.isArray(data) ? data : data.animais || [];
 
+            if (animais.length === 0) {
+                container.innerHTML = "<p>Você ainda não tem nenhum animal favoritado.</p>";
+                return;
+            }
+
             container.innerHTML = "";
 
             animais.forEach(animal => {
