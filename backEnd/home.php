@@ -37,6 +37,12 @@
         exit;
     }
 
+    if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
+        $controllerAnimal = new AnimalController();
+        $controllerAnimal->deletarAnimal($_GET['id']);
+        exit; 
+    }
+
     require __DIR__ . '/../frontEnd/view/navBar.html';
     require __DIR__ . '/../frontEnd/view/home.html';
     require __DIR__ . '/../frontEnd/view/footer.html';

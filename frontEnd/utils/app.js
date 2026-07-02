@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${animal.sexo || "Não informado"}</p>
                     <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
                     <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">Favoritar</button>
+                    ${window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : ""}
                 `;
                 container.appendChild(card);
             });
@@ -48,14 +49,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.addEventListener("click", (event) => {
         const target = event.target;
-        const button = target instanceof Element ? target.closest(".detalhes-btn") : null;
-        if (!button) {
+    
+        if (!(target instanceof Element)) {
             return;
         }
-
-        const animalId = button.dataset.animalId;
-        if (animalId) {
-            carregarDetalhesAnimal(animalId);
+    
+        const detalhesBtn = target.closest(".detalhes-btn");
+        if (detalhesBtn) {
+            carregarDetalhesAnimal(detalhesBtn.dataset.animalId);
+            return;
+        }
+    
+        const excluirBtn = target.closest(".excluir-btn");
+        if (excluirBtn) {
+            excluirAnimal(excluirBtn.dataset.animalId);
+            return;
         }
     });
 
@@ -140,6 +148,32 @@ document.addEventListener("DOMContentLoaded", () => {
             `);
         } catch (error) {
             console.error("Erro ao carregar detalhes do animal:", error);
+        }
+    }
+
+    async function excluirAnimal(id) {
+        if (!confirm("Deseja realmente excluir este animal?")) {
+            return;
+        }
+    
+        try {
+            const response = await fetch(`/backEnd/home.php?route=excluir_animal&id=${id}`, {
+                method: "DELETE",
+                credentials: "same-origin"
+            });
+    
+            const data = await response.json();
+    
+            if (data.sucesso) {
+                alert("Animal excluído com sucesso!");
+                carregarAnimais();
+            } else {
+                alert(data.erro || "Erro ao excluir o animal.");
+            }
+    
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao excluir o animal.");
         }
     }
 

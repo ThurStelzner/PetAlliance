@@ -1,6 +1,15 @@
-// Pega os elementos da tela
+window.addEventListener('DOMContentLoaded', () => {
     const campoData = document.getElementById('dt_nascimento');
-    const formulario = document.querySelector("form");
+    const formulario = document.querySelector('form');
+
+    if (!campoData) {
+        console.warn('animalValidacao: elemento #dt_nascimento não encontrado');
+        return;
+    }
+    if (!formulario) {
+        console.warn('animalValidacao: elemento <form> não encontrado');
+        return;
+    }
 
     // Descobre a data de hoje exata do seu computador
     const hoje = new Date().toLocaleDateString('sv-SE'); // Gera o formato AAAA-MM-DD direto
@@ -16,3 +25,4 @@
             campoData.focus();
         }
     });
+});

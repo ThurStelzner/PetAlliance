@@ -135,4 +135,31 @@
             
             return $animais;
         }
+        public function delete($id) {
+            $pdo = Conexao::getConexao();
+        
+            $arquivo = __DIR__ . "/../../uploads/animais/";
+        
+            $sql = "SELECT * FROM tb_pets WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+            $animal = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+            if ($animal) {
+        
+                if (
+                    !empty($animal['foto_pet']) &&
+                    $animal['foto_pet'] !== 'placeholder.webp' &&
+                    file_exists($arquivo . $animal['foto_pet'])
+                ) {
+                    unlink($arquivo . $animal['foto_pet']);
+                }
+        
+                $sql = "DELETE FROM tb_pets WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$id]);
+            }
+        }
+
+
     }
