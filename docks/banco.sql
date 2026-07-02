@@ -114,3 +114,11 @@ CREATE TABLE tb_denuncias (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
 );
+
+CREATE TABLE tb_favoritos (
+	id_pet BIGINT UNSIGNED,
+    id_usuario BIGINT UNSIGNED,
+    PRIMARY KEY (id_usuario, id_pet),
+    FOREIGN KEY (id_usuario) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_pet) REFERENCES tb_pets(id) ON DELETE CASCADE
+)

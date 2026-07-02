@@ -2,13 +2,14 @@
 
 class Animal implements JsonSerializable {
     private $dono_id;
+    private $foto_pet;
     private $nome;
     private $raca;
     private $cor;
     private $sexo;
     private $tipo;
     private $porte;
-    private $dt_nascimento;
+    private $data_nascimento;
     private $peso;
     private $descricao;
     private $vacinado;
@@ -17,17 +18,19 @@ class Animal implements JsonSerializable {
     private $foto_vacina;
 
     private $id;
+    private $favoritado;
 
-    public function __construct($dono_id,$nome,$raca,$cor,$sexo,$tipo,$porte,$dt_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null,$favoritado = false
     ) {
         $this->dono_id = $dono_id;
+        $this->foto_pet = $foto_pet;
         $this->nome = $nome;
         $this->raca = $raca;
         $this->cor = $cor;
         $this->sexo = $sexo;
         $this->tipo = $tipo;
         $this->porte = $porte;
-        $this->dt_nascimento = $dt_nascimento;
+        $this->data_nascimento = $data_nascimento;
         $this->peso = $peso;
         $this->descricao = $descricao;
         $this->vacinado = $vacinado;
@@ -35,6 +38,7 @@ class Animal implements JsonSerializable {
         $this->foto_certificado =$foto_certificado;
         $this->foto_vacina = $foto_vacina;
         $this->id = $id;
+        $this->favoritado = (bool) $favoritado;
     }
 
 
@@ -44,6 +48,10 @@ class Animal implements JsonSerializable {
 
     public function getDonoid() {
         return $this->dono_id;
+    }
+
+    public function getFotoPet() {
+        return $this->foto_pet;
     }
 
     public function getNome() {
@@ -70,8 +78,8 @@ class Animal implements JsonSerializable {
         return $this->porte;
     }
 
-    public function getDtNascimento() {
-        return $this->dt_nascimento;
+    public function getDataNascimento() {
+        return $this->data_nascimento;
     }
 
     public function getPeso() {
@@ -107,12 +115,35 @@ class Animal implements JsonSerializable {
         $this->id = (int) $id;
     }
 
+    public function getFavoritado() {
+        return $this->favoritado;
+    }
+
+    public function setFavoritado($favoritado) {
+        $this->favoritado = (bool) $favoritado;
+    }
+
     public function setDonoid($donoid) {
         if (!filter_var($donoid, FILTER_VALIDATE_INT) || $donoid <= 0) {
             throw new Exception("ID do dono inválido.");
         }
     
         $this->dono_id = (int) $donoid;
+    }
+    
+    public function setFotoPet($foto_pet){
+        $this->foto_pet = $foto_pet;
+        if (!empty($_FILES['arquivoFotoPet']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                } else {
+                    $foto_pet = uniqid('pet_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $foto_pet);
+                }
+            }
     }
     
     public function setRaca($raca) {
@@ -160,12 +191,17 @@ class Animal implements JsonSerializable {
         if (!$data || $data->format("Y-m-d") !== $dt_nascimento) {
             throw new Exception("Data de nascimento inválida.");
         }
+        if ($dt_nascimento < '2000-01-01') {
+            echo 'Erro: A data escolhida é menor que a data mínima permitida.';
+        } else {
+            echo 'Sucesso: Data válida!';
+        }
     
-        $this->dt_nascimento = $dt_nascimento;
+        $this->data_nascimento = $dt_nascimento;
     }
 
     public function setPeso($peso) {
-        if (!is_numeric($peso) || $peso <= 0) {
+        if (!is_numeric($peso) || $peso < 0) {
             throw new Exception("Peso deve ser um número maior que zero.");
         }
     
@@ -186,36 +222,68 @@ class Animal implements JsonSerializable {
     
         $this->vacinado = (int) $vacinado;
     }
+    
+    public function setCertificado($certificado) {
+        if (!in_array($certificado, [0, 1, "0", "1"], true)) {
+            throw new Exception("Valor de certificado inválido.");
+        }
+    
+        $this->certificado = (int) $certificado;
+    }
 
     public function setFotoCertificado($foto_certificado) {
         $this->foto_certificado = $foto_certificado;
+        if (!empty($_FILES['arquivoCertificado']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                    header("Location: /index.php");
+                    exit();
+                    
+                } else {
+                    $foto_certificado = uniqid('cert_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
+                }
+        }
+            
     }
 
     public function setFotoVacina($foto_vacina) {
         $this->foto_vacina = $foto_vacina;
-    }
-
-     public function setCertificado($certificado) {
-        $this->certificado = $certificado;
-    }
+        if (!empty($_FILES['arquivoVacinacao']['name'])) {
+                $extensao  = pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            
+                if (!in_array(strtolower($extensao), $permitidos)) {
+                    $erro = 'Tipo de imagem não permitido.';
+                } else {
+                    $foto_vacina = uniqid('vaci_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
+                }
+            }
+        }
 
     public function jsonSerialize(): array {
         return [
             'id' => $this->id,
             'dono_id' => $this->dono_id,
+            'foto_pet' => $this->foto_pet,
             'nome' => $this->nome,
             'raca' => $this->raca,
             'cor' => $this->cor,
             'sexo' => $this->sexo,
             'tipo' => $this->tipo,
             'porte' => $this->porte,
-            'dt_nascimento' => $this->dt_nascimento,
+            'data_nascimento' => $this->data_nascimento,
             'peso' => $this->peso,
             'descricao' => $this->descricao,
             'vacinado' => $this->vacinado,
             'certificado' => $this->certificado,
             'foto_certificado' => $this->foto_certificado,
             'foto_vacina' => $this->foto_vacina,
+            'favoritado' => $this->favoritado,
         ];
     }
 }

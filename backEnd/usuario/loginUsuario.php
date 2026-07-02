@@ -3,6 +3,8 @@
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require __DIR__ . "/../../frontEnd/view/footer.html";
 
+    session_start();
+
     $usuarioDAO = new UsuarioDAO();
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
@@ -19,11 +21,12 @@
         } elseif ($senha !== $usuario->getSenha()) {
             echo "Senha inválida!";
         }else {
-            header("Location: /backEnd/home.php");
             $_SESSION['usuario_id'] = $usuario->getId();
             $_SESSION['usuario_nome'] = $usuario->getNome();
             $_SESSION['usuario_email'] = $usuario->getEmail();
             $_SESSION['usuario_imagem'] = $usuario->getImagem();
+            $_SESSION['usuario_cpf'] = $usuario->getCpf();
+            header("Location: /backEnd/home.php?sucesso=1");
             exit;
         }
 

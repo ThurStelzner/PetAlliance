@@ -22,6 +22,21 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
+            $fotoPet = null;
+            if (!empty($_FILES['arquivoFotoPet']['name'])) {
+                $extensao = strtolower(pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION));
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+
+                if (!in_array($extensao, $permitidos, true)) {
+                    throw new InvalidArgumentException('Tipo de imagem não permitido para a foto do pet.');
+                }
+
+                $fotoPet = uniqid('pet_') . '.' . $extensao;
+                move_uploaded_file(
+                    $_FILES['arquivoFotoPet']['tmp_name'],
+                    __DIR__ . '/../../uploads/animais/' . $fotoPet
+                );
+            }
             $nome = trim($_POST['nome'] ?? '');
             $raca = trim($_POST['raca'] ?? '');
             $cor = trim($_POST['cor'] ?? '');
@@ -88,6 +103,7 @@
 
             $animal = new Animal(
                 $donoId,
+                $fotoPet,
                 $nome,
                 $raca,
                 $cor,
@@ -119,4 +135,5 @@
     }
 
     require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

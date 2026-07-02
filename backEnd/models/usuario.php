@@ -1,18 +1,20 @@
 <?php
 
-class Usuario {
+class Usuario implements JsonSerializable {
     private $imagem;
     private $cpf;
     private $cep;
+    private $tipo;
     private $nome;
     private $email;
     private $senha;
     private $id;
 
-    public function __construct($imagem, $cpf, $cep, $nome, $email, $senha, $id = null) {
+    public function __construct($imagem, $cpf, $cep,$tipo, $nome, $email, $senha, $id = null) {
         $this->imagem = $imagem;
         $this->cpf = $cpf;
         $this->cep = $cep;
+        $this->tipo = $tipo;
         $this->nome = $nome;
         $this->email = $email;
         $this->senha = $senha;
@@ -34,7 +36,9 @@ class Usuario {
     public function getCep() {
         return $this->cep;
     }
-
+    public function getTipo() {
+        return $this->tipo;
+    }
     public function getNome() {
         return $this->nome;
     }
@@ -65,6 +69,9 @@ class Usuario {
     public function setCep($cep) {
         $this->cep = $cep;
     }
+    public function setTipo($tipo) {
+        $this->tipo = $tipo;
+    }
 
     public function setNome($nome) {
         $this->nome = $nome;
@@ -76,5 +83,17 @@ class Usuario {
 
     public function setSenha($senha) {
         $this->senha = $senha;
+    }
+
+    public function jsonSerialize(): array {
+        return [
+            'imagem' => $this->imagem,
+            'cpf' => $this->cpf,
+            'cep' => $this->cep,
+            'tipo' => $this->tipo,
+            'nome' => $this->nome,
+            'email' => $this->email,
+            'id' => $this->id
+        ];
     }
 }

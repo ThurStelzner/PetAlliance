@@ -77,7 +77,7 @@
             $dados = $stmt->fetch(PDO::FETCH_ASSOC);
         
             if (!$dados) return null;
-            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['nome'],$dados['email'],$dados['senha']);
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email'],$dados['senha'],);
             $usuario->setId($dados['id']);
         
             return $usuario;

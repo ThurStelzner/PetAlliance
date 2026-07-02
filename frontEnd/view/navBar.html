@@ -9,7 +9,17 @@
     <nav>
         <h1>NavBar aqui</h1>
         <ul>
+            <li><a href="/backEnd/home.php">Inicio</a></li>
             <li><a href="/backEnd/animal/cadastrarAnimal.php">Cadastrar Animal</a></li>
-            <li><a href="/backEnd/animal/meusAnimaisView.php">Meus Animais</a></li>
+            <li><a href="/backEnd/animal/meusAnimais.php">Meus Animais</a></li>
+            <li><a href="/backEnd/animal/favoritos.php">Favoritos</a></li>
+            <button type="button" class="btn btn-menu" commandFor="menu" command="show-modal">Menu</button>
         </ul>
+
+        <dialog id="menu">
+            <button type="button" class="btn btn-close" commandFor="menu" command="close">X</button>
+            <ul>
+                <li><a href="/backEnd/usuario/perfil.php">Perfil</a></li>
+            </ul>
+        </dialog>
     </nav>

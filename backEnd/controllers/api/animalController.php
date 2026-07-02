@@ -10,20 +10,41 @@
             $this->dao = new AnimalDAO();
         }
 
-        public function listarAnimais() {
-            $animais = $this->dao->readAll();
+        public function read($id) {
+            $animal = $this->dao->read($id);
+            echo json_encode($animal);
+        }
+
+        public function listarAnimais($id) {
+            $animais = $this->dao->readAll($id);
             echo json_encode($animais);
         }
 
-        public function listarAnimaisPorDono($donoId) {
-            $animais = $this->dao->read($donoId);
+        public function readByDonoId($donoId) {
+            $animais = $this->dao->readByDonoId($donoId);
             echo json_encode($animais);
+        }
+
+        public function listarAnimaisFavoritos($id) {
+            $favoritos = $this->dao->listarFavoritos($id);
+            echo json_encode($favoritos);
+        }
+
+        public function favoritarAnimal($usuarioId, $petId) {
+            $dados = json_decode(file_get_contents("php://input"), true);
+            try {
+                $animalFavoritado = $this->dao->favoritarAnimal($usuarioId, $petId);
+                echo json_encode($animalFavoritado);
+            } catch (Exception $e) {
+                echo json_encode(["erro" => "Erro ao favoritar animal: " . $e->getMessage()]);
+            }
         }
 
         public function criarAnimal() {
             $dados = json_decode(file_get_contents("php://input"), true);
             $animal = new Animal(
                 $dados['dono_id'],
+                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],

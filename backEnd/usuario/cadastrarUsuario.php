@@ -15,6 +15,7 @@
             $cep = trim($_POST['cep'] ?? "");
             $email = trim($_POST['email'] ?? "");
             $senha = trim($_POST['senha'] ?? "");
+            $tipo = 0;
             
             $nomeArquivo = "placeholder.webp";
 
@@ -32,12 +33,13 @@
                     $dao = new UsuarioDAO();
                     $nomeArquivo = uniqid('prod_') . '.' . $extensao;
                     move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], '../../uploads/usuario/' . $nomeArquivo);
-                    $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
+                    $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $tipo, $cep, $nome, $email, $senha));
 
                     $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
                     $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
                     $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
                     $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+                    $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
 
                     header("Location: /backEnd/home.php");
                     exit();
@@ -45,12 +47,13 @@
             }
 
             $dao = new UsuarioDAO();
-            $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep, $nome, $email, $senha));
+            $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $tipo, $cep, $nome, $email, $senha));
 
             $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
             $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
             $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
             $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+            $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
 
             header("Location: /backEnd/home.php");
             exit();
