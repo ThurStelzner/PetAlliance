@@ -23,6 +23,7 @@
         }else {
             $_SESSION['usuario_id'] = $usuario->getId();
             $_SESSION['usuario_nome'] = $usuario->getNome();
+            $_SESSION['usuario_cpf'] = $usuario->getCpf();
             $_SESSION['usuario_email'] = $usuario->getEmail();
             $_SESSION['usuario_imagem'] = $usuario->getImagem();
             $_SESSION['usuario_cpf'] = $usuario->getCpf();

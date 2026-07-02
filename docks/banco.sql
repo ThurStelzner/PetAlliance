@@ -81,38 +81,30 @@ CREATE TABLE tb_mensagens (
     FOREIGN KEY (remetente_id) REFERENCES tb_usuarios(id)
 );
 
--- ANÚNCIOS
-CREATE TABLE tb_anuncios (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
-    pet_id BIGINT UNSIGNED NOT NULL,
-    preco DECIMAL(10,2) NOT NULL,
-    descricao TEXT,
-    ativo BOOLEAN DEFAULT TRUE NOT NULL,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (pet_id) REFERENCES tb_pets(id)
-);
 
 -- PAGAMENTOS
 CREATE TABLE tb_pagamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     usuario_id BIGINT UNSIGNED NOT NULL,
-    anuncio_id BIGINT UNSIGNED NOT NULL,
+    pet_id BIGINT UNSIGNED NOT NULL,
     valor DECIMAL(10,2) NOT NULL,
     taxa DECIMAL(10,2) NOT NULL,
     status VARCHAR(20) NOT NULL,
     data_pagamento TIMESTAMP NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (anuncio_id) REFERENCES tb_anuncios(id)
+    FOREIGN KEY (pet_id) REFERENCES tb_pets(id)
 );
 
 -- DENÚNCIAS
 CREATE TABLE tb_denuncias (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
-    usuario_id BIGINT UNSIGNED NOT NULL,
+    usuario_id BIGINT UNSIGNED NULL,
+    animal_id BIGINT UNSIGNED NULL,
     descricao TEXT,
     resolvido BOOLEAN DEFAULT FALSE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
+    FOREIGN KEY (animal_id) REFERENCES tb_pets(id)
 );
 
 CREATE TABLE tb_favoritos (

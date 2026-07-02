@@ -70,4 +70,12 @@
                 echo json_encode(["erro" => "Erro ao cadastrar animal: " . $e->getMessage()]);
             }
         }
+        public function deletarAnimal($id) {
+            $this->dao->delete($id);
+        
+            echo json_encode([
+                "sucesso" => true,
+                "mensagem" => "Animal excluído com sucesso."
+            ]);
+        }
     }

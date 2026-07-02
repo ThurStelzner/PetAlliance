@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
+    require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
 
     session_start();
 
@@ -9,6 +10,18 @@
 
     $metodo = $_SERVER['REQUEST_METHOD'];
     $usuarioId = $_SESSION['usuario_id'];
+
+    $usuarioDAO = new UsuarioDAO();
+
+    if (!isset($_SESSION['usuario_cpf'])) {
+        die("Usuário não está logado.");
+    }
+
+    $cpf = $_SESSION['usuario_cpf'];
+    $usuario = $usuarioDAO->read($cpf);
+
+    $ehAdmin = $usuario && $usuario->getTipo() == 1;
+
 
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
         header('Content-Type: application/json');
@@ -34,8 +47,13 @@
     $flashMessage = $_SESSION['flash'] ?? null;
     unset($_SESSION['flash']);
 
-    if ($flashMessage) {
+    if ($flashMessage){
         echo '<script>window.flashMessage = ' . json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ';</script>';
+    }
+    if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
+        $controllerAnimal = new AnimalController();
+        $controllerAnimal->deletarAnimal($_GET['id']);
+        exit; 
     }
 
     require __DIR__ . '/../frontEnd/view/navBar.html';
@@ -57,3 +75,8 @@
         }
     }
 ?>
+
+<script>
+    window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
+</script>
+
