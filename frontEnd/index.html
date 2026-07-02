@@ -45,7 +45,7 @@
     <nav class="navbar sticky top-0 z-40 bg-primary text-white shadow-md">
         <div class="navbar-inner max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
             <button onclick="navigateTo('home')" class="navbar-brand flex items-center gap-2 font-display font-bold text-xl text-white">
-                <img src="./pata.png" alt="Logo PetAlliance">
+                <img src="./public/pata.png" alt="Logo PetAlliance">
                 Pet<span class="navbar-brand-accent">Alliance</span>
             </button>
 
@@ -239,7 +239,7 @@
             <div class="auth-card w-full max-w-md">
                 <div class="text-center mb-8">
                     <div class="auth-card-icon">
-                        <img src="pata.png" alt="Ícone de pata" class="w-7 h-7 object-contain">
+                        <img src="./public/pata.png" alt="Ícone de pata" class="w-5 h-5 object-contain">
                     </div>
                     <h1 class="auth-card-title">Bem-vindo de volta</h1>
                     <p class="auth-card-subtitle">Entre com seu CPF e senha</p>
@@ -263,12 +263,16 @@
         </section>
 
         <!-- REGISTER PAGE -->
-        <section id="page-register" class="page hidden flex-1 flex items-center justify-center px-4 py-12">
+        <section id="page-register" class="page hidden flex-1 flex items-center justify-center px-4 py-12 min-h-screen">
             <div class="auth-card auth-card-wide w-full max-w-lg">
-                <div class="text-center mb-8">
-                    <div class="auth-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paw-print text-primary"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M15 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M9 7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M12 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
-                    <h1 class="auth-card-title">Crie sua conta</h1>
-                    <p class="auth-card-subtitle">Junte-se à comunidade PetAlliance</p>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="auth-card-icon">
+                        <img src="./public/pata.png" alt="Logo PetAlliance" class="w-5 h-5 object-contain">
+                    </div>
+                    <div>
+                        <h1 class="auth-card-title">Crie sua conta</h1>
+                        <p class="auth-card-subtitle">Junte-se à comunidade PetAlliance</p>
+                    </div>
                 </div>
                 <form onsubmit="handleRegister(event)" class="auth-card-form space-y-5">
                     <div id="reg-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"></div>
@@ -293,34 +297,38 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-foreground mb-1.5">Nome Completo</label>
-                            <input id="reg-name" type="text" placeholder="João Silva" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <input id="reg-name" type="text" placeholder="João Silva" maxlength="100" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-foreground mb-1.5">Email</label>
-                            <input id="reg-email" type="email" placeholder="joao@email.com" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <input id="reg-email" type="text" placeholder="seu@email.com" maxlength="100" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <p class="text-xs text-muted-foreground mt-1">Deve conter @ e .</p>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-foreground mb-1.5">CPF</label>
-                            <input id="reg-cpf" type="text" placeholder="000.000.000-00" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <input id="reg-cpf" type="text" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(event)" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-foreground mb-1.5">Telefone</label>
+                            <input id="reg-phone" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(event)" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-foreground mb-1.5">CEP</label>
-                            <input id="reg-cep" type="text" placeholder="00000-000" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <input id="reg-cep" type="text" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-foreground mb-1.5">Senha</label>
-                            <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
+                            <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" maxlength="50" class="w-full bg-input-background rounded-xl px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors">
                         </div>
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-foreground mb-2">Termos de Uso <span class="text-red-500">*</span></p>
-                        <div id="reg-terms-box" onscroll="handleTermsScroll(event)" class="terms-box">
-                            AUSÊNCIA DE GARANTIA DE SUCESSO DA MONTA... (Ver script.js para texto completo)
-                        </div>
-                        <p id="reg-terms-hint" class="terms-hint">Role até o final para aceitar os termos.</p>
-                        <label id="reg-terms-label" class="terms-label">
-                            <input id="reg-terms-check" type="checkbox" class="w-4 h-4 accent-primary mt-0.5 shrink-0">
-                            <span class="text-sm text-foreground">Li e aceito os <strong>Termos de Uso</strong> e a <strong>Política de Privacidade</strong> do PetAlliance.</span>
+                        <label id="reg-terms-label" class="terms-label-enabled flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                            <input id="reg-terms-check" type="checkbox" class="w-4 h-4 accent-primary mt-0.5 shrink-0" disabled>
+                            <span class="text-sm text-foreground">Li e aceito os <button type="button" onclick="openTermsModal()" class="text-primary font-semibold hover:underline">Termos de Uso</button> e a <button type="button" onclick="openPrivacyModal()" class="text-primary font-semibold hover:underline">Política de Privacidade</button> do PetAlliance.</span>
+                        </label>
+                        <p id="reg-terms-hint" class="terms-hint text-xs text-blue-600 mt-2">📖 Clique nos links acima para ler os termos antes de aceitar.</p>
+                    </div>
                         </label>
                     </div>
                     <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">Criar Conta</button>
@@ -330,6 +338,29 @@
                 </form>
             </div>
         </section>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal-shell hidden">
+        <div id="terms-overlay" class="modal-overlay" onclick="closeTermsModal()"></div>
+        <div id="terms-content" class="modal-content">
+            <div class="p-6 max-h-96 overflow-y-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-display text-2xl font-bold text-foreground">Termos de Uso</h2>
+                    <button onclick="closeTermsModal()" class="text-muted-foreground hover:text-foreground text-2xl">×</button>
+                </div>
+                <div id="terms-content-text" class="text-sm text-foreground whitespace-pre-wrap space-y-3 font-sans"></div>
+                <div class="mt-6 flex gap-3">
+                    <button id="terms-accept-btn" type="button" onclick="acceptTerms()" disabled class="flex-1 bg-primary text-white py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Aceitar Termos
+                    </button>
+                    <button type="button" onclick="closeTermsModal()" class="flex-1 bg-secondary text-foreground py-2.5 rounded-xl font-semibold hover:bg-muted transition-colors">
+                        Fechar
+                    </button>
+                </div>
+                <p id="terms-scroll-hint" class="text-xs text-muted-foreground mt-3 text-center">Leia até o final para aceitar os termos →</p>
+            </div>
+        </div>
     </div>
 
     <!-- Modals Container -->
