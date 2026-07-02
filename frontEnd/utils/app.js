@@ -69,10 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.addEventListener("click", (event) => {
         const target = event.target;
-        const button = target instanceof Element ? target.closest(".detalhes-btn") : null;
-        if (!button) {
-            return;
-        }
+
         if (!(target instanceof Element)) {
             return;
         }
