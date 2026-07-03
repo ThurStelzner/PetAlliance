@@ -2,6 +2,9 @@
 
     require_once __DIR__ . "/../../backEnd/models/animalDAO.php";
     require_once __DIR__ . "/../../backEnd/models/animal.php";
+    require_once __DIR__ . "/../controllers/api/animalController.php";
+
+
 
     session_start();
 
@@ -18,7 +21,7 @@
         exit;
     }
 
-    $dao = new AnimalDAO();
+    $controller = new AnimalController();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
@@ -119,7 +122,7 @@
                 $fotoVacinacao
             );
 
-            $dao->cadastrarAnimal($animal);
+            $controller->criarAnimal($animal);
             $_SESSION['flash'] = [
                 'mensagem' => 'Animal cadastrado com sucesso',
                 'sucesso' => true,

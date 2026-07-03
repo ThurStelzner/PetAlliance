@@ -2,6 +2,8 @@
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
+    require_once __DIR__ . "/../controllers/api/usuarioController.php";
+
 
     session_start();
 
@@ -46,8 +48,8 @@
                 }
             }
 
-            $dao = new UsuarioDAO();
-            $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep,$tipo, $nome, $email, $senha));
+            $controller = new UsuarioController();
+            $usuarioCadastrado = $controller->criarUsuario(new Usuario($nomeArquivo, $cpf, $cep,$tipo, $nome, $email, $senha));
 
             $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
             $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();

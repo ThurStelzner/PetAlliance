@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $usuario_id = $_SESSION["usuario_id"];
         $animal_id = trim($_POST["animal_id"] ?? "");
         $descricao = trim($_POST["descricao"] ?? "");
+        $tipo_alvo = $_GET["tipo"] ?? "";
         $resolvido = 0;
 
         $dao = new DenunciaDAO();
@@ -21,9 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $denunciaCadastrada = $dao->cadastrar(
             new Denuncia(
                 $usuario_id,
-                $animal_id,
+                $tipo_alvo,
                 $descricao,
-                0)
+                $animal_id !== "" ? $animal_id : null,
+                $resolvido)
         );
 
         header("Location: /backEnd/home.php");
