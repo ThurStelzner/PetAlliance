@@ -45,7 +45,7 @@ body.dark-theme {
 
 body {
   font-family: var(--font-sans);
-  background-color: #fcfcfc;
+  background-color: #FAF9F6;
   color: var(--color-foreground);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

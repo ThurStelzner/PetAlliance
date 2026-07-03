@@ -66,6 +66,11 @@
   margin-bottom: 1.5rem;
   max-height: 300px;
   overflow-y: auto;
+  white-space: pre-wrap;
+  padding: 0.75rem;
+  background: var(--color-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 
 .modal-footer {

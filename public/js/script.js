@@ -120,8 +120,15 @@
   }
 
   function openPrivacyModal() {
-    alert('🔒 Política de Privacidade\n\nSeus dados pessoais são protegidos conforme a LGPD. Utilizamos suas informações para:\n\n• Criar e manter sua conta\n• Conectar você com outros proprietários de animais\n• Melhorar nossos serviços\n• Enviar comunicações importantes\n\nNunca compartilhamos dados pessoais com terceiros sem seu consentimento.\n\nPara mais detalhes, entre em contato conosco.');
+    const modal = qs('#privacy-modal');
+    modal.classList.remove('hidden');
   }
+
+  function closePrivacyModal() {
+    const modal = qs('#privacy-modal');
+    modal.classList.add('hidden');
+  }
+
 
   function closeTermsModal() {
     const modal = qs('#terms-modal');
@@ -187,6 +194,12 @@
     if (page === 'my-animals') renderMyAnimals();
     if (page === 'matches') renderMatches();
     if (page === 'profile') updateProfileUI();
+
+    // Hide footer on auth pages
+    const footer = qs('.main-footer');
+    if (footer) {
+      footer.classList.toggle('hidden', page === 'login' || page === 'register');
+    }
   }
 
   function updateNavActive() {
@@ -305,6 +318,11 @@
 
   // --- Favorites ---
   function toggleFavorite(id) {
+    if (!state.user) {
+      alert('Você precisa estar logado para favoritar animais!');
+      navigateTo('login');
+      return;
+    }
     const idx = state.favorites.indexOf(id);
     if (idx === -1) state.favorites.push(id); else state.favorites.splice(idx, 1);
     localStorage.setItem('pa:favs', JSON.stringify(state.favorites));
@@ -346,7 +364,10 @@
             <p class="pet-modal-subtitle">Proprietário: ${pet.ownerName}</p>
             <div class="pet-modal-actions">
               <button id="modal-fav" class="pet-modal-fav">Favoritar</button>
-              <button id="modal-chat" class="pet-modal-chat">Chat</button>
+              <a id="modal-whatsapp" href="https://wa.me/5511999999999?text=Olá, tenho interesse no animal ${pet.name}" target="_blank" class="pet-modal-chat flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6n 2-2 0 0 1-2-2 19.79 19.79 0 0 1-3.07-8.63 2 2 0 0 1 2-2h3a2 2 0 0 1 2 2 19.79 19.79 0 0 1 8.63 3.07 19.5 19.5 0 0 1 6 6z"/><circle cx="12" cy="12" r="3"/></svg>
+                WhatsApp
+              </a>
             </div>
           </div>
         </div>
@@ -356,44 +377,9 @@
     qs('#modal-overlay').onclick = closeModal;
     qs('#modal-container').onclick = (e) => { if (e.target === modal) closeModal(); };
     qs('#modal-fav').addEventListener('click', () => { toggleFavorite(pet.id); renderFavoritesGrid(); });
-    qs('#modal-chat').addEventListener('click', () => openChat(pet));
   }
 
   function closeModal() { const modal = qs('#modal-container'); modal.classList.add('hidden'); modal.classList.remove('open'); qs('#modal-content').innerHTML = ''; }
-
-  // --- Chat simple ---
-  function openChat(pet) {
-    openPetModal(pet); // reuse modal then replace content
-    const content = qs('#modal-content');
-    content.innerHTML = `
-      <div class="modal-chat-shell">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-full overflow-hidden"><img src="${pet.photo}" class="w-full h-full object-cover"></div>
-          <div>
-            <div class="font-semibold">${pet.ownerName}</div>
-            <div class="text-xs text-muted-foreground">sobre ${pet.name}</div>
-          </div>
-        </div>
-        <div id="chat-log" class="modal-chat-log"></div>
-        <div class="flex gap-2">
-          <input id="chat-input" class="flex-1 bg-input-background rounded-xl px-3 py-2 border border-border" placeholder="Escreva uma mensagem...">
-          <button id="chat-send" class="bg-primary text-white px-4 py-2 rounded-xl">Enviar</button>
-        </div>
-      </div>
-    `;
-    const log = qs('#chat-log');
-    function add(msg, who) {
-      const el = document.createElement('div');
-      el.className = `modal-chat-message ${who==='me'?'me':''}`;
-      el.innerHTML = `<div class="modal-chat-bubble ${who==='me'?'me':'them'}">${msg}</div>`;
-      log.appendChild(el);
-      log.scrollTop = log.scrollHeight;
-    }
-    add(`Olá! Vi que você tem interesse no(a) ${pet.name}. Como posso ajudar?`, 'them');
-    qs('#chat-send').addEventListener('click', () => {
-      const v = qs('#chat-input').value.trim(); if (!v) return; add(v, 'me'); qs('#chat-input').value = ''; setTimeout(() => add('Perfeito! Vamos combinar os detalhes.', 'them'), 800);
-    });
-  }
 
   // --- Auth (very small simulation) ---
   function handleLogin(e) {
@@ -517,12 +503,72 @@
     qs('#profile-cpf').textContent = state.user.cpf || '-';
     qs('#profile-cep').textContent = state.user.cep || '-';
     qs('#profile-phone').textContent = state.user.phone || '-';
-    
+
     const avatarContainer = qs('#profile-avatar-container');
     if (avatarContainer && state.user.avatar) {
       avatarContainer.innerHTML = `<img src="${state.user.avatar}" class="avatar-img">`;
     }
   }
+
+  function toggleProfileEdit() {
+    const details = qs('#profile-details');
+    const form = qs('#profile-edit-form');
+    const btn = qs('#profile-edit-btn');
+
+    const isEditing = form.classList.toggle('hidden');
+    details.classList.toggle('hidden');
+
+    if (!isEditing) {
+      // Entering edit mode
+      btn.textContent = 'Cancelar';
+      qs('#edit-name').value = state.user?.nome || '';
+      qs('#edit-email').value = state.user?.email || '';
+    } else {
+      // Returning to view mode
+      btn.textContent = 'Editar';
+    }
+  }
+
+  function saveProfile() {
+    if (!state.user) return;
+
+    const newName = qs('#edit-name').value.trim();
+    const newEmail = qs('#edit-email').value.trim();
+
+    if (!newName || !newEmail) {
+      alert('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    state.user.nome = newName;
+    state.user.email = newEmail;
+    localStorage.setItem('pa:user', JSON.stringify(state.user));
+
+    updateProfileUI();
+    toggleProfileEdit();
+    alert('Perfil atualizado com sucesso!');
+  }
+
+  // Export to window for HTML onclick handlers
+  window.navigateTo = navigateTo;
+  window.logout = logout;
+  window.openTermsModal = openTermsModal;
+  window.closeTermsModal = closeTermsModal;
+  window.openPrivacyModal = openPrivacyModal;
+  window.acceptTerms = acceptTerms;
+  window.handleTermsModalScroll = handleTermsModalScroll;
+  window.handleRegAvatar = handleRegAvatar;
+  window.handleLogin = handleLogin;
+  window.handleRegister = handleRegister;
+  window.toggleTheme = toggleTheme;
+  window.openCheckout = openCheckout;
+  window.openPetModal = openPetModal;
+  window.closeModal = closeModal;
+  window.openRegisterAnimalModal = openRegisterAnimalModal;
+  window.handleProfileAvatar = handleProfileAvatar;
+  window.toggleProfileEdit = toggleProfileEdit;
+  window.saveProfile = saveProfile;
+
   function handleRegAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -562,21 +608,6 @@
       }
     };
     reader.readAsDataURL(file);
-  }
-
-  function handleTermsScroll(event) {
-    const box = event.target;
-    const label = qs('#reg-terms-label');
-    const hint = qs('#reg-terms-hint');
-    const checkbox = qs('#reg-terms-check');
-    const isAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 10;
-    
-    if (isAtBottom) {
-      hint.classList.add('hidden');
-      label.style.opacity = '1';
-      label.style.pointerEvents = 'auto';
-      checkbox.disabled = false;
-    }
   }
 
   function renderMyAnimals() {
@@ -673,23 +704,28 @@
   }
 
   // --- Mobile menu ---
-  function toggleMenu() { 
-    const m = qs('#mobile-menu'); 
-    const container = qs('.mobile-menu-container');
-    const isOpen = m.classList.toggle('hidden');
-    
-    if (container) {
-      container.classList.toggle('active', !isOpen);
+  function toggleMenu() {
+    const m = qs('#mobile-menu');
+    const icon = qs('#menu-icon');
+
+    if (m) {
+      const isHidden = m.classList.toggle('hidden');
+      if (icon) {
+        icon.classList.toggle('lucide-menu', isHidden);
+        icon.classList.toggle('lucide-x', !isHidden);
+      }
     }
   }
 
   function closeMenu() {
-    const m = qs('#mobile-menu'); 
-    const container = qs('.mobile-menu-container');
+    const m = qs('#mobile-menu');
+    const icon = qs('#menu-icon');
     if (m) m.classList.add('hidden');
-    if (container) container.classList.remove('active');
+    if (icon) {
+      icon.classList.add('lucide-menu');
+      icon.classList.remove('lucide-x');
+    }
   }
-
   // Adiciona listener para fechar ao clicar fora
   function setupMobileMenuListeners() {
     const container = qs('.mobile-menu-container');
@@ -731,11 +767,11 @@
     window.showErrorAlert = showErrorAlert;
     window.handleRegAvatar = handleRegAvatar;
     window.handleProfileAvatar = handleProfileAvatar;
-    window.handleTermsScroll = handleTermsScroll;
     // Funções de termos de uso
     window.openTermsModal = openTermsModal;
     window.openPrivacyModal = openPrivacyModal;
     window.closeTermsModal = closeTermsModal;
+    window.closePrivacyModal = closePrivacyModal;
     window.acceptTerms = acceptTerms;
     window.handleTermsModalScroll = handleTermsModalScroll;
     // attach file handlers where used
@@ -744,7 +780,7 @@
     qs('#logout-btn')?.addEventListener('click', logout);
 
     // Adicionar listener para scroll do modal de termos
-    const termsContentDiv = qs('#terms-content-text')?.parentElement;
+    const termsContentDiv = qs('#terms-content-text');
     if (termsContentDiv) {
       termsContentDiv.addEventListener('scroll', handleTermsModalScroll);
     }

@@ -64,19 +64,6 @@
                     </div>
                 </div>
             </div>
-            <footer class="main-footer">
-                <div class="footer-container">
-                    <div class="footer-logo">
-                        <img src="../assets/img/logo.png" alt="Footer PetAlliance">PetAlliance
-                    </div>
-                    <p class="footer-copyright">© 2026 PetAlliance. Feito com amor pelos animais.</p>
-                    <div class="footer-links">
-                        <a href="#" class="footer-link">Termos</a>
-                        <a href="#" class="footer-link">Privacidade</a>
-                        <a href="#" class="footer-link">Contato</a>
-                    </div>
-                </div>
-            </footer>
         </section>
 
         <!-- FAVORITES PAGE -->
@@ -346,6 +333,19 @@
                 <p class="empty-subtitle">Continue explorando para encontrar companheiros ideais!</p>
             </div>
         </section>
+            <footer class="main-footer">
+                <div class="footer-container">
+                    <div class="footer-logo">
+                        <img src="../assets/img/logo.png" alt="Footer PetAlliance">PetAlliance
+                    </div>
+                    <p class="footer-copyright">© 2026 PetAlliance. Feito com amor pelos animais.</p>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link" onclick="openTermsModal()">Termos</a>
+                        <a href="#" class="footer-link" onclick="openPrivacyModal()">Privacidade</a>
+                        <a href="https://wa.me/5511999999999" target="_blank" class="footer-link">Contato</a>
+                    </div>
+                </div>
+            </footer>
     </main>
 
     <!-- Terms Modal -->
@@ -367,6 +367,34 @@
                     </button>
                 </div>
                 <p id="terms-scroll-hint" class="modal-hint">Leia até o final para aceitar os termos →</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="modal-shell hidden">
+        <div id="privacy-overlay" class="modal-overlay" onclick="closePrivacyModal()"></div>
+        <div id="privacy-content" class="modal-content">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 class="modal-title">Política de Privacidade</h2>
+                    <button onclick="closePrivacyModal()" class="modal-close-btn">×</button>
+                </div>
+                <div id="privacy-content-text" class="modal-text">
+                    <p>Seus dados pessoais são protegidos conforme a LGPD. Utilizamos suas informações para:</p>
+                    <ul class="list-disc ml-5 my-4">
+                        <li>Criar e manter sua conta</li>
+                        <li>Conectar você com outros proprietários de animais</li>
+                        <li>Melhorar nossos serviços</li>
+                        <li>Enviar comunicações importantes</li>
+                    </ul>
+                    <p>Nunca compartilhamos dados pessoais com terceiros sem seu consentimento.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closePrivacyModal()" class="btn-primary flex-1">
+                        Fechar
+                    </button>
+                </div>
             </div>
         </div>
     </div>

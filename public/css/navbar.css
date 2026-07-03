@@ -15,6 +15,9 @@ body.main-layout {
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   padding: 0.75rem 0;
   box-shadow: var(--shadow-sm);
+  padding-top: 0;
+  border-top-left-radius: 0rem;
+  border-top-right-radius: 0rem;
 }
 
 .navbar-inner,
@@ -26,7 +29,8 @@ body.main-layout {
   margin: 0 auto;
   padding: 0.75rem 1rem;
   background: linear-gradient(90deg, var(--color-primary) 0%, #6366f1 100%);
-  border-radius: var(--radius-lg);
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
   box-shadow: var(--shadow-md);
 }
 
