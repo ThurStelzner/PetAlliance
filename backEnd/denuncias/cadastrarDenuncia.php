@@ -2,29 +2,40 @@
 
 require_once __DIR__ . "/../models/denunciaDAO.php";
 require_once __DIR__ . "/../models/denuncia.php";
+require_once __DIR__ . "/../controllers/api/denunciaController.php";
+
+session_start();
 
 require __DIR__ . "/../../frontEnd/view/cadastrarDenuncia.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";
 
-session_start();
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    try {
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $usuario_id = $_SESSION["usuario_id"];
+        $descricao = trim($_POST["descricao"] ?? "");
+        $tipo_alvo = $_GET["tipo"] ?? "";
+        $alvo_id = $_GET["id"] ?? null;
+        $resolvido = 0;
 
-    $usuario_id = $_SESSION["usuario_id"];
-    $animal_id = $_POST["animal_id"];
-    $descricao = $_POST["descricao"];
+        $controller = new DenunciaController();
 
-    $dao = new DenunciaDAO();
+        $controller->criarDenuncia(
+            new Denuncia(
+                $usuario_id,
+                $tipo_alvo,
+                $descricao,
+                $alvo_id,
+                $resolvido
+            )
+        );
 
-    $denuncia = new Denuncia(
-        $usuario_id,
-        $animal_id,
-        $descricao,
-        0
-    );
+        header("Location: /backEnd/home.php");
+        exit();
 
-    $dao->cadastrar($denuncia);
-
-    header("Location: /backEnd/home.php");
-    exit();
+    } catch (InvalidArgumentException $e) {
+        echo $e->getMessage();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
 }

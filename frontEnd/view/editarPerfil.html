@@ -4,6 +4,8 @@
 <script src="/frontEnd/utils/editarPerfil.js"></script>
 
 <form id="editar-perfil-form" method="POST" enctype="multipart/form-data">
+    <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>">
+    <a href="/backEnd/usuario/editarFotoUsuario.php">Trocar Foto</a>
     <div id="etapa1">
         <h3>Informações pessoais</h3>
         <label for="nome">Nome:</label>

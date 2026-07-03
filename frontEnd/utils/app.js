@@ -74,10 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.addEventListener("click", (event) => {
         const target = event.target;
-        const button = target instanceof Element ? target.closest(".detalhes-btn") : null;
-        if (!button) {
-            return;
-        }
+
         if (!(target instanceof Element)) {
             return;
         }
@@ -173,6 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
                     <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
                     <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
+                    <button type="button" onclick="window.location. href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
+
                 </div>
             `);
         } catch (error) {

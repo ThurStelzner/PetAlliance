@@ -10,7 +10,7 @@
         <h1>NavBar aqui</h1>
         <ul>
             <!-- Imagem de perfil do usuário -->
-            <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" alt="Foto do Usuário" style="width: 10rem;">
+            <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" alt="Foto do Usuário" style="width: 10rem; height: 10rem; object-fit: cover;">
             
             <button type="button" class="btn btn-menu" commandFor="menu" command="show-modal">Menu</button>
         </ul>
@@ -23,6 +23,8 @@
                 <li><a href="/backEnd/animal/meusAnimais.php">Meus Animais</a></li>
                 <li><a href="/backEnd/animal/favoritos.php">Favoritos</a></li>
                 <li><a href="/backEnd/usuario/perfil.php">Perfil</a></li>
+                <li><a href="/backEnd/usuario/configuracoes.php">Configuracoes</a></li>
+
             </ul>
         </dialog>
     </nav>

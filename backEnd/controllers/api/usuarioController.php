@@ -77,4 +77,13 @@
                 echo json_encode(["success" => false, "message" => $e->getMessage()]);
             }
         }
+        public function criarUsuario(Usuario $usuario) {
+            try {
+                return $this->dao->cadastrarUsuario($usuario);
+            } catch (InvalidArgumentException $e) {
+                throw $e;
+            } catch (Exception $e) {
+                throw $e;
+            }
+        }
     }

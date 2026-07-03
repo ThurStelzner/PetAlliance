@@ -40,34 +40,13 @@
             }
         }
 
-        public function criarAnimal() {
-            $dados = json_decode(file_get_contents("php://input"), true);
-            $animal = new Animal(
-                $dados['dono_id'],
-                $dados['foto_pet'],
-                $dados['nome'],
-                $dados['raca'],
-                $dados['cor'],
-                $dados['sexo'],
-                $dados['tipo'],
-                $dados['porte'],
-                $dados['data_nascimento'],
-                $dados['peso'],
-                $dados['descricao'],
-                $dados['vacinado'],
-                $dados['certificado_raca'],
-                $dados['foto_certificado'],
-                $dados['foto_vacina']
-            );
+        public function criarAnimal(Animal $animal) {
             try {
-                $animalCadastrado = $this->dao->cadastrarAnimal($animal);
-                echo json_encode($animalCadastrado);
+                return $this->dao->cadastrarAnimal($animal);
             } catch (InvalidArgumentException $e) {
-                http_response_code(400);
-                echo json_encode(["erro" => "Dados inválidos: " . $e->getMessage()]);
+                throw $e;
             } catch (Exception $e) {
-                http_response_code(500);
-                echo json_encode(["erro" => "Erro ao cadastrar animal: " . $e->getMessage()]);
+                throw $e;
             }
         }
         public function deletarAnimal($id) {

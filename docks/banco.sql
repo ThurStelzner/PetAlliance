@@ -42,15 +42,19 @@ CREATE TABLE tb_pets (
 
 -- MATCH
 CREATE TABLE tb_matches (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    pet1_id BIGINT UNSIGNED NOT NULL,
-    pet2_id BIGINT UNSIGNED NOT NULL,
-    CHECK (pet1_id <> pet2_id),
-    UNIQUE (pet1_id, pet2_id),
-    ativo BOOLEAN DEFAULT TRUE,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (pet1_id) REFERENCES tb_pets(id),
-    FOREIGN KEY (pet2_id) REFERENCES tb_pets(id)
+    id SERIAL PRIMARY KEY, 
+    id_usuario1 BIGINT UNSIGNED NOT NULL,  
+    id_animal1 BIGINT UNSIGNED NOT NULL,   
+    id_usuario2 BIGINT UNSIGNED NOT NULL,  
+    id_animal2 BIGINT UNSIGNED NOT NULL,   
+    aceito BOOLEAN DEFAULT FALSE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    respondido_em TIMESTAMP,
+    CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
+    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_animais(id),
+    CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
+    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
+    CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
 
 -- BLOQUEIOS
@@ -97,15 +101,15 @@ CREATE TABLE tb_pagamentos (
 
 -- DENÚNCIAS
 CREATE TABLE tb_denuncias (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
-    usuario_id BIGINT UNSIGNED NULL,
-    animal_id BIGINT UNSIGNED NULL,
-    descricao TEXT,
-    resolvido BOOLEAN DEFAULT FALSE,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (animal_id) REFERENCES tb_pets(id)
-);
+     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+     usuario_id BIGINT UNSIGNED  NULL,
+     tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
+     alvo_id BIGINT UNSIGNED NULL,
+     descricao TEXT NOT NULL,
+     resolvido TINYINT(1) NOT NULL DEFAULT 0,
+     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+ )
 
 CREATE TABLE tb_favoritos (
 	id_pet BIGINT UNSIGNED,

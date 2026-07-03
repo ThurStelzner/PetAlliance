@@ -1,14 +1,17 @@
 <div class="modal-content">
-    <h2>Denunciar anúncio</h2>
+    <h2>Fazer denúncia</h2>
 
-    <form id="form-denuncia">
-        <textarea
-            id="descricao"
+    <form method="POST" >
+
+        <input type="hidden" name="tipo_alvo" value="<?= $_GET['tipo'] ?? 'site' ?>">
+
+        <input type="hidden" name="alvo_id" value="<?= $_GET['id'] ?? null ?>">
+
+        <input
             name="descricao"
-            rows="6"
             placeholder="Descreva o motivo da denúncia..."
             required>
-        </textarea>
+        </input>
 
         <button type="submit">
             Enviar denúncia

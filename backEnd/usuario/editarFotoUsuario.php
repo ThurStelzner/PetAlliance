@@ -4,6 +4,8 @@
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
 
     session_start();
+    
+    require __DIR__ . "/../../frontEnd/view/navBar.html";
 
     // Proteção: Verifica se o usuário está logado
     if (!isset($_SESSION['usuario_cpf'])) {
