@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../models/denunciaDAO.php";
 require_once __DIR__ . "/../models/denuncia.php";
+require_once __DIR__ . "/../controllers/api/denunciaController.php";
 
 session_start();
 
@@ -12,20 +13,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
 
         $usuario_id = $_SESSION["usuario_id"];
-        $animal_id = trim($_POST["animal_id"] ?? "");
         $descricao = trim($_POST["descricao"] ?? "");
         $tipo_alvo = $_GET["tipo"] ?? "";
+        $alvo_id = $_GET["id"] ?? null;
         $resolvido = 0;
 
-        $dao = new DenunciaDAO();
+        $controller = new DenunciaController();
 
-        $denunciaCadastrada = $dao->cadastrar(
+        $controller->criarDenuncia(
             new Denuncia(
                 $usuario_id,
                 $tipo_alvo,
                 $descricao,
-                $animal_id !== "" ? $animal_id : null,
-                $resolvido)
+                $alvo_id,
+                $resolvido
+            )
         );
 
         header("Location: /backEnd/home.php");

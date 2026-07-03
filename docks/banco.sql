@@ -99,7 +99,6 @@ CREATE TABLE tb_pagamentos (
 CREATE TABLE tb_denuncias (
      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
      usuario_id BIGINT UNSIGNED  NULL,
-     animal_id BIGINT UNSIGNED  NULL
      tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
      alvo_id BIGINT UNSIGNED NULL,
      descricao TEXT NOT NULL,

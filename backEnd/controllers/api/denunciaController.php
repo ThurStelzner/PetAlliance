@@ -12,53 +12,13 @@ class DenunciaController {
         $this->dao = new DenunciaDAO();
     }
 
-    public function criarDenuncia() {
-
-        session_start();
-
-        $usuario_id = $_SESSION["usuario_id"];
-
-        // vindo do GET ou POST
-        $tipo_alvo = $_GET["tipo"] ?? $_POST["tipo_alvo"] ?? "site";
-        $alvo_id = $_GET["id"] ?? $_POST["alvo_id"] ?? null;
-
-        $descricao = trim($_POST["descricao"] ?? "");
-
-        // validação básica
-        if (empty($descricao)) {
-            http_response_code(400);
-            echo json_encode(["erro" => "Descrição obrigatória"]);
-            return;
-        }
-
-        // regra: site não precisa de alvo
-        if ($tipo_alvo !== "site" && empty($alvo_id)) {
-            http_response_code(400);
-            echo json_encode(["erro" => "Alvo inválido"]);
-            return;
-        }
-
-        $denuncia = new Denuncia(
-            $usuario_id,
-            $tipo_alvo,
-            $descricao,
-            $alvo_id ? (int) $alvo_id : null,
-            0
-        );
-
+    public function criarDenuncia(Denuncia $denuncia) {
         try {
-            $this->dao->cadastrar($denuncia);
-
-            echo json_encode([
-                "sucesso" => true,
-                "mensagem" => "Denúncia enviada com sucesso"
-            ]);
-
+            return $this->dao->cadastrar($denuncia);
+        } catch (InvalidArgumentException $e) {
+            throw $e;
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                "erro" => "Erro ao cadastrar denúncia"
-            ]);
+            throw $e;
         }
     }
 }
