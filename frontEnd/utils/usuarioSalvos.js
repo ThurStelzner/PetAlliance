@@ -8,6 +8,7 @@ if (params.get("sucesso") === "1") {
         "cepDigitado",
         "emailDigitado",
         "imagemEscolhida",
+        "etapa",
     ].forEach(chave => sessionStorage.removeItem(chave));
 }
 

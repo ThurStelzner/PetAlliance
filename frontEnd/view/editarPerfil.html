@@ -4,7 +4,7 @@
 <script src="/frontEnd/utils/editarPerfil.js"></script>
 
 <form id="editar-perfil-form" method="POST" enctype="multipart/form-data">
-    <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>">
+    <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" style="width: 10rem; height: 10rem; object-fit: cover;">
     <a href="/backEnd/usuario/editarFotoUsuario.php">Trocar Foto</a>
     <div id="etapa1">
         <h3>Informações pessoais</h3>
@@ -17,7 +17,6 @@
         <button type="submit">Atualizar Perfil</button>
     </div>
 </form>
-
 
 <script src="../../frontEnd/utils/usuarioSalvos.js"></script>
 <script src="../../frontEnd/utils/formatacao.js"></script>

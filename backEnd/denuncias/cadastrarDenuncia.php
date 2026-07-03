@@ -6,6 +6,11 @@ require_once __DIR__ . "/../controllers/api/denunciaController.php";
 
 session_start();
 
+if(!$_SESSION['usuario_id']) {
+    header('Location: /index.php');
+    exit();
+}
+
 require __DIR__ . "/../../frontEnd/view/cadastrarDenuncia.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";
 

@@ -3,6 +3,11 @@
 
     session_start();
 
+    if(!$_SESSION['usuario_id']) {
+        header('Location: /index.php');
+        exit();
+    }
+
     $usuarioId = $_SESSION['usuario_id'];
 
     header("Access-Control-Allow-Origin: *");

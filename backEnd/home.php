@@ -11,6 +11,11 @@
     $metodo = $_SERVER['REQUEST_METHOD'];
     $usuarioId = $_SESSION['usuario_id'];
 
+    if(!$_SESSION['usuario_id']) {
+        header('Location: /index.php');
+        exit();
+    }
+
     $usuarioDAO = new UsuarioDAO();
 
     if (!isset($_SESSION['usuario_cpf'])) {

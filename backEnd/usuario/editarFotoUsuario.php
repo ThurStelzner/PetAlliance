@@ -4,6 +4,11 @@
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
 
     session_start();
+
+    if(!$_SESSION['usuario_id']) {
+        header('Location: /index.php');
+        exit();
+    }
     
     require __DIR__ . "/../../frontEnd/view/navBar.html";
 

@@ -5,6 +5,12 @@
     
     session_start();
 
+    if(!$_SESSION['usuario_id']) {
+        header('Location: /index.php');
+        exit();
+    }
+
+
     $donoId = $_GET['donoid'] ?? ($_POST['dono_id'] ?? ($_SESSION['usuario_id'] ?? null));
 
     header("Access-Control-Allow-Origin: *");
