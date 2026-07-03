@@ -16,34 +16,32 @@
 <body class="main-layout">
 
     <!-- NavBar -->
-    <nav class="navbar">
-        <div class="navbar-inner">
+    <nav class="navbar site-navbar">
+        <div class="navbar-inner site-navbar-inner">
             <!-- Left: Brand -->
-            <button onclick="navigateTo('home')" class="navbar-brand">
-                <img src="../assets/img/logo.png" alt="Logo PetAlliance" class="navbar-logo">
-                <div>Pet<span class="navbar-brand-accent">Alliance</span></div>
+            <button onclick="navigateTo('home')" class="navbar-brand site-navbar-brand">
+                <img src="../assets/img/logo.png" alt="Logo PetAlliance" class="navbar-logo site-navbar-logo">
+                <div>Pet<span class="navbar-brand-accent site-navbar-brand-accent">Alliance</span></div>
             </button>
 
-            <!-- Center: Hamburger -->
-            
             <!-- Right: User Section -->
-            <div class="navbar-user-section">
+            <div class="navbar-user-section site-navbar-user-section">
                 <div id="nav-profile-avatar" onclick="navigateTo('profile')" class="nav-avatar hidden auth-only" style="cursor: pointer;">
                     <!-- Imagem injetada pelo script.js -->
                 </div>
-                <button id="auth-btn" onclick="navigateTo('login')" class="navbar-auth-btn">Entrar</button>
-                <button id="logout-btn" onclick="logout()" class="navbar-logout-btn hidden auth-only">
+                <button id="auth-btn" onclick="navigateTo('login')" class="navbar-auth-btn site-navbar-auth-btn">Entrar</button>
+                <button id="logout-btn" onclick="logout()" class="navbar-logout-btn site-navbar-logout-btn hidden auth-only">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="21" y1="12" y2="12"/></svg>
                     <span>Sair</span>
                 </button>
-                <button onclick="toggleMenu()" class="navbar-hamburger">
+                <button onclick="toggleMenu()" class="navbar-hamburger site-navbar-hamburger">
                     <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
             </div>
         </div>
+    </nav>
 
-        <!-- Pages Container -->
-        <div id="page-content" class="page-shell">
+    <main id="page-content" class="page-shell site-page-content">
         <!-- HOME PAGE -->
         <section id="page-home" class="page page-shell">
             <div class="hero-card">
@@ -348,7 +346,7 @@
                 <p class="empty-subtitle">Continue explorando para encontrar companheiros ideais!</p>
             </div>
         </section>
-    </div>
+    </main>
 
     <!-- Terms Modal -->
     <div id="terms-modal" class="modal-shell hidden">

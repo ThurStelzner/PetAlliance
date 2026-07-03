@@ -18,6 +18,13 @@
     { id: 5, ownerName: "Camila Rocha", photo: "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&h=600&fit=crop&auto=format", name: "Nina", breed: "Poodle", type: "Cachorro", birthDate: "2023-01-28", weight: "4 kg", vaccinated: true },
   ];
 
+  const MEMBER_PETS = [
+    { id: 'm1', ownerName: 'Ana Silva', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&h=600&fit=crop&auto=format', name: 'Rex', breed: 'Golden Retriever', type: 'Cachorro', birthDate: '2020-05-15', weight: '30 kg', vaccinated: true },
+    { id: 'm2', ownerName: 'Carlos Souza', photo: 'https://images.unsplash.com/photo-1513245543132-31f507757fb2?w=600&h=600&fit=crop&auto=format', name: 'Luna', breed: 'Siamês', type: 'Gato', birthDate: '2021-08-22', weight: '4 kg', vaccinated: true },
+    { id: 'm3', ownerName: 'Mariana Costa', photo: 'https://images.unsplash.com/photo-1583511655857-d19bc10f7595?w=600&h=600&fit=crop&auto=format', name: 'Max', breed: 'Bulldog Francês', type: 'Cachorro', birthDate: '2019-11-02', weight: '12 kg', vaccinated: true },
+    { id: 'm4', ownerName: 'João Pereira', photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&h=600&fit=crop&auto=format', name: 'Mia', breed: 'Persa', type: 'Gato', birthDate: '2022-01-10', weight: '3 kg', vaccinated: true },
+  ];
+
   // --- Helpers ---
   // Máscaras de entrada
   function maskCPF(event) {
@@ -161,6 +168,7 @@
     favorites: JSON.parse(localStorage.getItem('pa:favs') || '[]'),
     user: JSON.parse(localStorage.getItem('pa:user') || 'null'),
     pets: [...PETS], // Inicializa com os pets do mock
+    selectedPlan: null,
   };
 
   // --- Navigation ---
@@ -169,13 +177,13 @@
     qsa('.page').forEach(el => el.classList.add('hidden'));
     const target = qs(`#page-${page}`);
     if (target) target.classList.remove('hidden');
-    
+
     closeMenu();
-    
+
     updateNavActive();
     if (page === 'home') renderHomeGrid();
     if (page === 'favorites') renderFavoritesGrid();
-    if (page === 'members') renderPlans();
+    if (page === 'members') renderMembersGrid();
     if (page === 'my-animals') renderMyAnimals();
     if (page === 'matches') renderMatches();
     if (page === 'profile') updateProfileUI();
@@ -197,12 +205,12 @@
         <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
       </div>
       <div class="p-4">
-        <div class="flex items-start justify-between gap-3">
+        <div class="flex items-start justify-between gap-3 pet-card-content">
           <div class="min-w-0">
             <p class="font-semibold text-foreground truncate">${pet.name} <span class="text-sm text-muted-foreground">• ${pet.breed}</span></p>
             <p class="text-xs text-muted-foreground mt-1">${calcAge(pet.birthDate)} • ${pet.weight}</p>
           </div>
-          <div class="flex flex-row items-center gap-2">
+          <div class="pet-card-actions">
             <button class="view-btn btn-primary pet-card-view-btn" data-id="${pet.id}">Ver</button>
             <button class="fav-btn pet-card-fav-btn" aria-label="favorite" data-id="${pet.id}">♥</button>
           </div>
@@ -222,6 +230,13 @@
     });
     qs('.view-btn', div).addEventListener('click', () => openPetModal(pet));
     return div;
+  }
+
+  function renderMembersGrid() {
+    const container = qs('#members-grid');
+    if (!container) return;
+    container.innerHTML = '';
+    MEMBER_PETS.forEach(p => container.appendChild(createCard(p)));
   }
 
   function renderHomeGrid() {
@@ -252,7 +267,8 @@
     grid.innerHTML = '';
     PLANS.forEach(plan => {
       const div = document.createElement('div');
-      div.className = 'plan-card cursor-pointer hover:border-primary transition-all p-4 border rounded-2xl bg-card shadow-sm';
+      const isSelected = state.selectedPlan && state.selectedPlan.id === plan.id;
+      div.className = `plan-card cursor-pointer hover:border-primary transition-all p-4 border rounded-2xl bg-card shadow-sm ${isSelected ? 'border-primary ring-2 ring-primary' : ''}`;
       div.innerHTML = `
         <h3 class="font-bold text-foreground">${plan.name}</h3>
         <p class="text-xl font-bold text-primary my-2">${plan.price}</p>
@@ -268,15 +284,18 @@
   }
 
   function selectPlan(plan) {
+    state.selectedPlan = plan;
+    renderPlans();
+
     const banner = qs('#selected-plan-banner');
     const nameEl = qs('#selected-plan-name');
     const descEl = qs('#selected-plan-desc');
-    
+
     if (banner) {
       banner.classList.remove('hidden');
       nameEl.textContent = plan.name;
       descEl.textContent = plan.desc;
-      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 
@@ -294,10 +313,19 @@
 
   function updateFavBadges() {
     const count = state.favorites.length;
-    qs('#fav-count').textContent = count || '';
-    qs('#fav-count-mobile').textContent = count || '';
-    if (count) { qs('#fav-count').classList.remove('hidden'); qs('#fav-count-mobile').classList.remove('hidden'); }
-    else { qs('#fav-count').classList.add('hidden'); qs('#fav-count-mobile').classList.add('hidden'); }
+    const favCount = qs('#fav-count');
+    const favCountMobile = qs('#fav-count-mobile');
+
+    if (favCount) favCount.textContent = count || '';
+    if (favCountMobile) favCountMobile.textContent = count || '';
+
+    if (count) {
+      if (favCount) favCount.classList.remove('hidden');
+      if (favCountMobile) favCountMobile.classList.remove('hidden');
+    } else {
+      if (favCount) favCount.classList.add('hidden');
+      if (favCountMobile) favCountMobile.classList.add('hidden');
+    }
   }
 
   // --- Modal / Pet detail ---
@@ -307,24 +335,22 @@
     modal.classList.remove('hidden');
     modal.classList.add('open');
     content.innerHTML = `
-      <div class="p-6">
-        <div class="flex items-start gap-4">
-          <div class="pet-card-modal-media">
+      <div class="pet-modal">
+        <div class="pet-modal-header">
+          <div class="pet-modal-media">
             <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
           </div>
-          <div class="flex-1">
-            <h3 class="font-display text-2xl font-bold text-foreground mb-1">${pet.name}</h3>
-            <p class="text-sm text-muted-foreground mb-3">${pet.breed} • ${calcAge(pet.birthDate)}</p>
-            <p class="text-sm text-muted-foreground mb-4">Proprietário: ${pet.ownerName}</p>
-            <div class="flex gap-2">
-              <button id="modal-fav" class="bg-white text-primary px-4 py-2 rounded-xl border border-border">Favoritar</button>
-              <button id="modal-chat" class="bg-primary text-white px-4 py-2 rounded-xl">Chat</button>
+          <div class="pet-modal-info">
+            <h3 class="pet-modal-title">${pet.name}</h3>
+            <p class="pet-modal-subtitle">${pet.breed} • ${calcAge(pet.birthDate)}</p>
+            <p class="pet-modal-subtitle">Proprietário: ${pet.ownerName}</p>
+            <div class="pet-modal-actions">
+              <button id="modal-fav" class="pet-modal-fav">Favoritar</button>
+              <button id="modal-chat" class="pet-modal-chat">Chat</button>
             </div>
           </div>
         </div>
-        <div class="mt-6">
-          <button onclick="closeModal()" class="w-full text-sm text-muted-foreground">Fechar</button>
-        </div>
+        <button onclick="closeModal()" class="pet-modal-close">Fechar</button>
       </div>
     `;
     qs('#modal-overlay').onclick = closeModal;
