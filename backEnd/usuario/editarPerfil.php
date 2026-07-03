@@ -8,7 +8,7 @@
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
     $metodo = $_SERVER['REQUEST_METHOD'];
-    $cpf = $_SESSION['usuario_cpf'] ?? null;
+    $cpf = isset($_SESSION['usuario_cpf']) ? preg_replace('/[^0-9]/', '', $_SESSION['usuario_cpf']) : null;
 
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
@@ -18,6 +18,29 @@
         header('Content-Type: application/json');
         $controllerUsuario = new usuarioController();
         $controllerUsuario->read($cpf);
+        exit;
+    }
+
+    if ($metodo === 'POST' && $wantsJson && isset($cpf)) {
+        header('Content-Type: application/json');
+
+        $data = $_POST;
+        if (empty($data)) {
+            $rawData = file_get_contents('php://input');
+            if (!empty($rawData)) {
+                $decodedData = json_decode($rawData, true);
+                if (is_array($decodedData)) {
+                    $data = $decodedData;
+                }
+            }
+        }
+
+        if (!empty($data['nome']) && !empty($data['email']) && !empty($data['cep'])) {
+            $controllerUsuario = new usuarioController();
+            $controllerUsuario->updateUsuarioFromRequest($cpf, $data);
+        } else {
+            echo json_encode(["success" => false, "message" => "Dados incompletos para atualização."]);
+        }
         exit;
     }
 

@@ -17,13 +17,35 @@
 
     <div id="etapa2" style="display: none;">
         <h3>Foto de perfil</h3>
-        <input type="file" name="imagemPerfil" id="imagemPerfil" accept="./uploads/usuario/*">
+        
+        <!-- Preview da Foto -->
+        <img src="/uploads/usuario/placeholder.webp" id="preview-usuario" width="150" alt="Preview Foto">
+        <br>
+        
+        <input type="file" name="imagemPerfil" id="imagemPerfil" accept="image/*">
         <button type="button" onclick="voltar()">Voltar</button>
         <button type="submit" name="cadastrarFoto">Cadastrar</button>
         <button type="submit" onclick="limparFoto()">Pular por enquanto</button>
     </div>
 </form>
 
+
+<script>
+    // Script para Preview Dinâmico da Foto de Usuário
+    const inputUser = document.getElementById('imagemPerfil');
+    const previewUser = document.getElementById('preview-usuario');
+
+    inputUser.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewUser.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 <script src="../../frontEnd/utils/usuarioSalvos.js"></script>
 <script src="../../frontEnd/utils/formatacao.js"></script>

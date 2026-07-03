@@ -2,6 +2,9 @@
     <h1>Cadastro de Animal</h1>
 
     <label for="foto_pet">Foto do animal:</label>
+    <!-- Preview da Foto do Pet -->
+    <img src="/uploads/usuario/placeholder.webp" id="preview-pet" width="150" alt="Preview Pet">
+    <br>
     <input type="file" name="arquivoFotoPet" id="foto_pet" required>
 
     <label for="nome">Nome do animal:</label>
@@ -68,6 +71,23 @@
 
     <button type="submit">Cadastrar</button>
 </form>
+
+<script>
+    // Script para Preview Dinâmico da Foto do Pet
+    const inputPet = document.getElementById('foto_pet');
+    const previewPet = document.getElementById('preview-pet');
+
+    inputPet.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewPet.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 <script src="../../frontEnd/utils/animalSalvos.js"></script>
 <script src="../../frontEnd/utils/animalFuncoes.js"></script>

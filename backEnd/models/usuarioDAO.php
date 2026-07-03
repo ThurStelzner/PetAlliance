@@ -39,6 +39,53 @@
 
         }
 
+        private function prepararSenha($senha) {
+            if (empty($senha)) {
+                return $senha;
+            }
+
+            if (password_get_info($senha)['algo'] !== 0) {
+                return $senha;
+            }
+
+            return password_hash($senha, PASSWORD_DEFAULT);
+        }
+
+        public function updateFoto(Usuario $usuario) {
+            try {
+                $sql = "UPDATE tb_usuarios SET foto_perfil = ? WHERE cpf = ?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([
+                    $usuario->getImagem(),
+                    preg_replace('/[^0-9]/', '', $usuario->getCpf())
+                ]);
+                return true;
+            } catch (PDOException $e) {
+                throw new Exception("Erro ao atualizar foto do usuário: " . $e->getMessage());
+            }
+        }
+
+        public function updateUsuario(Usuario $usuario, $cpfAtual = null) {
+            try {
+                $sql = "UPDATE tb_usuarios SET foto_perfil = ?, cep = ?, nome = ?, email = ?, senha = ? WHERE cpf = ?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([
+                    $usuario->getImagem(),
+                    preg_replace('/[^0-9]/', '', $usuario->getCep()),
+                    $usuario->getNome(),
+                    $usuario->getEmail(),
+                    $this->prepararSenha($usuario->getSenha()),
+                    preg_replace('/[^0-9]/', '', $cpfAtual ?? $usuario->getCpf())
+                ]);
+                return true;
+            } catch (PDOException $e) {
+                if ($e->errorInfo[1] == 1062) {
+                    throw new Exception("E-mail já cadastrado.");
+                }
+                throw new Exception("Erro ao atualizar usuário: " . $e->getMessage());
+            }
+        }
+
         //para validar o cep precisamos da API ViaCep
 
         public function cadastrarUsuario(Usuario $usuario) {
@@ -54,7 +101,7 @@
                         preg_replace('/[^0-9]/', '', $usuario->getCep()),
                         $usuario->getNome(),
                         $usuario->getEmail(),
-                        $usuario->getSenha()
+                        $this->prepararSenha($usuario->getSenha())
                     ]);
                     $usuario->setId($this->pdo->lastInsertId());
                     return $usuario;

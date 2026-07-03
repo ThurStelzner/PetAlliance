@@ -56,13 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         container.innerHTML = `
             <article class="usuario-card">
-                <img 
+                <a href='/backEnd/usuario/editarFotoUsuario.php'><img 
                     src="/uploads/usuario/${fotoUsuario}" 
                     alt="Foto de ${usuario.nome || 'Usuário'}" 
                     class="usuario-image"
                     style="max-width: 200px; height: 200px; object-fit: cover;" 
                     onerror="this.onerror=null;this.src='/uploads/usuario/placeholder.webp'"
-                >
+                ></a>
                 <a href="/backEnd/usuario/editarPerfil.php">Editar Perfil</a>
                 <h3>Nome: ${usuario.nome || "Sem nome"}</h3>
                 <div class="usuario-info">
