@@ -21,6 +21,4 @@
         exit;
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
-    require __DIR__ . "/../../frontEnd/view/perfil.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/view/editarPerfil.html";
