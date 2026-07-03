@@ -16,6 +16,11 @@
             $email = trim($_POST['email'] ?? "");
             $senha = trim($_POST['senha'] ?? "");
             $tipo = 0;
+
+            $cepNumerico = preg_replace('/[^0-9]/', '', $cep);
+            if (strlen($cepNumerico) !== 8) {
+                throw new InvalidArgumentException("CEP inválido. Informe um CEP com 8 dígitos.");
+            }
             
             $nomeArquivo = "placeholder.webp";
 

@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "flex";
         modal.style.alignItems = "center";
         modal.style.justifyContent = "center";
-        modal.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        modal.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
         modal.style.zIndex = "9999";
         modal.innerHTML = contentHtml;
 

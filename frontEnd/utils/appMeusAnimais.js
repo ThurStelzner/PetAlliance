@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const card = document.createElement("article");
                 card.classList.add("animal-card");
                 card.innerHTML = `
-                    <img src="/uploads/animais/${animal.fotoAnimal}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
+                    <img src="/uploads/animais/${animal.foto_pet || 'placeholder.webp'}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
                     <h3>${animal.nome || "Sem nome"}</h3>
                     <p>${animal.descricao || "Não informada"}</p>
                     <p>${animal.tipo || "Não informado"}</p>

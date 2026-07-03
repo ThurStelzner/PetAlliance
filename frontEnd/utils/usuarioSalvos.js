@@ -1,7 +1,5 @@
 const params = new URLSearchParams(window.location.search);
-
 const formulario = document.querySelector("form");
-
 
 if (params.get("sucesso") === "1") {
     [
@@ -13,14 +11,21 @@ if (params.get("sucesso") === "1") {
     ].forEach(chave => sessionStorage.removeItem(chave));
 }
 
+if (formulario) {
+    formulario.addEventListener("submit", () => {
+        const nomeInput = document.getElementById("nome");
+        const cpfInput = document.getElementById("cpf");
+        const cepInput = document.getElementById("cep");
+        const emailInput = document.getElementById("email");
+        const imagemInput = document.getElementById("imagemPerfil");
 
-formulario.addEventListener("submit", () => {
-    sessionStorage.setItem("nomeDigitado", document.getElementById("nome").value);
-    sessionStorage.setItem("cpfDigitado", document.getElementById("cpf").value);
-    sessionStorage.setItem("cepDigitado", document.getElementById("cep").value);
-    sessionStorage.setItem("emailDigitado", document.getElementById("email").value);
-    sessionStorage.setItem("imagemEscolhida", document.getElementById("imagemPerfil").value);
-});
+        if (nomeInput) sessionStorage.setItem("nomeDigitado", nomeInput.value);
+        if (cpfInput) sessionStorage.setItem("cpfDigitado", cpfInput.value);
+        if (cepInput) sessionStorage.setItem("cepDigitado", cepInput.value);
+        if (emailInput) sessionStorage.setItem("emailDigitado", emailInput.value);
+        if (imagemInput) sessionStorage.setItem("imagemEscolhida", imagemInput.value);
+    });
+}
 
 window.addEventListener("DOMContentLoaded", () => {
     const nomeSalvo = sessionStorage.getItem("nomeDigitado");
@@ -31,14 +36,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-    if (cpfSalvo,emailSalvo,cepSalvo,nomeSalvo) {
-        document.getElementById("nome").value = nomeSalvo;
-        document.getElementById("cpf").value = cpfSalvo;
-        document.getElementById("cep").value = cepSalvo;
-        document.getElementById("email").value = emailSalvo
-        document.getElementById("imagemPerfil").value = imagemSalva;
+    const nomeInput = document.getElementById("nome");
+    const cpfInput = document.getElementById("cpf");
+    const cepInput = document.getElementById("cep");
+    const emailInput = document.getElementById("email");
+    const imagemInput = document.getElementById("imagemPerfil");
 
-    }
+    if (nomeSalvo && nomeInput) nomeInput.value = nomeSalvo;
+    if (cpfSalvo && cpfInput) cpfInput.value = cpfSalvo;
+    if (cepSalvo && cepInput) cepInput.value = cepSalvo;
+    if (emailSalvo && emailInput) emailInput.value = emailSalvo;
+    if (imagemSalva && imagemInput) imagemInput.value = imagemSalva;
 });
 
 

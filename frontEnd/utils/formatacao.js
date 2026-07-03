@@ -1,11 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
     const cpfInput = document.getElementById("cpf");
+    const cepInput = document.getElementById("cep");
+    const formCadastro = document.querySelector("form");
+    const temCampoCep = !!document.getElementById("cep");
 
     if (cpfInput) {
         cpfInput.addEventListener("input", function () {
             this.value = mascaraCPF(this.value);
-    });
-  }
+        });
+    }
+
+    if (cepInput) {
+        cepInput.addEventListener("input", function () {
+            this.value = mascaraCEP(this.value);
+        });
+
+        cepInput.addEventListener("blur", validarCep);
+    }
+
+    if (formCadastro && temCampoCep) {
+        formCadastro.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const cepValido = await validarCep();
+            if (cepValido) {
+                formCadastro.submit();
+            }
+        });
+    }
 });
 
 function mascaraCPF(valor) {
@@ -17,16 +39,37 @@ function mascaraCPF(valor) {
         .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 };
 
+function mascaraCEP(valor) {
+    return valor
+        .replace(/\D/g, "")
+        .substring(0, 8)
+        .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
 async function validarCep() {
-    const cep = document.querySelector("#cep").value;
+    const cepInput = document.querySelector("#cep");
+    if (!cepInput) return false;
 
-    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const d = await r.json();
-    console.log(d);
+    const cep = cepInput.value.replace(/\D/g, "");
 
-    if(d.erro) {
-        alert('CEP não encontrado!');
-        return;
+    if (cep.length !== 8) {
+        alert('CEP inválido! Informe um CEP com 8 dígitos.');
+        return false;
+    }
+
+    try {
+        const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const d = await r.json();
+
+        if (d.erro) {
+            alert('CEP não encontrado!');
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        alert('Não foi possível validar o CEP no momento.');
+        return false;
     }
 }
 
@@ -45,5 +88,3 @@ function voltar() {
 function limparFoto() {
     document.getElementById('imagem').value = '';
 }
-
-document.getElementById('cep').addEventListener('blur', validarCep);

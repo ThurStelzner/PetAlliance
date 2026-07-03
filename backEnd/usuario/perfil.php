@@ -8,7 +8,7 @@
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
     $metodo = $_SERVER['REQUEST_METHOD'];
-    $cpf = $_SESSION['usuario_cpf'] ?? null;
+    $cpf = isset($_SESSION['usuario_cpf']) ? preg_replace('/[^0-9]/', '', $_SESSION['usuario_cpf']) : null;
 
     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';

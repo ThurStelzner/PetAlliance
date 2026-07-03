@@ -8,23 +8,11 @@
         <h3>Informações pessoais</h3>
         <label for="nome">Nome:</label>
         <input type="text" name="nome" id="nome" placeholder="Seu Nome aqui" required>
-        <label for="cpf">CPF:</label>
-        <input type="text" name="cpf" id="cpf" placeholder="Seu CPF aqui" maxlength="14" minlength="11" required>
         <label for="cep">CEP:</label>
         <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="9" minlength="8" required>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" placeholder="Seu Email aqui" required>
-        <button type="button" onclick="avancar()">Avançar</button>
-    </div>
-
-    <div id="etapa2" style="display: none;">
-        <h3>Foto de perfil</h3>
-        <img id="foto-perfil-preview" src="" alt="Foto de perfil" style="display: none; max-width: 200px; max-height: 200px;">
-        <label for="imagemPerfil">Alterar Foto de Perfil:</label>
-        <input type="file" name="imagemPerfil" id="imagemPerfil" accept="./uploads/usuario/*">
-        <button type="button" onclick="voltar()">Voltar</button>
-        <button type="submit" name="cadastrarFoto">Cadastrar</button>
-        <button type="submit" onclick="limparFoto()">Pular por enquanto</button>
+        <button type="submit">Atualizar Perfil</button>
     </div>
 </form>
 
