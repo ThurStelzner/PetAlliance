@@ -134,6 +134,100 @@
             return $animal;
         }
 
+        public function search($termo, $usuarioId, $filtros = []) {
+            $condicoes = [];
+            $params = [$usuarioId];
+
+            if ($termo !== '') {
+                $termoLike = '%' . $termo . '%';
+                $condicoes[] = "(p.nome LIKE ? OR p.tipo LIKE ? OR p.raca LIKE ? OR p.cor LIKE ? OR p.descricao LIKE ?)";
+                $params = array_merge($params, [$termoLike, $termoLike, $termoLike, $termoLike, $termoLike]);
+            }
+
+            if (!empty($filtros['porte'])) {
+                $portes = explode(',', $filtros['porte']);
+                $placeholders = implode(',', array_fill(0, count($portes), '?'));
+                $condicoes[] = "p.porte IN ($placeholders)";
+                $params = array_merge($params, $portes);
+            }
+
+            if (!empty($filtros['cor'])) {
+                $cores = explode(',', $filtros['cor']);
+                $coresPadrao = ['Preto', 'Branco', 'Marrom', 'Cinza'];
+                $selecionadas = array_diff($cores, ['Outro']);
+                $temOutro = in_array('Outro', $cores);
+
+                if ($temOutro) {
+                    $excluir = array_diff($coresPadrao, $selecionadas);
+                    if (!empty($excluir)) {
+                        $placeholders = implode(',', array_fill(0, count($excluir), '?'));
+                        $condicoes[] = "p.cor NOT IN ($placeholders)";
+                        $params = array_merge($params, array_values($excluir));
+                    }
+                } elseif (!empty($selecionadas)) {
+                    $placeholders = implode(',', array_fill(0, count($selecionadas), '?'));
+                    $condicoes[] = "p.cor IN ($placeholders)";
+                    $params = array_merge($params, array_values($selecionadas));
+                }
+            }
+
+            if (!empty($filtros['vacinado'])) {
+                $vacinados = explode(',', $filtros['vacinado']);
+                $placeholders = implode(',', array_fill(0, count($vacinados), '?'));
+                $condicoes[] = "p.vacinado IN ($placeholders)";
+                $params = array_merge($params, $vacinados);
+            }
+
+            if (!empty($filtros['certificado'])) {
+                $certificados = explode(',', $filtros['certificado']);
+                $placeholders = implode(',', array_fill(0, count($certificados), '?'));
+                $condicoes[] = "p.certificado_raca IN ($placeholders)";
+                $params = array_merge($params, $certificados);
+            }
+
+            $where = count($condicoes) > 0 ? 'WHERE ' . implode(' AND ', $condicoes) : '';
+
+            $sql = "SELECT p.*,
+                    EXISTS (
+                        SELECT 1
+                        FROM tb_favoritos f
+                        WHERE f.id_pet = p.id
+                            AND f.id_usuario = ?
+                    ) AS favoritado
+                FROM tb_pets p
+                $where
+                ORDER BY p.nome";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            $animais = [];
+
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $animal = new Animal(
+                $dados['dono_id'],
+                $dados['foto_pet'],
+                $dados['nome'],
+                $dados['raca'],
+                $dados['cor'],
+                $dados['sexo'],
+                $dados['tipo'],
+                $dados['porte'],
+                $dados['data_nascimento'],
+                $dados['peso'],
+                $dados['descricao'],
+                $dados['vacinado'],
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
+                $dados['id'] ?? null,
+                $dados['favoritado'] ?? 0
+              );
+              $animais[] = $animal;
+            }
+
+            return $animais;
+        }
+
         public function readAll($usuarioId) {
             $sql = "SELECT p.*, 
                     EXISTS (

@@ -69,6 +69,16 @@
                 throw new InvalidArgumentException('Preencha todos os campos obrigatórios.');
             }
 
+            $coresPermitidas = ["Preto", "Branco", "Cinza", "Marrom", "Outro"];
+            if (!in_array($cor, $coresPermitidas, true)) {
+                throw new InvalidArgumentException('Cor inválida. Selecione: Preto, Branco, Cinza, Marrom ou Outro.');
+            }
+
+            $tiposPermitidos = ["Cachorro", "Gato", "Cavalo", "Outro"];
+            if (!in_array($tipo, $tiposPermitidos, true)) {
+                throw new InvalidArgumentException('Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.');
+            }
+
             $fotoCertificado = null;
             $fotoVacinacao = null;
 
@@ -131,7 +141,7 @@
                 'sucesso' => true,
                 'tipo' => 'sucesso'
             ];
-            header('Location: /backEnd/home.php');
+            header('Location: /backEnd/home.php?sucesso=1');
             exit;
         } catch (InvalidArgumentException $e) {
             $erro = $e->getMessage();

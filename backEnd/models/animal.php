@@ -66,6 +66,14 @@ class Animal implements JsonSerializable {
         return $this->cor;
     }
 
+    public function setCor($cor) {
+        $permitidos = ["Preto", "Branco", "Cinza", "Marrom", "Outro"];
+        if (!in_array($cor, $permitidos, true)) {
+            throw new Exception("Cor inválida. Selecione: Preto, Branco, Cinza, Marrom ou Outro.");
+        }
+        $this->cor = $cor;
+    }
+
     public function getSexo() {
         return $this->sexo;
     }
@@ -166,8 +174,9 @@ class Animal implements JsonSerializable {
     }
 
     public function setTipo($tipo) {
-        if (empty($tipo)) {
-            throw new Exception("Tipo não pode ser vazio.");
+        $permitidos = ["Cachorro", "Gato", "Cavalo", "Outro"];
+        if (!in_array($tipo, $permitidos, true)) {
+            throw new Exception("Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.");
         }
         $this->tipo = $tipo;
     }

@@ -29,6 +29,20 @@
 
 
     try {
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'buscar_animais') {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $termo = $_GET['termo'] ?? '';
+            $filtros = [];
+            foreach (['porte', 'cor', 'vacinado', 'certificado'] as $f) {
+                if (!empty($_GET[$f])) {
+                    $filtros[$f] = $_GET[$f];
+                }
+            }
+            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros);
+            exit;
+        }
+
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
             header('Content-Type: application/json');
             $controllerAnimal = new AnimalController();
