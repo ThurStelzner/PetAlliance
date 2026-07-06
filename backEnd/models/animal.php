@@ -20,7 +20,7 @@ class Animal implements JsonSerializable {
     private $id;
     private $favoritado;
 
-    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null,$favoritado = false
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina, $id = null,$favoritado = false
     ) {
         $this->dono_id = $dono_id;
         $this->foto_pet = $foto_pet;
@@ -105,7 +105,6 @@ class Animal implements JsonSerializable {
     public function getFotoVacinas() {
         return $this->foto_vacina;
     }
-
 
     public function setId($id) {
         if (!filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {

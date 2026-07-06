@@ -29,8 +29,7 @@
                     $animal->getVacinado(),
                     $animal->getCertificado(),
                     $animal->getFotoCertificado(),
-                    $animal->getFotoVacinas(),
-
+                    $animal->getFotoVacinas()
                 ]);
                 $animal->setId($this->pdo->lastInsertId());
                 return $animal;
@@ -93,8 +92,8 @@
                         $dados['id'] ?? null,
                         $dados['favoritado'] ?? 1
                     );
-                $animal->setId($dados['id']);
-                $animais[] = $animal;
+                    $animal->setId($dados['id']);
+                    $animais[] = $animal;
                 }
                 return $animais;
             } catch (PDOException $e) {
@@ -197,7 +196,7 @@
                 $dados['vacinado'],
                 $dados['certificado_raca'],
                 $dados['foto_certificado'],
-                $dados['foto_vacinas'],
+                $dados['foto_vacinas']
               );
               $animal->setId($dados['id']);
               $animais[] = $animal; // adiciona ao array

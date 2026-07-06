@@ -1,0 +1,21 @@
+<?php
+    require_once __DIR__ . "/config/config.php";
+    require_once __DIR__ . "/controllers/api/PagamentoController.php";
+
+    session_start();
+
+    if(!$_SESSION['usuario_id']) {
+        header('Location: /index.php');
+        exit();
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['route']) && $_GET['route'] === 'historico') {
+        header('Content-Type: application/json');
+        $controller = new PagamentoController();
+        $controller->historicoPagamentos();
+        exit;
+    }
+
+    require __DIR__ . "/../frontEnd/view/navBar.html";
+    require __DIR__ . "/../frontEnd/view/pagamentos.html";
+    require __DIR__ . "/../frontEnd/view/footer.html";

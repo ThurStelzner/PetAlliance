@@ -1,19 +1,5 @@
 const params = new URLSearchParams(window.location.search);
 
-if (params.get("sucesso") === "1") {
-    [
-        "animalNome",
-        "animalRaca",
-        "animalCor",
-        "animalSexo",
-        "animalTipo",
-        "animalPorte",
-        "animalNascimento",
-        "animalPeso",
-        "animalDescricao"
-    ].forEach(chave => sessionStorage.removeItem(chave));
-}
-
 window.addEventListener("DOMContentLoaded", () => {
     const formulario = document.querySelector("form");
     const certificado = document.getElementById("certificado");

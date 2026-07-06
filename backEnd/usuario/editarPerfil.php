@@ -48,5 +48,5 @@
         }
         exit;
     }
-
+    require __DIR__ . "/../../frontEnd/view/navBar.html";
     require __DIR__ . "/../../frontEnd/view/editarPerfil.html";
