@@ -27,6 +27,14 @@
   margin-bottom: 2rem;
 }
 
+.auth-card-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
 .auth-card-header-wide {
   display: flex;
   align-items: center;

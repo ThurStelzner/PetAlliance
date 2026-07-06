@@ -54,6 +54,10 @@
       input.value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7);
     }
   }
+  
+  function normalizeCPF(cpf) {
+    return cpf ? cpf.replace(/\D/g, '') : '';
+  }
 
   function maskCEP(event) {
     let input = event.target;
@@ -159,11 +163,19 @@
   }
 
   function calcAge(bd) {
+    if (!bd) return 'Idade não informada';
     const diff = Date.now() - new Date(bd).getTime();
     const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
     if (years > 0) return `${years} ano${years > 1 ? 's' : ''}`;
     const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
     return `${months} mês${months !== 1 ? 'es' : ''}`;
+  }
+
+  function formatDateBR(dateStr) {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr + 'T00:00:00');
+    if (isNaN(date)) return dateStr;
+    return date.toLocaleDateString('pt-BR');
   }
 
   function qs(sel, root = document) { return root.querySelector(sel); }
@@ -484,13 +496,30 @@
           </div>
           <div class="pet-modal-info">
             <h3 class="pet-modal-title">${pet.name}</h3>
-            <p class="pet-modal-subtitle">${pet.breed} • ${calcAge(pet.birthDate)}</p>
-            <p class="pet-modal-subtitle">Proprietário: ${pet.ownerName}</p>
+            <p class="pet-modal-subtitle">${pet.type || 'Animal'} • ${pet.breed || 'Raça não informada'} • ${calcAge(pet.birthDate)}</p>
+            <p class="pet-modal-owner">Proprietário: ${pet.ownerName || 'Não informado'}</p>
+            
+            <div class="pet-details-grid">
+              <div class="detail-item"><span>Cor:</span> ${pet.color || '-'}</div>
+              <div class="detail-item"><span>Sexo:</span> ${pet.gender || '-'}</div>
+              <div class="detail-item"><span>Porte:</span> ${pet.size || '-'}</div>
+              <div class="detail-item"><span>Peso:</span> ${pet.weight || '-'}</div>
+              <div class="detail-item"><span>Vacinado:</span> ${pet.vaccinated === 'Sim' ? '✅ Sim' : pet.vaccinated === 'Não' ? '❌ Não' : '-'}</div>
+              <div class="detail-item"><span>Nasc:</span> ${formatDateBR(pet.birthDate)}</div>
+            </div>
+
+            ${pet.description ? `<p class="pet-description">${pet.description}</p>` : ''}
+            
+            <div class="pet-docs">
+              ${pet.breedCert ? `<a href="${pet.breedCert}" target="_blank" class="doc-link">Certif. Raça</a>` : ''}
+              ${pet.vaccinePhoto ? `<a href="${pet.vaccinePhoto}" target="_blank" class="doc-link">Foto Vacinas</a>` : ''}
+              ${pet.certPhoto ? `<a href="${pet.certPhoto}" target="_blank" class="doc-link">Foto Certif.</a>` : ''}
+            </div>
+
             <div class="pet-modal-actions">
               <button id="modal-fav" class="pet-modal-fav">Favoritar</button>
               <a id="modal-whatsapp" href="https://wa.me/5511999999999?text=Olá, tenho interesse no animal ${pet.name}" target="_blank" class="pet-modal-chat flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6n 2-2 0 0 1-2-2 19.79 19.79 0 0 1-3.07-8.63 2 2 0 0 1 2-2h3a2 2 0 0 1 2 2 19.79 19.79 0 0 1 8.63 3.07 19.5 19.5 0 0 1 6 6z"/><circle cx="12" cy="12" r="3"/></svg>
-                WhatsApp
+                <img src="../../assets/img/whatsapp_icon.png" alt="WhatsApp" class="logo_whatsapp">WhatsApp
               </a>
             </div>
           </div>
@@ -511,7 +540,17 @@
     const cpf = qs('#login-cpf').value.trim();
     const pass = qs('#login-password').value.trim();
     if (!cpf || !pass) { qs('#login-error').classList.remove('hidden'); return; }
-    state.user = { nome: 'Usuário', email: 'user@exemplo.com', cpf };
+
+    const registeredUser = JSON.parse(localStorage.getItem('pa:registered_user') || 'null');
+    
+    if (registeredUser && normalizeCPF(registeredUser.cpf) === normalizeCPF(cpf)) {
+      // Use existing registered user data
+      state.user = registeredUser;
+    } else {
+      // Fallback to dummy user if not registered or different CPF
+      state.user = { nome: 'Usuário', email: 'user@exemplo.com', cpf };
+    }
+
     localStorage.setItem('pa:user', JSON.stringify(state.user));
     qs('#login-error').classList.add('hidden');
     updateAuthUI();
@@ -528,50 +567,51 @@
     const cep = qs('#reg-cep').value.trim();
     const password = qs('#reg-password').value.trim();
     const termsCheck = qs('#reg-terms-check').checked;
-
+    
     // Validações
     if (!name || !email || !cpf || !phone || !cep || !password) { 
       showErrorAlert('Por favor, preencha todos os campos obrigatórios.');
       return; 
     }
-
+    
     if (name.length < 3) {
       showErrorAlert('O nome deve ter pelo menos 3 caracteres.');
       return;
     }
-
+    
     if (!validateEmail(email)) {
       showErrorAlert('Email inválido.\n\nO email deve conter @ e . (exemplo: seu@email.com)');
       return;
     }
-
+    
     if (!validateCPF(cpf)) {
       showErrorAlert('CPF inválido.\n\nDigite um CPF válido no formato: 000.000.000-00');
       return;
     }
-
+    
     if (!validatePhone(phone)) {
       showErrorAlert('Telefone inválido.\n\nDigite um telefone válido no formato: (00) 00000-0000');
       return;
     }
-
+    
     if (!validateCEP(cep)) {
       showErrorAlert('CEP inválido.\n\nDigite um CEP válido no formato: 00000-000');
       return;
     }
-
+    
     if (password.length < 6) {
       showErrorAlert('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
-
+    
     if (!termsCheck) {
       showErrorAlert('Você deve aceitar os Termos de Uso e a Política de Privacidade.');
       return;
     }
-
+    
     // Se passou em todas as validações, registrar
     state.user = { nome: name, email, cpf, phone, cep };
+    localStorage.setItem('pa:registered_user', JSON.stringify(state.user));
     localStorage.setItem('pa:user', JSON.stringify(state.user));
     qs('#reg-error').classList.add('hidden');
     updateAuthUI();
@@ -579,7 +619,12 @@
     navigateTo('home');
   }
 
-  function logout() { state.user = null; localStorage.removeItem('pa:user'); updateAuthUI(); navigateTo('home'); }
+  function logout() { 
+    state.user = null; 
+    localStorage.removeItem('pa:user'); 
+    updateAuthUI(); 
+    navigateTo('home'); 
+  }
 
   function updateAuthUI() {
     const authOnly = qsa('.auth-only');
@@ -624,10 +669,14 @@
     if (!state.user) return;
     qs('#profile-name').textContent = state.user.nome || 'Usuário';
     qs('#profile-email').textContent = state.user.email || 'email@exemplo.com';
+    
+    // Detalhes na grade
+    qs('#profile-name-detail').textContent = state.user.nome || '-';
+    qs('#profile-email-detail').textContent = state.user.email || '-';
     qs('#profile-cpf').textContent = state.user.cpf || '-';
     qs('#profile-cep').textContent = state.user.cep || '-';
     qs('#profile-phone').textContent = state.user.phone || '-';
-
+    
     const avatarContainer = qs('#profile-avatar-container');
     if (avatarContainer && state.user.avatar) {
       avatarContainer.innerHTML = `<img src="${state.user.avatar}" class="avatar-img">`;
@@ -649,6 +698,7 @@
       qs('#edit-email').value = state.user?.email || '';
       qs('#edit-cpf').value = state.user?.cpf || '';
       qs('#edit-cep').value = state.user?.cep || '';
+      qs('#edit-phone').value = state.user?.phone || '';
       qs('#edit-password').value = '';
     } else {
       // Returning to view mode
@@ -663,17 +713,19 @@
     const newEmail = qs('#edit-email').value.trim();
     const newCpf = qs('#edit-cpf').value.trim();
     const newCep = qs('#edit-cep').value.trim();
+    const newPhone = qs('#edit-phone').value.trim();
     const newPassword = qs('#edit-password').value.trim();
-
-    if (!newName || !newEmail || !newCpf || !newCep) {
+    
+    if (!newName || !newEmail || !newCpf || !newCep || !newPhone) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
-
+    
     state.user.nome = newName;
     state.user.email = newEmail;
     state.user.cpf = newCpf;
     state.user.cep = newCep;
+    state.user.phone = newPhone;
     if (newPassword) {
       state.user.password = newPassword;
     }
@@ -783,6 +835,15 @@
     });
   }
 
+  function handleRegisterAnimalScroll(event) {
+    const contentDiv = event.target;
+    const isAtBottom = contentDiv.scrollHeight - contentDiv.scrollTop - contentDiv.clientHeight < 15;
+    if (isAtBottom) {
+      const btn = qs('#reg-submit-btn');
+      if (btn) btn.disabled = false;
+    }
+  }
+
   function openRegisterAnimalModal() {
     const container = qs('#modal-container');
     const content = qs('#modal-content');
@@ -795,42 +856,108 @@
           <button onclick="closeModal()" class="modal-close-btn">×</button>
         </div>
         <form onsubmit="handleAnimalRegister(event)" class="auth-card-form">
-          <div class="form-group">
-            <label class="form-label">Nome do Pet</label>
-            <input name="petName" type="text" required class="form-input" placeholder="Ex: Max">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Espécie</label>
-            <input name="species" type="text" required class="form-input" placeholder="Ex: Cachorro">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Idade</label>
-            <input name="age" type="number" required class="form-input" placeholder="Ex: 2">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Foto</label>
-            <input name="photo" type="file" accept="image/*" class="form-input">
+          <div id="reg-form-scroll" class="reg-form-scroll">
+            <div class="form-group">
+              <label class="form-label">Tutor</label>
+              <input type="text" class="form-input" value="${state.user?.nome || 'Usuário não logado'}" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nome do Pet</label>
+              <input name="petName" type="text" required class="form-input" placeholder="Ex: Max">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tipo/Espécie</label>
+              <input name="type" type="text" required class="form-input" placeholder="Ex: Cachorro">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Raça</label>
+              <input name="breed" type="text" class="form-input" placeholder="Ex: Golden Retriever">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cor</label>
+              <input name="color" type="text" class="form-input" placeholder="Ex: Dourado">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sexo</label>
+              <select name="gender" class="form-input">
+                <option value="Macho">Macho</option>
+                <option value="Fêmea">Fêmea</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Porte</label>
+              <select name="size" class="form-input">
+                <option value="Pequeno">Pequeno</option>
+                <option value="Médio">Médio</option>
+                <option value="Grande">Grande</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Data de Nascimento</label>
+              <input name="birthDate" type="date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Peso</label>
+              <input name="weight" type="text" class="form-input" placeholder="Ex: 10 kg">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descrição</label>
+              <textarea name="description" class="form-input" rows="3" placeholder="Conte mais sobre o pet..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vacinado?</label>
+              <select name="vaccinated" class="form-input">
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Foto do Pet</label>
+              <input name="photo" type="file" accept="image/*" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Certificado de Raça</label>
+              <input name="breedCert" type="file" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Foto Vacinas</label>
+              <input name="vaccinePhoto" type="file" class="form-input">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" onclick="closeModal()" class="btn-secondary flex-1">Cancelar</button>
-            <button type="submit" class="btn-primary flex-1">Cadastrar</button>
+            <button id="reg-submit-btn" type="submit" class="btn-primary flex-1" disabled>Cadastrar</button>
           </div>
         </form>
       </div>
     `;
     container.classList.remove('hidden');
+    qs('#reg-form-scroll').addEventListener('scroll', handleRegisterAnimalScroll);
   }
+
+
 
   function handleAnimalRegister(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const newPet = {
       id: Date.now(),
+      userId: state.user?.cpf || 'unknown',
+      ownerName: state.user?.nome || 'Usuário',
       name: formData.get('petName'),
-      species: formData.get('species'),
-      age: formData.get('age'),
-      photo: 'assets/img/default-pet.png',
-      userId: state.user?.id,
+      type: formData.get('type'),
+      breed: formData.get('breed'),
+      color: formData.get('color'),
+      gender: formData.get('gender'),
+      size: formData.get('size'),
+      birthDate: formData.get('birthDate'),
+      weight: formData.get('weight'),
+      description: formData.get('description'),
+      vaccinated: formData.get('vaccinated'),
+      photo: 'assets/img/default-pet.png', // Simplified for static demo
+      breedCert: formData.get('breedCert')?.name || '',
+      vaccinePhoto: formData.get('vaccinePhoto')?.name || '',
+      certPhoto: formData.get('certPhoto')?.name || '',
       favorites: 0
     };
     state.pets.push(newPet);

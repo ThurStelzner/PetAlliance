@@ -101,7 +101,7 @@
                 </div>
                 <div id="selected-plan-banner" class="plan-banner hidden">
                     <div class="plan-banner-info">
-                        <p class="plan-banner-title"><span id="selected-plan-name" class="text-primary"></span></p>
+                        <p class="plan-banner-title"><span id="selected-plan-name" class="text-primary1"></span></p>
                         <p id="selected-plan-desc" class="plan-banner-subtitle"></p>
                     </div>
                     <button onclick="openCheckout()" class="plan-banner-btn">
@@ -120,37 +120,43 @@
         <!-- PROFILE PAGE -->
         <section id="page-profile" class="page hidden container py-10">
             <div class="profile-card">
-                <div class="profile-card-header">
-                    <div class="profile-avatar-section">
-                        <div class="relative shrink-0">
-                            <div id="profile-avatar-container" class="profile-avatar">
-                                <div class="w-full h-full flex items-center justify-center bg-primary/10"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-                            </div>
-                            <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="profile-avatar-edit-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                            </button>
-                            <input id="avatar-input" type="file" accept="image/*" class="hidden" onchange="handleProfileAvatar(event)">
+                <div class="profile-header">
+                    <div class="profile-avatar-wrapper">
+                        <div id="profile-avatar-container" class="profile-avatar">
+                            <div class="w-full h-full flex items-center justify-center bg-primary/10"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                         </div>
-                        <div class="profile-info">
-                            <h2 id="profile-name" class="font-display text-2xl font-bold text-foreground truncate">Carregando...</h2>
-                            <p id="profile-email" class="text-sm text-muted-foreground truncate">carregando@email.com</p>
-                        </div>
-                        <button id="profile-edit-btn" onclick="toggleProfileEdit()" class="profile-edit-btn">Editar</button>
+                        <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="profile-avatar-edit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                        </button>
+                        <input id="avatar-input" type="file" accept="image/*" class="hidden" onchange="handleProfileAvatar(event)">
                     </div>
+                    <div class="profile-info">
+                        <h2 id="profile-name" class="font-display text-2xl font-bold text-foreground truncate">Carregando...</h2>
+                        <p id="profile-email" class="text-sm text-muted-foreground truncate">carregando@email.com</p>
+                    </div>
+                    <button id="profile-edit-btn" onclick="toggleProfileEdit()" class="profile-edit-btn">Editar</button>
                 </div>
-                <div class="px-6 pb-6">
+                <div class="p-6">
                     <div id="profile-details" class="profile-details-grid">
                         <div class="profile-detail-item">
-                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CPF</p>
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Nome Completo:</p>
+                            <p id="profile-name-detail" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Email:</p>
+                            <p id="profile-email-detail" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CPF:</p>
                             <p id="profile-cpf" class="text-sm font-semibold text-foreground">-</p>
                         </div>
                         <div class="profile-detail-item">
-                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CEP</p>
-                            <p id="profile-cep" class="text-sm font-semibold text-foreground">-</p>
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Telefone:</p>
+                            <p id="profile-phone" class="text-sm font-semibold text-foreground">-</p>
                         </div>
                         <div class="profile-detail-item">
-                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Telefone</p>
-                            <p id="profile-phone" class="text-sm font-semibold text-foreground">-</p>
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CEP:</p>
+                            <p id="profile-cep" class="text-sm font-semibold text-foreground">-</p>
                         </div>
                     </div>
                     <div id="profile-edit-form" class="profile-edit-form hidden">
@@ -169,6 +175,10 @@
                         <div class="form-group">
                             <label class="form-label">CEP</label>
                             <input id="edit-cep" type="text" oninput="maskCEP(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input id="edit-phone" type="text" oninput="maskPhone(event)" class="form-input">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Senha</label>
@@ -194,8 +204,6 @@
                 <aside class="settings-sidebar">
                     <button onclick="scrollToSection('settings-account')" class="settings-nav-link active">Conta</button>
                     <button onclick="scrollToSection('settings-appearance')" class="settings-nav-link">Aparência</button>
-                    <button onclick="scrollToSection('settings-notifications')" class="settings-nav-link">Notificações</button>
-                    <button onclick="scrollToSection('settings-privacy')" class="settings-nav-link">Privacidade</button>
                 </aside>
 
                 <div class="settings-main">
@@ -203,28 +211,8 @@
                     <div id="settings-account" class="settings-section">
                         <h3 class="section-title-sm">Conta</h3>
                         <div class="settings-card">
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">E-mail</p>
-                                    <p id="settings-email" class="settings-item-value">carregando...</p>
-                                </div>
-                                <button onclick="navigateTo('profile')" class="btn-secondary btn-sm">Alterar</button>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">CPF</p>
-                                    <p id="settings-cpf" class="settings-item-value">carregando...</p>
-                                </div>
-                                <span class="text-xs text-muted">Não alterável</span>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Senha</p>
-                                    <p class="text-xs text-muted-foreground">Atualize sua senha regularmente para maior segurança</p>
-                                </div>
-                                <button class="btn-secondary btn-sm">Alterar Senha</button>
-                            </div>
-                            <div class="settings-item" style="border-top: 1px solid var(--color-border); margin-top: 1rem; padding-top: 1rem;">
+
+                            <div class="settings-item" >
                                 <div class="settings-item-info">
                                     <p class="settings-item-label text-red-500">Excluir Conta</p>
                                     <p class="text-xs text-muted-foreground">Remova permanentemente todos os seus dados</p>
@@ -249,69 +237,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Notifications Section -->
-                    <div id="settings-notifications" class="settings-section">
-                        <h3 class="section-title-sm">Notificações</h3>
-                        <div class="settings-card">
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Alertas de Novos Matches</p>
-                                    <p class="text-xs text-muted-foreground">Receba notificações quando houver novos pets compatíveis</p>
-                                </div>
-                                <input type="checkbox" class="settings-checkbox" checked>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Avisos de Mensagens</p>
-                                    <p class="text-xs text-muted-foreground">Notificações de novas mensagens no chat</p>
-                                </div>
-                                <input type="checkbox" class="settings-checkbox" checked>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Notificações por E-mail</p>
-                                    <p class="text-xs text-muted-foreground">Receba novidades e alertas no seu e-mail</p>
-                                </div>
-                                <input type="checkbox" class="settings-checkbox" checked>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Privacy Section -->
-                    <div id="settings-privacy" class="settings-section">
-                        <h3 class="section-title-sm">Privacidade e Segurança</h3>
-                        <div class="settings-card">
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Perfil Público</p>
-                                    <p class="text-xs text-muted-foreground">Permite que qualquer usuário veja seu perfil</p>
-                                </div>
-                                <input type="checkbox" class="settings-checkbox" checked>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Visibilidade de Localização</p>
-                                    <p class="text-xs text-muted-foreground">Mostre a cidade onde você reside</p>
-                                </div>
-                                <input type="checkbox" class="settings-checkbox" checked>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Usuários Bloqueados</p>
-                                    <p class="text-xs text-muted-foreground">Gerencie quem não pode interagir com você</p>
-                                </div>
-                                <button class="btn-secondary btn-sm">Gerenciar</button>
-                            </div>
-                            <div class="settings-item">
-                                <div class="settings-item-info">
-                                    <p class="settings-item-label">Exportar Meus Dados</p>
-                                    <p class="text-xs text-muted-foreground">Baixe uma cópia de todas as suas informações</p>
-                                </div>
-                                <button class="btn-secondary btn-sm">Exportar</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -320,19 +245,21 @@
         <!-- LOGIN PAGE -->
         <section id="page-login" class="page hidden auth-page">
             <div class="auth-card">
-                <div class="auth-card-header">
-                    <div class="auth-card-icon">
-                        <img src="assets/img/pata.png" alt="Ícone de pata">
+                    <div class="auth-card-header">
+                        <div class="auth-card-title-wrapper">
+                            <div class="auth-card-icon">
+                                <img src="../assets/img/logo.png" alt="Ícone de pata" class="auth-card-logo">
+                            </div>
+                            <h1 class="auth-card-title">Bem-vindo de volta</h1>
+                        </div>
+                        <p class="auth-card-subtitle">Entre com seu CPF e senha</p>
                     </div>
-                    <h1 class="auth-card-title">Bem-vindo de volta</h1>
-                    <p class="auth-card-subtitle">Entre com seu CPF e senha</p>
-                </div>
                 <form onsubmit="handleLogin(event)" class="auth-card-form">
                     <div id="login-error" class="error-message hidden">CPF ou senha inválidos.</div>
-                    <div class="form-group">
-                        <label class="form-label">CPF</label>
-                        <input id="login-cpf" type="text" placeholder="000.000.000-00" class="form-input">
-                    </div>
+                         <div class="form-group">
+                             <label class="form-label">CPF</label>
+                             <input id="login-cpf" type="text" placeholder="000.000.000-00" oninput="maskCPF(event)" class="form-input">
+                         </div>
                     <div class="form-group">
                         <label class="form-label">Senha</label>
                         <input id="login-password" type="password" placeholder="••••••••" class="form-input">
@@ -350,7 +277,7 @@
             <div class="auth-card auth-card-wide">
                 <div class="auth-card-header-wide">
                     <div class="auth-card-icon">
-                        <img src="../assets/img/logo.png" alt="Logo PetAlliance">
+                        <img src="../assets/img/logo.png" alt="Logo PetAlliance" class="auth-card-logo">
                     </div>
                     <div class="auth-card-title-group">
                         <h1 class="auth-card-title">Crie sua conta</h1>
@@ -365,7 +292,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-muted-foreground"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             </div>
                             <button type="button" onclick="document.getElementById('reg-avatar-input').click()" class="reg-avatar-edit-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                             </button>
                             <input id="reg-avatar-input" type="file" accept="image/*" class="hidden" onchange="handleRegAvatar(event)">
                         </div>
@@ -457,7 +384,7 @@
             <footer class="main-footer">
                 <div class="footer-container">
                     <div class="footer-logo">
-                        <img src="../assets/img/logo.png" alt="Footer PetAlliance">PetAlliance
+                        <img src="../assets/img/logo.png" alt="Footer PetAlliance" class="footer_logo">PetAlliance
                     </div>
                     <p class="footer-copyright">© 2026 PetAlliance. Feito com amor pelos animais.</p>
                     <div class="footer-links">
