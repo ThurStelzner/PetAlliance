@@ -3,7 +3,7 @@
     require_once __DIR__ . "/../../models/usuario.php";
     require_once __DIR__ . "/../../models/usuarioDAO.php";
 
-    class usuarioController {
+    class UsuarioController {
         private $dao;
 
         public function __construct() {

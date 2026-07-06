@@ -34,9 +34,15 @@ class DenunciaDAO {
         $sql = "SELECT d.*, u.nome AS usuario_nome, u.foto_perfil AS usuario_imagem
                 FROM tb_denuncias d
                 LEFT JOIN tb_usuarios u ON d.usuario_id = u.id
-                ORDER BY d.id DESC";
+                ORDER BY d.resolvido ASC, d.id DESC";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function atualizarStatus($id, $status) {
+        $sql = "UPDATE tb_denuncias SET resolvido = ? WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$status, $id]);
     }
 
     public function estatisticas() {

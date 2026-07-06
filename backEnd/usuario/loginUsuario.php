@@ -1,9 +1,7 @@
 <?php
-    require __DIR__ . "/../../frontEnd/view/login.html";
-    require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
-
     session_start();
+
+    require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
 
     $usuarioDAO = new UsuarioDAO();
 
@@ -36,6 +34,7 @@
 
     }
 
-    
+    require __DIR__ . "/../../frontEnd/view/login.html";
+    require __DIR__ . "/../../frontEnd/view/footer.html";
 
 

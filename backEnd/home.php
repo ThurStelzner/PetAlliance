@@ -73,7 +73,6 @@
 
     require __DIR__ . '/../frontEnd/view/navBar.html';
     require __DIR__ . '/../frontEnd/view/home.html';
-    require __DIR__ . '/../frontEnd/view/footer.html';
 
     if (isset($_GET['mensagem'])) {
         if ($_GET['mensagem'] === 'animal_cadastrado') {
@@ -89,9 +88,12 @@
             echo 'Ocorreu um erro';
         }
     }
+    ?>
+    <script>
+        window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
+        window.USUARIO_ID = <?= $usuarioId ?>;
+    </script>
+    <?php
+    require __DIR__ . '/../frontEnd/view/footer.html';
 ?>
-
-<script>
-    window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
-</script>
 

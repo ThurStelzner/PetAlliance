@@ -32,6 +32,23 @@ class DenunciaController {
         }
     }
 
+    public function resolverDenuncia() {
+        header('Content-Type: application/json');
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $id = $input['id'] ?? null;
+            $resolvido = isset($input['resolvido']) ? (int) $input['resolvido'] : null;
+            if (!$id || $resolvido === null) {
+                echo json_encode(['sucesso' => false, 'erro' => 'ID ou status não informado']);
+                return;
+            }
+            $this->dao->atualizarStatus($id, $resolvido);
+            echo json_encode(['sucesso' => true]);
+        } catch (Exception $e) {
+            echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+        }
+    }
+
     public function estatisticas() {
         header('Content-Type: application/json');
         try {

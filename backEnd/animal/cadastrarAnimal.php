@@ -8,7 +8,7 @@
 
     session_start();
 
-    $donoId = $_GET['donoid'] ?? ($_POST['dono_id'] ?? ($_SESSION['usuario_id'] ?? null));
+    $donoId = $_SESSION['usuario_id'] ?? null;
     $erro = '';
 
     if (!$donoId) {
@@ -25,7 +25,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $fotoPet = null;
+            $fotoPet = 'placeholder.webp';
             if (!empty($_FILES['arquivoFotoPet']['name'])) {
                 $extensao = strtolower(pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
@@ -66,8 +66,8 @@
                 throw new InvalidArgumentException('Preencha todos os campos obrigatórios.');
             }
 
-            $fotoCertificado = null;
-            $fotoVacinacao = null;
+            $fotoCertificado = 'placeholder.webp';
+            $fotoVacinacao = 'placeholder.webp';
 
             $diretorioUploads = __DIR__ . '/../../uploads/animais/';
             if (!is_dir($diretorioUploads)) {
@@ -137,6 +137,6 @@
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

@@ -34,29 +34,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function resolverDenuncia(id, botao, novoStatus) {
+        try {
+            const response = await fetch(API_BASE + "resolver", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, resolvido: novoStatus }),
+                credentials: "same-origin"
+            });
+            const data = await response.json();
+            if (data.sucesso) {
+                const row = botao.closest("tr");
+                const statusCell = row.querySelector(".status-cell");
+                const acoesCell = row.querySelector(".acoes-cell");
+                if (novoStatus === 1) {
+                    statusCell.textContent = "Resolvido";
+                    acoesCell.innerHTML = `<button class="btn-voltar" data-id="${id}">Voltar</button>`;
+                } else {
+                    statusCell.textContent = "Pendente";
+                    acoesCell.innerHTML = `<button class="btn-concluir" data-id="${id}">Concluir</button>`;
+                }
+            } else {
+                alert("Erro: " + (data.erro || "não foi possível concluir"));
+            }
+        } catch (error) {
+            alert("Erro de conexão ao resolver denúncia.");
+        }
+    }
+
     function montarTabelaDenuncias(titulo, denuncias) {
         if (!denuncias.length) return "";
         const resolvidoLabels = { 0: "Pendente", 1: "Resolvido" };
 
         let html = `<h4>${titulo} (${denuncias.length})</h4>
             <table class="denuncias-table">
-                <thead><tr><th>ID</th><th>Usuário</th><th>Alvo ID</th><th>Descrição</th><th>Status</th></tr></thead>
+                <thead><tr><th>ID</th><th>Usuário</th><th>Alvo ID</th><th>Descrição</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
         `;
 
         denuncias.forEach(d => {
+            const pendente = d.resolvido == 0;
             html += `<tr>
                 <td>${d.id}</td>
                 <td>${d.usuario_nome || "Desconhecido"}</td>
                 <td>${d.alvo_id || "-"}</td>
                 <td>${d.descricao || "-"}</td>
-                <td>${resolvidoLabels[d.resolvido] || "Desconhecido"}</td>
+                <td class="status-cell">${resolvidoLabels[d.resolvido] || "Desconhecido"}</td>
+                <td class="acoes-cell">${pendente
+                    ? `<button class="btn-concluir" data-id="${d.id}">Concluir</button>`
+                    : `<button class="btn-voltar" data-id="${d.id}">Voltar</button>`}</td>
             </tr>`;
         });
 
         html += `</tbody></table>`;
         return html;
     }
+
+    document.getElementById("denuncias-list").addEventListener("click", e => {
+        const botao = e.target.closest(".btn-concluir, .btn-voltar");
+        if (botao) {
+            const id = parseInt(botao.dataset.id);
+            const novoStatus = botao.classList.contains("btn-concluir") ? 1 : 0;
+            resolverDenuncia(id, botao, novoStatus);
+        }
+    });
 
     async function carregarDenuncias() {
         try {
