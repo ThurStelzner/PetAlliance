@@ -1,7 +1,7 @@
 const API_BASE = "/backEnd/chatApi.php?route=";
 let conversaAtual = null;
 let ultimoId = 0;
-let pollingInterval = null;
+let polling = null;
 let dadosConversaAtual = null;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -74,7 +74,7 @@ function abrirConversa(conversaId, solicitacaoId) {
     carregarHeader();
     carregarMensagens();
     carregarConversas();
-    iniciarPolling();
+    if (conversaId) iniciarPolling();
 }
 
 function carregarHeader() {
@@ -114,22 +114,32 @@ function renderizarMensagens(mensagens) {
         const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
         html += `<div class="msg ${ehMinha ? 'minha' : 'outra'}">
             ${m.conteudo}
-            <small>${new Date(m.data_envio).toLocaleString('pt-BR')}</small>
+            <small>${m.data_envio || ''}</small>
         </div>`;
     });
     container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
 }
 
+function adicionarMensagemNaTela(m) {
+    const container = document.getElementById("chat-messages");
+    const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
+    const div = document.createElement("div");
+    div.className = "msg " + (ehMinha ? "minha" : "outra");
+    div.innerHTML = `${m.conteudo} <small>${m.data_envio || ''}</small>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
 function iniciarPolling() {
     pararPolling();
-    pollingInterval = setInterval(buscarNovas, 3000);
+    polling = setInterval(buscarNovas, 500);
 }
 
 function pararPolling() {
-    if (pollingInterval) {
-        clearInterval(pollingInterval);
-        pollingInterval = null;
+    if (polling) {
+        clearInterval(polling);
+        polling = null;
     }
 }
 
@@ -139,18 +149,10 @@ async function buscarNovas() {
         const resp = await fetch(API_BASE + "novas_mensagens&conversa_id=" + conversaAtual.id + "&ultimo_id=" + ultimoId, { credentials: "same-origin" });
         const data = await resp.json();
         if (data.sucesso && data.mensagens.length) {
-            const container = document.getElementById("chat-messages");
-            let html = "";
             data.mensagens.forEach(m => {
-                const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
-                html += `<div class="msg ${ehMinha ? 'minha' : 'outra'}">
-                    ${m.conteudo}
-                    <small>${new Date(m.data_envio).toLocaleString('pt-BR')}</small>
-                </div>`;
+                adicionarMensagemNaTela(m);
                 if (m.id > ultimoId) ultimoId = m.id;
             });
-            container.insertAdjacentHTML("beforeend", html);
-            container.scrollTop = container.scrollHeight;
         }
     } catch (e) {
         console.error("Polling error:", e);
@@ -194,6 +196,9 @@ async function enviarMensagem() {
                 carregarConversas();
                 carregarMensagens();
                 iniciarPolling();
+            } else {
+                adicionarMensagemNaTela(data.mensagem);
+                ultimoId = data.mensagem.id;
             }
         } else {
             alert("Erro: " + (data.erro || "Erro ao enviar"));

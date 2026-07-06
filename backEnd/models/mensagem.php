@@ -20,6 +20,7 @@ class Mensagem implements JsonSerializable {
     public function getRemetenteId() { return $this->remetente_id; }
     public function getConteudo() { return $this->conteudo; }
     public function getDataEnvio() { return $this->data_envio; }
+    public function setDataEnvio($data_envio) { $this->data_envio = $data_envio; }
 
     public function setId($id) {
         if (!filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
