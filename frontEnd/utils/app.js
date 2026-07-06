@@ -1,7 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
     const container = document.getElementById("animais-container");
     const buscaInput = document.getElementById("busca-input");
+    let matchStatusMap = {};
 
     if (!container) {
         console.error("Elemento #animais-container não encontrado.");
@@ -116,6 +117,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    async function carregarMatchStatus() {
+        try {
+            const response = await fetch("/backEnd/match.php?route=minhas_solicitacoes", { credentials: "same-origin" });
+            const data = await response.json();
+            if (data.sucesso && data.solicitacoes) {
+                data.solicitacoes.forEach(s => {
+                    matchStatusMap[s.pet_id] = { status: s.status, solicitacao_id: s.id };
+                });
+            }
+        } catch (error) {
+            console.error("Erro ao carregar status dos matchs:", error);
+        }
+    }
+
     async function carregarAnimais() {
         try {
             const response = await fetch(API_URL_ANIMAIS, { credentials: 'same-origin' });
@@ -132,29 +147,95 @@ document.addEventListener("DOMContentLoaded", () => {
             const animais = Array.isArray(data) ? data : data.animais || [];
 
             renderizarAnimais(animais);
+            if (animais.length === 0) {
+                container.innerHTML = "<p>Você ainda não tem nenhum animal favoritado.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+
+            animais.forEach(animal => {
+                const card = document.createElement("article");
+                const fotoAnimal = (animal.foto_pet || "placeholder.webp").toString().trim() || "placeholder.webp";
+                card.classList.add("animal-card");
+                    var matchHtml = "";
+                    if (animal.dono_id != window.USUARIO_ID) {
+                        if (matchStatusMap[animal.id]) {
+                            if (matchStatusMap[animal.id].status === 'aceito') {
+                                matchHtml = '<a href="/backEnd/chat.php?solicitacao_id=' + matchStatusMap[animal.id].solicitacao_id + '" class="btn-chat-home">Iniciar Chat</a>';
+                            } else if (matchStatusMap[animal.id].status === 'pendente') {
+                                matchHtml = '<button type="button" class="match-btn" disabled>Pendente</button>';
+                            } else {
+                                matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
+                            }
+                        } else {
+                            matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
+                        }
+                    }
+
+                    var adminBtn = window.EH_ADMIN ? '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '">Excluir</button>' : "";
+
+                    card.innerHTML = `
+                    <img src="/uploads/animais/${fotoAnimal}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
+                    <h3>${animal.nome || "Sem nome"}</h3>
+                    <p>${animal.descricao || "Não informada"}</p>
+                    <p>${animal.tipo || "Não informado"}</p>
+                    <p>${animal.porte || "Não informado"}</p>
+                    <p>${animal.sexo || "Não informado"}</p>
+                    <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
+                    <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>
+                    ${adminBtn}
+                    ${matchHtml}
+                `;
+                container.appendChild(card);
+            });
         } catch (error) {
             console.error("Erro ao carregar animais:", error);
             container.innerHTML = "<p>Não foi possível carregar os animais.</p>";
         }
     }
 
-    container.addEventListener("click", (event) => {
+    container.addEventListener("click", async (event) => {
         const target = event.target;
         const button = target instanceof Element ? target.closest(".favoritar-btn") : null;
-        if (!button) {
+        if (button) {
+            const animalId = button.dataset.animalId;
+            if (animalId) {
+                const estaFavoritado = button.textContent.trim() === "Remover dos Favoritos";
+                button.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
+                try {
+                    fetch(`/backEnd/home.php?route=favoritar_animal&idAnimal=${animalId}`);
+                } catch (error) {
+                    console.error("Erro ao buscar dados do animal:", error);
+                }
+            }
             return;
         }
 
-        const animalId = button.dataset.animalId;
-        if (animalId) {
-            const estaFavoritado = button.textContent.trim() === "Remover dos Favoritos";
-            button.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
+        const matchBtn = target instanceof Element ? target.closest(".match-btn") : null;
+        if (!matchBtn) return;
 
-            try {
-                fetch(`/backEnd/home.php?route=favoritar_animal&idAnimal=${animalId}`);
-            } catch (error) {
-                console.error("Erro ao buscar dados do animal:", error);
+        const animalId = matchBtn.dataset.animalId;
+        if (!confirm("Enviar solicitação de match para este animal?")) return;
+
+        try {
+            const response = await fetch("/backEnd/match.php?route=enviar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pet_id: animalId, remetente_id: window.USUARIO_ID }),
+                credentials: "same-origin"
+            });
+            const data = await response.json();
+            if (data.sucesso) {
+                alert(data.mensagem);
+                matchStatusMap[animalId] = "pendente";
+                matchBtn.textContent = "Pendente";
+                matchBtn.disabled = true;
+            } else {
+                alert("Erro: " + (data.erro || "Erro desconhecido"));
             }
+        } catch (error) {
+            alert("Erro de conexão.");
         }
     });
 
@@ -291,5 +372,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    await carregarMatchStatus();
     carregarAnimais();
 });

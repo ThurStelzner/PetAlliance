@@ -147,8 +147,8 @@ class Animal implements JsonSerializable {
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
-                    $foto_pet = uniqid('pet_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $foto_pet);
+                    $this->foto_pet = uniqid('pet_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $this->foto_pet);
                 }
             }
     }
@@ -247,12 +247,9 @@ class Animal implements JsonSerializable {
             
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
-                    header("Location: /index.php");
-                    exit();
-                    
                 } else {
-                    $foto_certificado = uniqid('cert_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $foto_certificado);
+                    $this->foto_certificado = uniqid('cert_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $this->foto_certificado);
                 }
         }
             
@@ -267,8 +264,8 @@ class Animal implements JsonSerializable {
                 if (!in_array(strtolower($extensao), $permitidos)) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
-                    $foto_vacina = uniqid('vaci_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $foto_vacina);
+                    $this->foto_vacina = uniqid('vaci_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $this->foto_vacina);
                 }
             }
         }

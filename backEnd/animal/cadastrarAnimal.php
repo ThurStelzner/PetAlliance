@@ -28,7 +28,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $fotoPet = null;
+            $fotoPet = 'placeholder.webp';
             if (!empty($_FILES['arquivoFotoPet']['name'])) {
                 $extensao = strtolower(pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
@@ -150,6 +150,6 @@
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

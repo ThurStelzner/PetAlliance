@@ -41,6 +41,12 @@ if ($metodo === 'GET' && isset($_GET['route'])) {
     }
 }
 
+if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'resolver') {
+    $controller = new DenunciaController();
+    $controller->resolverDenuncia();
+    exit;
+}
+
 if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'sistema') {
     header('Content-Type: application/json');
     try {
@@ -64,8 +70,9 @@ if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'sistema') 
 
 require __DIR__ . "/../../frontEnd/view/navBar.html";
 require __DIR__ . "/../../frontEnd/view/admin.html";
-require __DIR__ . "/../../frontEnd/view/footer.html";
 ?>
 <script>
     window.EH_ADMIN = true;
 </script>
+<?php
+require __DIR__ . "/../../frontEnd/view/footer.html";
