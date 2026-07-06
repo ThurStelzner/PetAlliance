@@ -14,8 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $usuario_id = $_SESSION["usuario_id"];
         $descricao = trim($_POST["descricao"] ?? "");
-        $tipo_alvo = $_GET["tipo"] ?? "";
-        $alvo_id = $_GET["id"] ?? null;
+        $tipo_alvo = $_POST["tipo_alvo"] ?? $_GET["tipo"] ?? "";
+        $alvo_id = $_POST["alvo_id"] ?? $_GET["id"] ?? null;
         $resolvido = 0;
 
         $controller = new DenunciaController();

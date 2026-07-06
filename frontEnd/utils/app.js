@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
                     <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
                     <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
-                    <button type="button" onclick="window.location. href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
+                    <button type="button" onclick="window.location.href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
 
                 </div>
             `);
