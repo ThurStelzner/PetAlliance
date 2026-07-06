@@ -4,10 +4,10 @@
 (function () {
   // --- Mock data (trimmed from original React source) ---
   const PLANS = [
-    { id: 'basic', name: 'Iniciante', price: 'R$ <spam class="dindin"> 7,50 </spam>/mês', features: ['5 Animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
-    { id: 'standard', name: 'Standard', price: 'R$ 15,00/mês', features: ['10 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
-    { id: 'premium', name: 'Premium', price: 'R$ 30,00/mês', features: ['20 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
-    { id: 'vip', name: 'VIP', price: 'R$ 45,00/mês', features: ['30 animais por mês', 'Perfil Verificado', 'Medalha de membro'] },
+    { id: 'iniciante', name: 'Iniciante', price: '7,50', priceFull: 'R$ 7,50/mês', features: ['5 animais por mês', 'Perfil verificado', 'Badge de membro', 'Chat com donos'], isPopular: false },
+    { id: 'basico', name: 'Básico', price: '15,00', priceFull: 'R$ 15,00/mês', features: ['10 animais por mês', 'Perfil verificado', 'Badge de membro', 'Chat com donos'], isPopular: false },
+    { id: 'profissional', name: 'Profissional', price: '30,00', priceFull: 'R$ 30,00/mês', features: ['20 animais por mês', 'Perfil verificado', 'Badge de membro', 'Chat com donos'], isPopular: true },
+    { id: 'premium', name: 'Premium', price: '45,00', priceFull: 'R$ 45,00/mês', features: ['30 animais por mês', 'Perfil verificado', 'Badge de membro', 'Chat com donos'], isPopular: false },
   ];
 
   const PETS = [
@@ -169,6 +169,21 @@
   function qs(sel, root = document) { return root.querySelector(sel); }
   function qsa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
 
+  function scrollToSection(sectionId) {
+    const element = qs(`#${sectionId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Update active state in sidebar
+      qsa('.settings-nav-link').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(sectionId)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+  }
+
   // --- State ---
   let state = {
     page: 'home',
@@ -190,7 +205,10 @@
     updateNavActive();
     if (page === 'home') renderHomeGrid();
     if (page === 'favorites') renderFavoritesGrid();
-    if (page === 'members') renderMembersGrid();
+    if (page === 'members') {
+      renderMembersGrid();
+      renderPlans();
+    }
     if (page === 'my-animals') renderMyAnimals();
     if (page === 'matches') renderMatches();
     if (page === 'profile') updateProfileUI();
@@ -281,17 +299,40 @@
     PLANS.forEach(plan => {
       const div = document.createElement('div');
       const isSelected = state.selectedPlan && state.selectedPlan.id === plan.id;
-      div.className = `plan-card cursor-pointer hover:border-primary transition-all p-4 border rounded-2xl bg-card shadow-sm ${isSelected ? 'border-primary ring-2 ring-primary' : ''}`;
-      div.innerHTML = `
-        <h3 class="font-bold text-foreground">${plan.name}</h3>
-        <p class="text-xl font-bold text-primary my-2">${plan.price}</p>
-        <p class="text-xs text-muted-foreground mb-4">${plan.desc}</p>
-        <ul class="text-xs space-y-1 text-muted-foreground mb-4">
-          ${plan.features.map(f => `<li>• ${f}</li>`).join('')}
+      div.className = `plan-card cursor-pointer transition-all ${isSelected ? 'selected' : ''}`;
+      
+      let content = '';
+      if (plan.isPopular) {
+        content += `<div class="popular-badge">Mais popular</div>`;
+      }
+      if (isSelected) {
+        content += `<div class="selected-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+      }
+      
+      content += `
+        <h3 class="plan-name">${plan.name}</h3>
+        <div class="plan-price-container">
+          <span class="plan-currency">R$</span>
+          <span class="plan-price-value">${plan.price}</span>
+          <span class="plan-period">/mês</span>
+        </div>
+        <ul class="plan-features">
+          ${plan.features.map(f => `<li>${f}</li>`).join('')}
         </ul>
-        <button class="w-full py-2 text-xs font-semibold rounded-lg bg-secondary hover:bg-muted transition-colors">Selecionar</button>
+        <button class="plan-buy-btn ${plan.isPopular ? 'btn-popular' : ''}">Comprar</button>
       `;
+      
+      div.innerHTML = content;
       div.onclick = () => selectPlan(plan);
+      
+      // Button click specifically opens checkout
+      const btn = div.querySelector('.plan-buy-btn');
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        selectPlan(plan);
+        openCheckout();
+      };
+      
       grid.appendChild(div);
     });
   }
@@ -306,14 +347,97 @@
 
     if (banner) {
       banner.classList.remove('hidden');
-      nameEl.textContent = plan.name;
-      descEl.textContent = plan.desc;
+      nameEl.textContent = `${plan.name} selecionado`;
+      descEl.textContent = `${plan.priceFull} · ${plan.features[0]}`;
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 
   function openCheckout() {
-    alert('Redirecionando para o checkout de pagamento...');
+    const plan = state.selectedPlan;
+    if (!plan) {
+      alert('Por favor, selecione um plano primeiro!');
+      return;
+    }
+
+    const content = qs('#modal-content');
+    if (!content) return;
+
+    content.innerHTML = `
+      <div class="payment-modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Assinar Plano</h2>
+          <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        
+        <div class="payment-summary">
+          <span class="payment-summary-label">Plano Selecionado</span>
+          <div class="payment-summary-row">
+            <span class="payment-summary-plan-name">${plan.name}</span>
+            <span class="payment-summary-price">${plan.priceFull.split('/')[0]}</span>
+          </div>
+          <div class="payment-summary-feature">${plan.features[0]}</div>
+        </div>
+
+        <h3 class="payment-methods-title">Forma de pagamento</h3>
+        <div class="payment-methods-list">
+          <div class="payment-method-item" onclick="selectPaymentMethod(this, 'pix')">
+            <div class="payment-method-icon">⚡</div>
+            <div class="payment-method-info">
+              <span class="payment-method-name">PIX</span>
+              <span class="payment-method-desc">Aprovação imediata</span>
+            </div>
+          </div>
+          <div class="payment-method-item" onclick="selectPaymentMethod(this, 'credit')">
+            <div class="payment-method-icon">💳</div>
+            <div class="payment-method-info">
+              <span class="payment-method-name">Cartão de Crédito</span>
+              <span class="payment-method-desc">Em até 12x</span>
+            </div>
+          </div>
+          <div class="payment-method-item" onclick="selectPaymentMethod(this, 'boleto')">
+            <div class="payment-method-icon">📄</div>
+            <div class="payment-method-info">
+              <span class="payment-method-name">Boleto Bancário</span>
+              <span class="payment-method-desc">Vence em 3 dias úteis</span>
+            </div>
+          </div>
+          <div class="payment-method-item" onclick="selectPaymentMethod(this, 'debit')">
+            <div class="payment-method-icon">📱</div>
+            <div class="payment-method-info">
+              <span class="payment-method-name">Cartão de Débito</span>
+              <span class="payment-method-desc">Débito online</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="payment-submit-btn" class="payment-submit-btn" disabled onclick="finalizePayment()">
+          <span>&rsaquo;</span> Selecione a forma de pagamento
+        </button>
+      </div>
+    `;
+
+    qs('#modal-container').classList.remove('hidden');
+  }
+
+  function selectPaymentMethod(element, method) {
+    qsa('.payment-method-item').forEach(item => item.classList.remove('selected'));
+    element.classList.add('selected');
+    
+    const btn = qs('#payment-submit-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<span>&rsaquo;</span> Finalizar Pagamento`;
+    }
+    state.selectedPaymentMethod = method;
+  }
+
+  function finalizePayment() {
+    const plan = state.selectedPlan;
+    const method = state.selectedPaymentMethod;
+    alert(`Pagamento de ${plan.name} via ${method.toUpperCase()} processado com sucesso!`);
+    closeModal();
+    // Aqui poderia atualizar o status do usuário para premium
   }
 
   // --- Favorites ---
@@ -523,6 +647,9 @@
       btn.textContent = 'Cancelar';
       qs('#edit-name').value = state.user?.nome || '';
       qs('#edit-email').value = state.user?.email || '';
+      qs('#edit-cpf').value = state.user?.cpf || '';
+      qs('#edit-cep').value = state.user?.cep || '';
+      qs('#edit-password').value = '';
     } else {
       // Returning to view mode
       btn.textContent = 'Editar';
@@ -534,14 +661,23 @@
 
     const newName = qs('#edit-name').value.trim();
     const newEmail = qs('#edit-email').value.trim();
+    const newCpf = qs('#edit-cpf').value.trim();
+    const newCep = qs('#edit-cep').value.trim();
+    const newPassword = qs('#edit-password').value.trim();
 
-    if (!newName || !newEmail) {
-      alert('Por favor, preencha todos os campos.');
+    if (!newName || !newEmail || !newCpf || !newCep) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
     state.user.nome = newName;
     state.user.email = newEmail;
+    state.user.cpf = newCpf;
+    state.user.cep = newCep;
+    if (newPassword) {
+      state.user.password = newPassword;
+    }
+    
     localStorage.setItem('pa:user', JSON.stringify(state.user));
 
     updateProfileUI();
@@ -568,6 +704,7 @@
   window.handleProfileAvatar = handleProfileAvatar;
   window.toggleProfileEdit = toggleProfileEdit;
   window.saveProfile = saveProfile;
+  window.scrollToSection = scrollToSection;
 
   function handleRegAvatar(event) {
     const file = event.target.files[0];
@@ -744,6 +881,8 @@
     window.navigateTo = navigateTo; // allow inline handlers in HTML to call navigateTo
     window.openMatches = () => navigateTo('matches');
     window.openCheckout = openCheckout;
+    window.selectPaymentMethod = selectPaymentMethod;
+    window.finalizePayment = finalizePayment;
     window.toggleMenu = toggleMenu;
     window.logout = logout;
     window.handleLogin = handleLogin;

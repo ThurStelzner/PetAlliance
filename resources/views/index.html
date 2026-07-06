@@ -101,7 +101,7 @@
                 </div>
                 <div id="selected-plan-banner" class="plan-banner hidden">
                     <div class="plan-banner-info">
-                        <p class="plan-banner-title">Plano <span id="selected-plan-name" class="text-primary"></span> selecionado</p>
+                        <p class="plan-banner-title"><span id="selected-plan-name" class="text-primary"></span></p>
                         <p id="selected-plan-desc" class="plan-banner-subtitle"></p>
                     </div>
                     <button onclick="openCheckout()" class="plan-banner-btn">
@@ -162,6 +162,18 @@
                             <label class="form-label">Email</label>
                             <input id="edit-email" type="email" class="form-input">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">CPF</label>
+                            <input id="edit-cpf" type="text" oninput="maskCPF(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CEP</label>
+                            <input id="edit-cep" type="text" oninput="maskCEP(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <input id="edit-password" type="password" class="form-input" placeholder="Deixe em branco para não alterar">
+                        </div>
                         <div class="form-actions">
                             <button onclick="saveProfile()" class="btn-primary flex-1">Salvar</button>
                             <button onclick="toggleProfileEdit()" class="btn-secondary flex-1">Cancelar</button>
@@ -177,24 +189,133 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43-.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                 <h1 class="page-title">Configurações</h1>
             </div>
-            <div class="profile-card" style="max-width: 600px; margin: 0 auto;">
-                <div class="px-6 py-6">
-                    <h3 class="font-semibold text-foreground mb-4">Aparência</h3>
-                    <div class="flex items-center justify-between p-4 border rounded-xl bg-secondary">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 6 6 0 0 1-9 6 6 0 0 1-9-6 6 6 0 0 0 9-6z"/></svg>
-                            <div>
-                                <p class="text-sm font-medium text-foreground">Tema Escuro</p>
-                                <p class="text-xs text-muted-foreground">Mude a aparência do site para o modo noturno</p>
+            
+            <div class="settings-layout">
+                <aside class="settings-sidebar">
+                    <button onclick="scrollToSection('settings-account')" class="settings-nav-link active">Conta</button>
+                    <button onclick="scrollToSection('settings-appearance')" class="settings-nav-link">Aparência</button>
+                    <button onclick="scrollToSection('settings-notifications')" class="settings-nav-link">Notificações</button>
+                    <button onclick="scrollToSection('settings-privacy')" class="settings-nav-link">Privacidade</button>
+                </aside>
+
+                <div class="settings-main">
+                    <!-- Account Section -->
+                    <div id="settings-account" class="settings-section">
+                        <h3 class="section-title-sm">Conta</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">E-mail</p>
+                                    <p id="settings-email" class="settings-item-value">carregando...</p>
+                                </div>
+                                <button onclick="navigateTo('profile')" class="btn-secondary btn-sm">Alterar</button>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">CPF</p>
+                                    <p id="settings-cpf" class="settings-item-value">carregando...</p>
+                                </div>
+                                <span class="text-xs text-muted">Não alterável</span>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Senha</p>
+                                    <p class="text-xs text-muted-foreground">Atualize sua senha regularmente para maior segurança</p>
+                                </div>
+                                <button class="btn-secondary btn-sm">Alterar Senha</button>
+                            </div>
+                            <div class="settings-item" style="border-top: 1px solid var(--color-border); margin-top: 1rem; padding-top: 1rem;">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label text-red-500">Excluir Conta</p>
+                                    <p class="text-xs text-muted-foreground">Remova permanentemente todos os seus dados</p>
+                                </div>
+                                <button class="btn-secondary btn-sm text-red-500">Excluir</button>
                             </div>
                         </div>
-                        <button id="theme-toggle" class="btn-secondary" style="width: 50px; height: 26px; border-radius: 13px; position: relative; transition: all 0.3s; background: var(--color-border); border: none; cursor: pointer;">
-                            <div id="theme-toggle-dot" style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
-                        </button>
+                    </div>
+
+                    <!-- Appearance Section -->
+                    <div id="settings-appearance" class="settings-section">
+                        <h3 class="section-title-sm">Aparência</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Tema Escuro</p>
+                                    <p class="text-xs text-muted-foreground">Mude a aparência do site para o modo noturno</p>
+                                </div>
+                                <button id="theme-toggle" class="theme-toggle-btn">
+                                    <div id="theme-toggle-dot"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div id="settings-notifications" class="settings-section">
+                        <h3 class="section-title-sm">Notificações</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Alertas de Novos Matches</p>
+                                    <p class="text-xs text-muted-foreground">Receba notificações quando houver novos pets compatíveis</p>
+                                </div>
+                                <input type="checkbox" class="settings-checkbox" checked>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Avisos de Mensagens</p>
+                                    <p class="text-xs text-muted-foreground">Notificações de novas mensagens no chat</p>
+                                </div>
+                                <input type="checkbox" class="settings-checkbox" checked>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Notificações por E-mail</p>
+                                    <p class="text-xs text-muted-foreground">Receba novidades e alertas no seu e-mail</p>
+                                </div>
+                                <input type="checkbox" class="settings-checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Section -->
+                    <div id="settings-privacy" class="settings-section">
+                        <h3 class="section-title-sm">Privacidade e Segurança</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Perfil Público</p>
+                                    <p class="text-xs text-muted-foreground">Permite que qualquer usuário veja seu perfil</p>
+                                </div>
+                                <input type="checkbox" class="settings-checkbox" checked>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Visibilidade de Localização</p>
+                                    <p class="text-xs text-muted-foreground">Mostre a cidade onde você reside</p>
+                                </div>
+                                <input type="checkbox" class="settings-checkbox" checked>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Usuários Bloqueados</p>
+                                    <p class="text-xs text-muted-foreground">Gerencie quem não pode interagir com você</p>
+                                </div>
+                                <button class="btn-secondary btn-sm">Gerenciar</button>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Exportar Meus Dados</p>
+                                    <p class="text-xs text-muted-foreground">Baixe uma cópia de todas as suas informações</p>
+                                </div>
+                                <button class="btn-secondary btn-sm">Exportar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <!-- LOGIN PAGE -->
         <section id="page-login" class="page hidden auth-page">

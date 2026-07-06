@@ -144,15 +144,34 @@
   transition: all 0.2s;
   font-size: 1rem;
 }
-
 .fav-btn:not(.is-favorite):hover {
   border-color: var(--color-danger);
   color: var(--color-danger);
 }
-
 .fav-btn.is-favorite {
   background-color: var(--color-danger) !important;
   color: white !important;
   border-color: var(--color-danger) !important;
+}
+
+/* THEME TOGGLE SWITCH */
+.theme-toggle-btn {
+  width: 50px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  position: relative;
+  transition: background 0.3s ease;
+  border: 2px solid var(--color-border);
+}
+
+.theme-toggle-dot {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  transition: left 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
