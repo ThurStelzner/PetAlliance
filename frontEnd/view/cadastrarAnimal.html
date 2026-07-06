@@ -12,14 +12,27 @@
 
 
     <label for="tipo">Tipo de animal:</label>
-    <input type="text" name="tipo" id="tipo" minlength="3" maxlength="80" placeholder="Tipo do animal" required>
+    <select name="tipo" id="tipo" required>
+        <option value="" selected disabled>Selecione</option>
+        <option value="Cachorro">Cachorro</option>
+        <option value="Gato">Gato</option>
+        <option value="Cavalo">Cavalo</option>
+        <option value="Outro">Outro</option>
+    </select>
 
 
     <label for="raca">Raça:</label>
     <input type="text" name="raca" id="raca" minlength="3" maxlength="80" placeholder="Raça" required>
 
     <label for="cor">Cor:</label>
-    <input type="text" name="cor" id="cor" minlength="3" maxlength="80" placeholder="Cor" required>
+    <select name="cor" id="cor" required>
+        <option value="" selected disabled>Selecione</option>
+        <option value="Preto">Preto</option>
+        <option value="Branco">Branco</option>
+        <option value="Cinza">Cinza</option>
+        <option value="Marrom">Marrom</option>
+        <option value="Outro">Outro</option>
+    </select>
 
     <label for="sexo">Sexo:</label>
     <select name="sexo" id="sexo" required>

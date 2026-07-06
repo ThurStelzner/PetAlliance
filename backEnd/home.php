@@ -28,24 +28,45 @@
     $ehAdmin = $usuario && $usuario->getTipo() == 1;
 
 
-    if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
-        header('Content-Type: application/json');
-        $controllerAnimal = new AnimalController();
-        $controllerAnimal->listarAnimais($usuarioId);
-        exit;
-    }
+    try {
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'buscar_animais') {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $termo = $_GET['termo'] ?? '';
+            $filtros = [];
+            foreach (['porte', 'cor', 'tipo', 'vacinado', 'certificado'] as $f) {
+                if (!empty($_GET[$f])) {
+                    $filtros[$f] = $_GET[$f];
+                }
+            }
+            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros);
+            exit;
+        }
 
-    if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'detalhes_animal' && isset($_GET['id'])) {
-        header('Content-Type: application/json');
-        $controllerAnimal = new AnimalController();
-        $controllerAnimal->read($_GET['id']);
-        exit;
-    }
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $controllerAnimal->listarAnimais($usuarioId);
+            exit;
+        }
 
-    if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'favoritar_animal' && isset($_GET['idAnimal'])) {
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'detalhes_animal' && isset($_GET['id'])) {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $controllerAnimal->read($_GET['id']);
+            exit;
+        }
+
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'favoritar_animal' && isset($_GET['idAnimal'])) {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $controllerAnimal->favoritarAnimal($usuarioId, $_GET['idAnimal']);
+            exit;
+        }
+    } catch (Exception $e) {
         header('Content-Type: application/json');
-        $controllerAnimal = new AnimalController();
-        $controllerAnimal->favoritarAnimal($usuarioId, $_GET['idAnimal']);
+        http_response_code(500);
+        echo json_encode(["erro" => $e->getMessage()]);
         exit;
     }
 
@@ -55,10 +76,18 @@
     if ($flashMessage){
         echo '<script>window.flashMessage = ' . json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ';</script>';
     }
-    if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
-        $controllerAnimal = new AnimalController();
-        $controllerAnimal->deletarAnimal($_GET['id']);
-        exit; 
+    try {
+        if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
+            header('Content-Type: application/json');
+            $controllerAnimal = new AnimalController();
+            $controllerAnimal->deletarAnimal($_GET['id']);
+            exit;
+        }
+    } catch (Exception $e) {
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(["erro" => $e->getMessage()]);
+        exit;
     }
 
     require __DIR__ . '/../frontEnd/view/navBar.html';

@@ -10,6 +10,17 @@ if (params.get("sucesso") === "1") {
         "imagemEscolhida",
         "etapa",
     ].forEach(chave => sessionStorage.removeItem(chave));
+    [
+        "animalNome",
+        "animalRaca",
+        "animalCor",
+        "animalSexo",
+        "animalTipo",
+        "animalPorte",
+        "animalNascimento",
+        "animalPeso",
+        "animalDescricao"
+    ].forEach(chave => sessionStorage.removeItem(chave));
 }
 
 if (formulario) {

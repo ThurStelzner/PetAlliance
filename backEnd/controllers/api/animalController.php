@@ -40,6 +40,11 @@
             }
         }
 
+        public function buscarAnimais($termo, $usuarioId, $filtros = []) {
+            $animais = $this->dao->search($termo, $usuarioId, $filtros);
+            echo json_encode($animais);
+        }
+
         public function criarAnimal(Animal $animal) {
             try {
                 return $this->dao->cadastrarAnimal($animal);

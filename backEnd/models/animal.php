@@ -20,7 +20,7 @@ class Animal implements JsonSerializable {
     private $id;
     private $favoritado;
 
-    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina,$id = null,$favoritado = false
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina, $id = null,$favoritado = false
     ) {
         $this->dono_id = $dono_id;
         $this->foto_pet = $foto_pet;
@@ -66,6 +66,14 @@ class Animal implements JsonSerializable {
         return $this->cor;
     }
 
+    public function setCor($cor) {
+        $permitidos = ["Preto", "Branco", "Cinza", "Marrom", "Outro"];
+        if (!in_array($cor, $permitidos, true)) {
+            throw new Exception("Cor inválida. Selecione: Preto, Branco, Cinza, Marrom ou Outro.");
+        }
+        $this->cor = $cor;
+    }
+
     public function getSexo() {
         return $this->sexo;
     }
@@ -105,7 +113,6 @@ class Animal implements JsonSerializable {
     public function getFotoVacinas() {
         return $this->foto_vacina;
     }
-
 
     public function setId($id) {
         if (!filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
@@ -167,8 +174,9 @@ class Animal implements JsonSerializable {
     }
 
     public function setTipo($tipo) {
-        if (empty($tipo)) {
-            throw new Exception("Tipo não pode ser vazio.");
+        $permitidos = ["Cachorro", "Gato", "Cavalo", "Outro"];
+        if (!in_array($tipo, $permitidos, true)) {
+            throw new Exception("Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.");
         }
         $this->tipo = $tipo;
     }

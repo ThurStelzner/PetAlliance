@@ -1,10 +1,119 @@
 document.addEventListener("DOMContentLoaded", () => {
     const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
     const container = document.getElementById("animais-container");
+    const buscaInput = document.getElementById("busca-input");
 
     if (!container) {
         console.error("Elemento #animais-container não encontrado.");
         return;
+    }
+
+    const filtroCheckboxes = document.querySelectorAll(".filtro-check");
+    const btnFiltros = document.getElementById("btn-filtros");
+    const filtrosDropdown = document.getElementById("filtros-dropdown");
+    const btnLimparFiltros = document.getElementById("btn-limpar-filtros");
+
+    let debounceTimer;
+
+    function getFiltrosAtivos() {
+        const filtros = {};
+        filtroCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                const chave = cb.dataset.filtro;
+                if (!filtros[chave]) filtros[chave] = [];
+                filtros[chave].push(cb.value);
+            }
+        });
+        return filtros;
+    }
+
+    function montarUrlBusca() {
+        const termo = buscaInput ? buscaInput.value.trim() : "";
+        const filtros = getFiltrosAtivos();
+        const params = new URLSearchParams();
+        params.set("route", "buscar_animais");
+        if (termo) params.set("termo", termo);
+        Object.keys(filtros).forEach(chave => {
+            params.set(chave, filtros[chave].join(","));
+        });
+        return "/backEnd/home.php?" + params.toString();
+    }
+
+    function executarBusca() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async () => {
+            const url = montarUrlBusca();
+            const temFiltros = url.includes("termo=") || url.includes("porte=") || url.includes("cor=") || url.includes("tipo=") || url.includes("vacinado=") || url.includes("certificado=");
+            if (!temFiltros) {
+                carregarAnimais();
+                return;
+            }
+            try {
+                const response = await fetch(url, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error(`Erro na busca: ${response.status}`);
+                const data = await response.json();
+                const animais = Array.isArray(data) ? data : data.animais || [];
+                renderizarAnimais(animais);
+            } catch (error) {
+                console.error("Erro ao buscar animais:", error);
+            }
+        }, 300);
+    }
+
+    if (buscaInput) {
+        buscaInput.addEventListener("input", executarBusca);
+    }
+
+    filtroCheckboxes.forEach(cb => {
+        cb.addEventListener("change", executarBusca);
+    });
+
+    if (btnFiltros && filtrosDropdown) {
+        btnFiltros.addEventListener("click", () => {
+            const aberto = filtrosDropdown.style.display === "block";
+            filtrosDropdown.style.display = aberto ? "none" : "block";
+        });
+        document.addEventListener("click", (e) => {
+            if (!btnFiltros.contains(e.target) && !filtrosDropdown.contains(e.target)) {
+                filtrosDropdown.style.display = "none";
+            }
+        });
+    }
+
+    if (btnLimparFiltros) {
+        btnLimparFiltros.addEventListener("click", () => {
+            filtroCheckboxes.forEach(cb => cb.checked = false);
+            if (buscaInput) buscaInput.value = "";
+            filtrosDropdown.style.display = "none";
+            carregarAnimais();
+        });
+    }
+
+    function renderizarAnimais(animais) {
+        if (animais.length === 0) {
+            container.innerHTML = "<p>Nenhum animal encontrado.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        animais.forEach(animal => {
+            const card = document.createElement("article");
+            const fotoAnimal = (animal.foto_pet || "placeholder.webp").toString().trim() || "placeholder.webp";
+            card.classList.add("animal-card");
+                card.innerHTML = `
+                <img src="/uploads/animais/${fotoAnimal}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
+                <h3>${animal.nome || "Sem nome"}</h3>
+                <p>${animal.descricao || "Não informada"}</p>
+                <p>${animal.tipo || "Não informado"}</p>
+                <p>${animal.porte || "Não informado"}</p>
+                <p>${animal.sexo || "Não informado"}</p>
+                <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
+                <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>
+                ${window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : ""}
+            `;
+            container.appendChild(card);
+        });
     }
 
     async function carregarAnimais() {
@@ -22,31 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const animais = Array.isArray(data) ? data : data.animais || [];
 
-            if (animais.length === 0) {
-                container.innerHTML = "<p>Você ainda não tem nenhum animal favoritado.</p>";
-                return;
-            }
-
-            container.innerHTML = "";
-
-            animais.forEach(animal => {
-                const card = document.createElement("article");
-                const fotoAnimal = (animal.foto_pet || "placeholder.webp").toString().trim() || "placeholder.webp";
-                card.classList.add("animal-card");
-                    card.innerHTML = `
-                    <img src="/uploads/animais/${fotoAnimal}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
-                    <h3>${animal.nome || "Sem nome"}</h3>
-                    <p>${animal.descricao || "Não informada"}</p>
-                    <p>${animal.tipo || "Não informado"}</p>
-                    <p>${animal.porte || "Não informado"}</p>
-                    <p>${animal.sexo || "Não informado"}</p>
-                    <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
-                    <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>
-                    <button type="button" class="match-btn" data-animal-id="${animal.id}" data-animal-dono-id="${animal.dono_id}">Match</button>
-                    ${window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : ""}
-                `;
-                container.appendChild(card);
-            });
+            renderizarAnimais(animais);
         } catch (error) {
             console.error("Erro ao carregar animais:", error);
             container.innerHTML = "<p>Não foi possível carregar os animais.</p>";
@@ -171,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
                     <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
                     <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
-                    <button type="button" onclick="window.location. href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
+                    <button type="button" onclick="window.location.href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
 
                 </div>
             `);

@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../../backEnd/config/config.php";
-require_once __DIR__ . "/../../backEnd/models/Denuncia.php";
+require_once __DIR__ . "/../../backEnd/models/denuncia.php";
 
 class DenunciaDAO {
 
@@ -28,5 +28,32 @@ class DenunciaDAO {
         ]);
 
         return $denuncia;
+    }
+
+    public function listar() {
+        $sql = "SELECT d.*, u.nome AS usuario_nome, u.foto_perfil AS usuario_imagem
+                FROM tb_denuncias d
+                LEFT JOIN tb_usuarios u ON d.usuario_id = u.id
+                ORDER BY d.id DESC";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function estatisticas() {
+        $total = $this->pdo->query("SELECT COUNT(*) FROM tb_denuncias")->fetchColumn();
+
+        $porTipo = $this->pdo->query(
+            "SELECT tipo_alvo, COUNT(*) as total FROM tb_denuncias GROUP BY tipo_alvo"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $resolvidas = $this->pdo->query(
+            "SELECT resolvido, COUNT(*) as total FROM tb_denuncias GROUP BY resolvido"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'total' => (int) $total,
+            'porTipo' => $porTipo,
+            'resolvidas' => $resolvidas
+        ];
     }
 }

@@ -34,7 +34,8 @@ CREATE TABLE tb_pets (
     vacinado BOOLEAN NOT NULL,
     foto_vacinas VARCHAR(250) DEFAULT 0,
     certificado_raca BOOLEAN DEFAULT FALSE,
-	foto_certificado VARCHAR(250) DEFAULT 0,
+    foto_certificado VARCHAR(250) DEFAULT 0,
+    venda_preco DECIMAL(10,2) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
     FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id)
     ON DELETE CASCADE
@@ -90,13 +91,30 @@ CREATE TABLE tb_mensagens (
 CREATE TABLE tb_pagamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     usuario_id BIGINT UNSIGNED NOT NULL,
-    pet_id BIGINT UNSIGNED NOT NULL,
-    valor DECIMAL(10,2) NOT NULL,
-    taxa DECIMAL(10,2) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    data_pagamento TIMESTAMP NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (pet_id) REFERENCES tb_pets(id)
+    prod_id_abacatepay varchar(200) NOT NULL,
+    status_pagamento ENUM('PENDING', 'PAID', 'REFUNDED', 'EXPIRED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    id_transacao_abacatepay VARCHAR(255) UNIQUE NULL,
+    valor DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+);
+
+-- VENDAS
+CREATE TABLE tb_vendas (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    animal_id BIGINT UNSIGNED NOT NULL,
+    comprador_id BIGINT UNSIGNED NOT NULL,
+    vendedor_id BIGINT UNSIGNED NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    status ENUM('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    pagamento_id BIGINT UNSIGNED,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (animal_id) REFERENCES tb_pets(id),
+    FOREIGN KEY (comprador_id) REFERENCES tb_usuarios(id),
+    FOREIGN KEY (vendedor_id) REFERENCES tb_usuarios(id),
+    FOREIGN KEY (pagamento_id) REFERENCES tb_pagamentos(id)
 );
 
 -- DENÚNCIAS
@@ -109,7 +127,7 @@ CREATE TABLE tb_denuncias (
      resolvido TINYINT(1) NOT NULL DEFAULT 0,
      criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
      FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
- )
+)
 
 CREATE TABLE tb_favoritos (
 	id_pet BIGINT UNSIGNED,

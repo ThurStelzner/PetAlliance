@@ -14,7 +14,8 @@
         <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" 
              id="preview-foto" 
              class="perfil-preview" 
-             alt="Foto de Perfil">
+             alt="Foto de Perfil" 
+             style="width: 20rem;">
 
         <form action="editarFotoUsuario.php" method="POST" enctype="multipart/form-data" class="upload-group">
             <input type="file" name="imagemPerfil" id="input-foto" accept="image/*" required>
