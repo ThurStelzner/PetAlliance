@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${animal.sexo || "Não informado"}</p>
                     <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
                     <button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>
+                    <button type="button" class="match-btn" data-animal-id="${animal.id}" data-animal-dono-id="${animal.dono_id}">Match</button>
                     ${window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : ""}
                 `;
                 container.appendChild(card);

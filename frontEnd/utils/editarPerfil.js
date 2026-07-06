@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(resultado.message || 'Não foi possível atualizar o perfil.');
             }
 
-            window.location.href = '/backEnd/usuario/perfil.php';
+            window.location.href = '/backEnd/usuario/perfil.php?sucesso=1';
         } catch (error) {
             console.error("Erro ao atualizar perfil:", error);
             exibirErro(error.message);
