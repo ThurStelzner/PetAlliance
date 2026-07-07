@@ -27,6 +27,30 @@
 
     $ehAdmin = $usuario && $usuario->getTipo() == 1;
 
+    // Verificar pagamento pendente ao retornar do AbacatePay
+    $checkoutIdPendente = $_SESSION['ultimo_checkout_id'] ?? null;
+    $produtoIdPendente = $_SESSION['ultimo_produto_id'] ?? null;
+    unset($_SESSION['ultimo_checkout_id'], $_SESSION['ultimo_produto_id']);
+
+    if ($checkoutIdPendente && $produtoIdPendente) {
+        require_once __DIR__ . '/../backEnd/models/PagamentoAbacatePay.php';
+        $pagamentoService = new PagamentoAbacatePay();
+
+        $statusApi = $pagamentoService->consultarStatusApiAbacatePay($checkoutIdPendente);
+
+        if ($statusApi) {
+            $statusApiValue = $statusApi['status'] ?? 'PENDING';
+
+            if ($statusApiValue === 'PAID') {
+                $transacaoId = $statusApi['transactionId'] ?? $statusApi['transaction_id'] ?? null;
+                $pagamentoService->atualizarStatusPagamento($checkoutIdPendente, 'PAID', $transacaoId);
+                $_SESSION['flash'] = [
+                    'tipo' => 'sucesso',
+                    'mensagem' => 'Pagamento confirmado! Seja bem-vindo como membro.'
+                ];
+            }
+        }
+    }
 
     try {
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'buscar_animais') {
@@ -74,7 +98,15 @@
     unset($_SESSION['flash']);
 
     if ($flashMessage){
-        echo '<script>window.flashMessage = ' . json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ';</script>';
+        $jsonMsg = json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
+        echo '<script>window.flashMessage = ' . $jsonMsg . ';</script>';
+        echo '<div id="flash-message" class="flash-' . ($flashMessage['tipo'] ?? 'info') . '" style="padding:1rem;margin:1rem;border-radius:8px;text-align:center;font-weight:bold;';
+        if (($flashMessage['tipo'] ?? '') === 'sucesso') {
+            echo 'background:#d4edda;color:#155724;border:1px solid #c3e6cb;';
+        } else {
+            echo 'background:#fff3cd;color:#856404;border:1px solid #ffeeba;';
+        }
+        echo '">' . htmlspecialchars($flashMessage['mensagem'] ?? '') . '</div>';
     }
     try {
         if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {

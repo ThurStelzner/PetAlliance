@@ -59,28 +59,16 @@
             $baseUrl = "$protocolo://$dominio";
 
             $dados = [
-                'frequency' => 'ONE_TIME',
                 'methods' => ['CARD'],
                 'returnUrl' => "$baseUrl/backEnd/home.php",
-                'completionUrl' => "$baseUrl/backEnd/home.php"
+                'completionUrl' => "$baseUrl/backEnd/home.php",
+                'items' => [
+                    [
+                        'id' => (string)$produtoId,
+                        'quantity' => 1
+                    ]
+                ]
             ];
-
-            if ($animalId) {
-                $animal = $this->getAnimalById($animalId);
-                if (!$animal) {
-                    throw new Exception('Animal não encontrado');
-                }
-                $dados['items'] = [[
-                    'name' => $animal['nome'] ?? 'Filhote',
-                    'quantity' => 1,
-                    'price' => (int)((float)$preco * 100)
-                ]];
-            } else {
-                $dados['items'] = [[
-                    'id' => $produtoId,
-                    'quantity' => 1
-                ]];
-            }
 
             return $dados;
         }
@@ -186,5 +174,70 @@
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$usuarioId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        public function consultarStatusApiAbacatePay($checkoutId) {
+            $url = rtrim($this->apiUrl, '/') . '/v2/checkouts/get?id=' . urlencode($checkoutId);
+
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPGET => true,
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Bearer ' . $this->apiKey
+                ],
+                CURLOPT_TIMEOUT => 15
+            ]);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            if (curl_error($ch)) {
+                curl_close($ch);
+                return null;
+            }
+
+            curl_close($ch);
+
+            if ($httpCode !== 200) {
+                return null;
+            }
+
+            $dados = json_decode($response, true);
+            $checkoutData = $dados['data'] ?? null;
+
+            if (!$checkoutData) {
+                return null;
+            }
+
+            return $checkoutData;
+        }
+
+        public function verificarEAtualizarPagamentoPendente($checkoutId, $produtoId) {
+            $pagamento = $this->verificarStatusPagamento($produtoId);
+
+            if (!$pagamento || $pagamento['status_pagamento'] === 'PAID') {
+                return $pagamento;
+            }
+
+            $statusApi = $this->consultarStatusApiAbacatePay($checkoutId);
+
+            if (!$statusApi) {
+                return $pagamento;
+            }
+
+            $statusApiValue = $statusApi['status'] ?? 'PENDING';
+
+            if ($statusApiValue === 'PAID') {
+                $transacaoId = $statusApi['transactionId'] ?? $statusApi['transaction_id'] ?? null;
+                $this->atualizarStatusPagamento($checkoutId, 'PAID', $transacaoId);
+                $pagamento['status_pagamento'] = 'PAID';
+                $pagamento['atualizado_em'] = date('Y-m-d H:i:s');
+                if ($transacaoId) {
+                    $pagamento['id_transacao_abacatepay'] = $transacaoId;
+                }
+            }
+
+            return $pagamento;
         }
     }
