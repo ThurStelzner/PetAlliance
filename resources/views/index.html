@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAlliance - Encontre seu companheiro ideal</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="main-layout">
+
+    <!-- NavBar -->
+    <nav class="navbar site-navbar">
+        <div class="navbar-inner site-navbar-inner">
+            <!-- Left: Brand -->
+            <button onclick="navigateTo('home')" class="navbar-brand site-navbar-brand">
+                <img src="../assets/img/logo.png" alt="Logo PetAlliance" class="navbar-logo site-navbar-logo">
+                <div>Pet<span class="navbar-brand-accent site-navbar-brand-accent">Alliance</span></div>
+            </button>
+
+            <!-- Right: User Section -->
+            <div class="navbar-user-section site-navbar-user-section">
+                <div id="nav-profile-avatar" onclick="navigateTo('profile')" class="nav-avatar hidden auth-only" style="cursor: pointer;">
+                    <!-- Imagem injetada pelo script.js -->
+                </div>
+                <button id="auth-btn" onclick="navigateTo('login')" class="navbar-auth-btn site-navbar-auth-btn">Entrar</button>
+                <button id="logout-btn" onclick="logout()" class="navbar-logout-btn site-navbar-logout-btn hidden auth-only">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="21" y1="12" y2="12"/></svg>
+                    <span>Sair</span>
+                </button>
+                <button onclick="toggleMenu()" class="navbar-hamburger site-navbar-hamburger">
+                    <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="page-content" class="page-shell site-page-content">
+        <!-- HOME PAGE -->
+        <section id="page-home" class="page page-shell">
+            <div class="hero-card">
+                <h1 class="hero-title">
+                    Encontre seu <span class="text-primary">companheiro</span> ideal
+                </h1>
+                <p class="hero-text">
+                    Conectamos donos apaixonados por seus animais. Explore, conheça e faça conexões reais.
+                </p>
+            </div>
+            <div class="container py-10">
+                <h2 class="section-title">Animais Cadastrados</h2>
+                <div id="home-grid" class="animals-grid">
+                    <!-- Animal cards will be injected here -->
+                </div>
+                <div id="home-loader" class="loader-container">
+                    <div class="loader-text">
+                        <div class="loader-spinner"></div>
+                        Carregando mais animais...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAVORITES PAGE -->
+        <section id="page-favorites" class="page hidden container py-10">
+            <div class="favorites-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart text-red-500"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <h1 class="page-title">Animais Favoritos</h1>
+            </div>
+            <div id="favorites-grid" class="animals-grid">
+                <!-- Fav cards injected here -->
+            </div>
+            <div id="favorites-empty" class="favorites-empty hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-icon lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <p class="empty-text">Você ainda não favoritou nenhum animal.</p>
+                <p class="empty-subtitle">Clique no coração nos cards para salvar seus favoritos.</p>
+            </div>
+        </section>
+
+        <!-- MEMBERS PAGE -->
+        <section id="page-members" class="page hidden page-shell">
+            <div class="hero-card hero-card-members">
+                <div class="premium-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Comunidade Premium
+                </div>
+                <h1 class="page-title">Ver Os Membros</h1>
+                <p class="hero-subtitle">Conheça os animais de quem faz parte da nossa comunidade e escolha seu plano.</p>
+            </div>
+            <div class="container py-12">
+                <div class="members-intro">
+                    <h2 class="section-title">Seja Membro</h2>
+                    <p class="section-subtitle">Escolha o plano ideal e comece a publicar seus animais</p>
+                </div>
+                <div id="plans-grid" class="plans-grid">
+                    <!-- Plans injected here -->
+                </div>
+                <div id="selected-plan-banner" class="plan-banner hidden">
+                    <div class="plan-banner-info">
+                        <p class="plan-banner-title"><span id="selected-plan-name" class="text-primary1"></span></p>
+                        <p id="selected-plan-desc" class="plan-banner-subtitle"></p>
+                    </div>
+                    <button onclick="openCheckout()" class="plan-banner-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Ir para pagamento
+                    </button>
+                </div>
+                <div class="members-list-section">
+                    <h2 class="section-title">Animais dos Membros</h2>
+                    <div id="members-grid" class="animals-grid">
+                        <!-- Member cards injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE PAGE -->
+        <section id="page-profile" class="page hidden container py-10">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar-wrapper">
+                        <div id="profile-avatar-container" class="profile-avatar">
+                            <div class="w-full h-full flex items-center justify-center bg-primary/10"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                        </div>
+                        <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="profile-avatar-edit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                        </button>
+                        <input id="avatar-input" type="file" accept="image/*" class="hidden" onchange="handleProfileAvatar(event)">
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profile-name" class="font-display text-2xl font-bold text-foreground truncate">Carregando...</h2>
+                        <p id="profile-email" class="text-sm text-muted-foreground truncate">carregando@email.com</p>
+                    </div>
+                    <button id="profile-edit-btn" onclick="toggleProfileEdit()" class="profile-edit-btn">Editar</button>
+                </div>
+                <div class="p-6">
+                    <div id="profile-details" class="profile-details-grid">
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Nome Completo:</p>
+                            <p id="profile-name-detail" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Email:</p>
+                            <p id="profile-email-detail" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CPF:</p>
+                            <p id="profile-cpf" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Telefone:</p>
+                            <p id="profile-phone" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                        <div class="profile-detail-item">
+                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CEP:</p>
+                            <p id="profile-cep" class="text-sm font-semibold text-foreground">-</p>
+                        </div>
+                    </div>
+                    <div id="profile-edit-form" class="profile-edit-form hidden">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo</label>
+                            <input id="edit-name" type="text" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input id="edit-email" type="email" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CPF</label>
+                            <input id="edit-cpf" type="text" oninput="maskCPF(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CEP</label>
+                            <input id="edit-cep" type="text" oninput="maskCEP(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input id="edit-phone" type="text" oninput="maskPhone(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <input id="edit-password" type="password" class="form-input" placeholder="Deixe em branco para não alterar">
+                        </div>
+                        <div class="form-actions">
+                            <button onclick="saveProfile()" class="btn-primary flex-1">Salvar</button>
+                            <button onclick="toggleProfileEdit()" class="btn-secondary flex-1">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SETTINGS PAGE -->
+        <section id="page-settings" class="page hidden container py-10">
+            <div class="favorites-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43-.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                <h1 class="page-title">Configurações</h1>
+            </div>
+            
+            <div class="settings-layout">
+                <aside class="settings-sidebar">
+                    <button onclick="scrollToSection('settings-account')" class="settings-nav-link active">Conta</button>
+                    <button onclick="scrollToSection('settings-appearance')" class="settings-nav-link">Aparência</button>
+                </aside>
+
+                <div class="settings-main">
+                    <!-- Account Section -->
+                    <div id="settings-account" class="settings-section">
+                        <h3 class="section-title-sm">Conta</h3>
+                        <div class="settings-card">
+
+                            <div class="settings-item" >
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label text-red-500">Excluir Conta</p>
+                                    <p class="text-xs text-muted-foreground">Remova permanentemente todos os seus dados</p>
+                                </div>
+                                <button class="btn-secondary btn-sm text-red-500">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Section -->
+                    <div id="settings-appearance" class="settings-section">
+                        <h3 class="section-title-sm">Aparência</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <p class="settings-item-label">Tema Escuro</p>
+                                    <p class="text-xs text-muted-foreground">Mude a aparência do site para o modo noturno</p>
+                                </div>
+                                <button id="theme-toggle" class="theme-toggle-btn">
+                                    <div id="theme-toggle-dot"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- LOGIN PAGE -->
+        <section id="page-login" class="page hidden auth-page">
+            <div class="auth-card">
+                    <div class="auth-card-header">
+                        <div class="auth-card-title-wrapper">
+                            <div class="auth-card-icon">
+                                <img src="../assets/img/logo.png" alt="Ícone de pata" class="auth-card-logo">
+                            </div>
+                            <h1 class="auth-card-title">Bem-vindo de volta</h1>
+                        </div>
+                        <p class="auth-card-subtitle">Entre com seu CPF e senha</p>
+                    </div>
+                <form onsubmit="handleLogin(event)" class="auth-card-form">
+                    <div id="login-error" class="error-message hidden">CPF ou senha inválidos.</div>
+                         <div class="form-group">
+                             <label class="form-label">CPF</label>
+                             <input id="login-cpf" type="text" placeholder="000.000.000-00" oninput="maskCPF(event)" class="form-input">
+                         </div>
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input id="login-password" type="password" placeholder="••••••••" class="form-input">
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Entrar</button>
+                    <p class="auth-footer">
+                        Não tem conta? <button type="button" onclick="navigateTo('register')" class="link-primary">Cadastre-se</button>
+                    </p>
+                </form>
+            </div>
+        </section>
+
+        <!-- REGISTER PAGE -->
+        <section id="page-register" class="page hidden auth-page">
+            <div class="auth-card auth-card-wide">
+                <div class="auth-card-header-wide">
+                    <div class="auth-card-icon">
+                        <img src="../assets/img/logo.png" alt="Logo PetAlliance" class="auth-card-logo">
+                    </div>
+                    <div class="auth-card-title-group">
+                        <h1 class="auth-card-title">Crie sua conta</h1>
+                        <p class="auth-card-subtitle">Junte-se à comunidade PetAlliance</p>
+                    </div>
+                </div>
+                <form onsubmit="handleRegister(event)" class="auth-card-form">
+                    <div id="reg-error" class="error-message hidden"></div>
+                    <div class="reg-avatar-upload">
+                        <div class="reg-avatar-wrapper">
+                            <div id="reg-avatar-preview" class="reg-avatar-preview">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user text-muted-foreground"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <button type="button" onclick="document.getElementById('reg-avatar-input').click()" class="reg-avatar-edit-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                            </button>
+                            <input id="reg-avatar-input" type="file" accept="image/*" class="hidden" onchange="handleRegAvatar(event)">
+                        </div>
+                        <div class="reg-avatar-info">
+                            <p id="reg-display-name" class="reg-display-name">Seu nome aqui</p>
+                            <p id="reg-display-email" class="reg-display-email">seu@email.com</p>
+                            <button type="button" onclick="document.getElementById('reg-avatar-input').click()" class="reg-upload-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Adicionar foto
+                            </button>
+                        </div>
+                    </div>
+                    <div class="reg-form-fields">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo</label>
+                            <input id="reg-name" type="text" placeholder="João Silva" maxlength="100" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input id="reg-email" type="text" placeholder="seu@email.com" maxlength="100" class="form-input">
+                            <p class="form-hint">Deve conter @ e .</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CPF</label>
+                            <input id="reg-cpf" type="text" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefone</label>
+                            <input id="reg-phone" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CEP</label>
+                            <input id="reg-cep" type="text" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" maxlength="50" class="form-input">
+                        </div>
+                    </div>
+                    <div class="terms-section">
+                        <p class="terms-title">Termos de Uso <span class="required-mark">*</span></p>
+                        <label id="reg-terms-label" class="terms-label-enabled">
+                            <input id="reg-terms-check" type="checkbox" class="checkbox-primary" disabled>
+                            <span class="terms-text">Li e aceito os <button type="button" onclick="openTermsModal()" class="link-primary">Termos de Uso</button> e a <button type="button" onclick="openPrivacyModal()" class="link-primary">Política de Privacidade</button> do PetAlliance.</span>
+                        </label>
+                        <p id="reg-terms-hint" class="terms-hint">📖 Clique nos links acima para ler os termos antes de aceitar.</p>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Criar Conta</button>
+                    <p class="auth-footer">
+                        Já tem conta? <button type="button" onclick="navigateTo('login')" class="link-primary">Entrar</button>
+                    </p>
+                </form>
+            </div>
+        </section>
+
+        <!-- MY ANIMALS PAGE -->
+        <section id="page-my-animals" class="page hidden container py-10">
+            <div class="favorites-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dog"><path d="M6 18 a 6 6 0 0 1 0 -12 a 6 6 0 0 1 12 0 a 6 6 0 0 1 0 12"/><path d="M10 14 a 2 2 0 1 0 0 -4 a 2 2 0 0 0 0 4"/><path d="M14 14 a 2 2 0 1 0 0 -4 a 2 2 0 0 0 0 4"/><path d="M18 10 a 2 2 0 0 1 2 2 v 4 a 2 2 0 0 1 -2 2 h -4 a 2 2 0 0 1 -2 -2 v -4 a 2 2 0 0 1 2 -2 h 4"/></svg>
+                <h1 class="page-title">Seus Animais</h1>
+            </div>
+            <div class="my-animals-controls" style="display: flex; justify-content: flex-end; margin-bottom: 2rem;">
+                <button onclick="openRegisterAnimalModal()" class="btn-primary">Cadastrar Animal</button>
+            </div>
+            <div id="my-animals-grid" class="animals-grid">
+                <!-- My animals injected here -->
+            </div>
+            <div id="my-animals-empty" class="favorites-empty hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-icon lucide lucide-dog"><path d="M6 18 a 6 6 0 0 1 0 -12 a 6 6 0 0 1 12 0 a 6 6 0 0 1 0 12"/><path d="M10 14 a 2 2 0 1 0 0 -4 a 2 2 0 0 0 0 4"/><path d="M14 14 a 2 2 0 1 0 0 -4 a 2 2 0 0 0 0 4"/></svg>
+                <p class="empty-text">Você ainda não cadastrou nenhum animal.</p>
+                <p class="empty-subtitle">Que tal apresentar seu melhor amigo para a comunidade?</p>
+            </div>
+        </section>
+
+        <!-- MATCHES PAGE -->
+        <section id="page-matches" class="page hidden container py-10">
+            <div class="favorites-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                <h1 class="page-title">Matches</h1>
+            </div>
+            <div id="matches-grid" class="animals-grid">
+                <!-- Matches injected here -->
+            </div>
+            <div id="matches-empty" class="favorites-empty hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-icon lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                <p class="empty-text">Nenhum match encontrado ainda.</p>
+                <p class="empty-subtitle">Continue explorando para encontrar companheiros ideais!</p>
+            </div>
+        </section>
+            <footer class="main-footer">
+                <div class="footer-container">
+                    <div class="footer-logo">
+                        <img src="../assets/img/logo.png" alt="Footer PetAlliance" class="footer_logo">PetAlliance
+                    </div>
+                    <p class="footer-copyright">© 2026 PetAlliance. Feito com amor pelos animais.</p>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link" onclick="openTermsModal()">Termos</a>
+                        <a href="#" class="footer-link" onclick="openPrivacyModal()">Privacidade</a>
+                        <a href="https://wa.me/5511999999999" target="_blank" class="footer-link">Contato</a>
+                    </div>
+                </div>
+            </footer>
+    </main>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal-shell hidden">
+        <div id="terms-overlay" class="modal-overlay" onclick="closeTermsModal()"></div>
+        <div id="terms-content" class="modal-content">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 class="modal-title">Termos de Uso</h2>
+                    <button onclick="closeTermsModal()" class="modal-close-btn">×</button>
+                </div>
+                <div id="terms-content-text" class="modal-text"></div>
+                <div class="modal-footer">
+                    <button id="terms-accept-btn" type="button" onclick="acceptTerms()" disabled class="btn-primary flex-1">
+                        Aceitar Termos
+                    </button>
+                    <button type="button" onclick="closeTermsModal()" class="btn-secondary flex-1">
+                        Fechar
+                    </button>
+                </div>
+                <p id="terms-scroll-hint" class="modal-hint">Leia até o final para aceitar os termos →</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="modal-shell hidden">
+        <div id="privacy-overlay" class="modal-overlay" onclick="closePrivacyModal()"></div>
+        <div id="privacy-content" class="modal-content">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 class="modal-title">Política de Privacidade</h2>
+                    <button onclick="closePrivacyModal()" class="modal-close-btn">×</button>
+                </div>
+                <div id="privacy-content-text" class="modal-text">
+                    <p>Seus dados pessoais são protegidos conforme a LGPD. Utilizamos suas informações para:</p>
+                    <ul class="list-disc ml-5 my-4">
+                        <li>Criar e manter sua conta</li>
+                        <li>Conectar você com outros proprietários de animais</li>
+                        <li>Melhorar nossos serviços</li>
+                        <li>Enviar comunicações importantes</li>
+                    </ul>
+                    <p>Nunca compartilhamos dados pessoais com terceiros sem seu consentimento.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closePrivacyModal()" class="btn-primary flex-1">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container" class="modal-shell hidden">
+        <div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
+        <div id="modal-content" class="modal-content">
+            <!-- Modal content injected here -->
+        </div>
+    </div>
+
+    <div class="mobile-menu-container">
+        <div id="mobile-menu" class="mobile-menu hidden">
+            <button class="mobile-nav-link" data-page="home">Início</button>
+            <button class="mobile-nav-link" data-page="members">Membros</button>
+            <button class="mobile-nav-link hidden auth-only" data-page="my-animals">Seus Animais</button>
+            <button class="mobile-nav-link hidden auth-only" data-page="profile">Perfil</button>
+            <button class="mobile-nav-link" data-page="settings">Configurações</button>
+            <button class="mobile-nav-link" data-page="favorites">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart text-red-500"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <span>Favoritos</span>
+                <span id="fav-count-mobile" class="nav-badge hidden">0</span>
+            </button>
+            <button onclick="navigateTo('matches')" class="mobile-nav-link hidden auth-only" data-page="matches">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shuffle"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                <span>Matches</span>
+                <span id="match-count-mobile" class="nav-badge match hidden">0</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
