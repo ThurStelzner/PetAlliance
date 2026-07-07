@@ -24,6 +24,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const cepValido = await validarCep();
             if (cepValido) {
+                const submitter = event.submitter;
+                if (submitter && submitter.name) {
+                    const hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = submitter.name;
+                    hidden.value = submitter.value || '1';
+                    this.appendChild(hidden);
+                }
                 formCadastro.submit();
             }
         });
@@ -86,5 +94,9 @@ function voltar() {
 }
 
 function limparFoto() {
-    document.getElementById('imagem').value = '';
+    document.getElementById('imagemPerfil').value = '';
+    const preview = document.getElementById('preview-usuario');
+    if (preview) {
+        preview.src = '/uploads/usuario/placeholder.webp';
+    }
 }
