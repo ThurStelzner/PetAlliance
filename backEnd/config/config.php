@@ -22,6 +22,7 @@
     }
 
     carregarEnv();
+    date_default_timezone_set('America/Sao_Paulo');
 
     class Conexao {
         private static $instancia = null;
@@ -38,6 +39,7 @@
                         PDO::ATTR_ERRMODE,
                         PDO::ERRMODE_EXCEPTION
                     );
+                    self::$instancia->exec("SET time_zone = 'America/Sao_Paulo'");
                 } catch (PDOException $e){
                     die("Erro: " . $e->getMessage());
                 }

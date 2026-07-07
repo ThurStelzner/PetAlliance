@@ -1,7 +1,7 @@
 const API_BASE = "/backEnd/chatApi.php?route=";
 let conversaAtual = null;
 let ultimoId = 0;
-let pollingInterval = null;
+let polling = null;
 let dadosConversaAtual = null;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -63,7 +63,7 @@ async function abrirConversaPorSolicitacao(solicitacaoId) {
     }
 }
 
-function abrirConversa(conversaId, solicitacaoId) {
+async function abrirConversa(conversaId, solicitacaoId) {
     pararPolling();
     conversaAtual = { id: conversaId, solicitacao_id: solicitacaoId };
     ultimoId = 0;
@@ -72,9 +72,9 @@ function abrirConversa(conversaId, solicitacaoId) {
     document.getElementById("chat-active").style.display = "flex";
 
     carregarHeader();
-    carregarMensagens();
+    await carregarMensagens();
     carregarConversas();
-    iniciarPolling();
+    if (conversaId) iniciarPolling();
 }
 
 function carregarHeader() {
@@ -114,22 +114,32 @@ function renderizarMensagens(mensagens) {
         const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
         html += `<div class="msg ${ehMinha ? 'minha' : 'outra'}">
             ${m.conteudo}
-            <small>${new Date(m.data_envio).toLocaleString('pt-BR')}</small>
+            <small>${m.data_envio || ''}</small>
         </div>`;
     });
     container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
 }
 
+function adicionarMensagemNaTela(m) {
+    const container = document.getElementById("chat-messages");
+    const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
+    const div = document.createElement("div");
+    div.className = "msg " + (ehMinha ? "minha" : "outra");
+    div.innerHTML = `${m.conteudo} <small>${m.data_envio || ''}</small>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
 function iniciarPolling() {
     pararPolling();
-    pollingInterval = setInterval(buscarNovas, 3000);
+    polling = setInterval(buscarNovas, 500);
 }
 
 function pararPolling() {
-    if (pollingInterval) {
-        clearInterval(pollingInterval);
-        pollingInterval = null;
+    if (polling) {
+        clearInterval(polling);
+        polling = null;
     }
 }
 
@@ -139,18 +149,11 @@ async function buscarNovas() {
         const resp = await fetch(API_BASE + "novas_mensagens&conversa_id=" + conversaAtual.id + "&ultimo_id=" + ultimoId, { credentials: "same-origin" });
         const data = await resp.json();
         if (data.sucesso && data.mensagens.length) {
-            const container = document.getElementById("chat-messages");
-            let html = "";
-            data.mensagens.forEach(m => {
-                const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
-                html += `<div class="msg ${ehMinha ? 'minha' : 'outra'}">
-                    ${m.conteudo}
-                    <small>${new Date(m.data_envio).toLocaleString('pt-BR')}</small>
-                </div>`;
-                if (m.id > ultimoId) ultimoId = m.id;
-            });
-            container.insertAdjacentHTML("beforeend", html);
-            container.scrollTop = container.scrollHeight;
+            const novas = data.mensagens.filter(m => parseInt(m.id) > parseInt(ultimoId));
+            if (novas.length) {
+                novas.forEach(m => adicionarMensagemNaTela(m));
+                ultimoId = parseInt(novas[novas.length - 1].id);
+            }
         }
     } catch (e) {
         console.error("Polling error:", e);
@@ -192,8 +195,14 @@ async function enviarMensagem() {
             if (!conversaAtual.id) {
                 conversaAtual.id = data.mensagem.conversa_id;
                 carregarConversas();
-                carregarMensagens();
+                await carregarMensagens();
                 iniciarPolling();
+            } else {
+                if (data.mensagem.id > ultimoId) {
+                    adicionarMensagemNaTela(data.mensagem);
+                    document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
+                }
+                ultimoId = data.mensagem.id;
             }
         } else {
             alert("Erro: " + (data.erro || "Erro ao enviar"));

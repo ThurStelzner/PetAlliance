@@ -19,6 +19,15 @@ class MensagemDAO {
             $mensagem->getConteudo()
         ]);
         $mensagem->setId($this->pdo->lastInsertId());
+
+        $sqlData = "SELECT data_envio FROM tb_mensagens WHERE id = ?";
+        $stmtData = $this->pdo->prepare($sqlData);
+        $stmtData->execute([$mensagem->getId()]);
+        $row = $stmtData->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $mensagem->setDataEnvio($row['data_envio']);
+        }
+
         return $mensagem;
     }
 
