@@ -38,13 +38,17 @@ class SolicitacaoMatchController {
             $solicitacaoData = $this->dao->buscar($solicitacao->getId());
             $donoId = $solicitacaoData['dono_id'];
 
-            $notificacao = new Notificacao(
-                $donoId,
-                'solicitacao_match',
-                'Alguém quer um match com seu pet "' . $solicitacaoData['pet_nome'] . '"',
-                '/backEnd/match.php'
-            );
-            $this->notificacaoDAO->criar($notificacao);
+            try {
+                $notificacao = new Notificacao(
+                    $donoId,
+                    'solicitacao_match',
+                    'Alguém quer um match com seu pet "' . $solicitacaoData['pet_nome'] . '"',
+                    '/backEnd/match.php'
+                );
+                $this->notificacaoDAO->criar($notificacao);
+            } catch (Exception $e) {
+                // Ignora: dono do pet pode ter sido deletado
+            }
 
             echo json_encode(['sucesso' => true, 'mensagem' => 'Solicitação enviada!']);
         } catch (Exception $e) {
@@ -71,13 +75,17 @@ class SolicitacaoMatchController {
 
             $this->dao->atualizarStatus($id, 'aceito');
 
-            $notificacao = new Notificacao(
-                $solicitacao['remetente_id'],
-                'match_aceito',
-                'Seu match com "' . $solicitacao['pet_nome'] . '" foi aceito!',
-                '/backEnd/match.php'
-            );
-            $this->notificacaoDAO->criar($notificacao);
+            try {
+                $notificacao = new Notificacao(
+                    $solicitacao['remetente_id'],
+                    'match_aceito',
+                    'Seu match com "' . $solicitacao['pet_nome'] . '" foi aceito!',
+                    '/backEnd/match.php'
+                );
+                $this->notificacaoDAO->criar($notificacao);
+            } catch (Exception $e) {
+                // Ignora: remetente pode ter sido deletado
+            }
 
             echo json_encode(['sucesso' => true, 'mensagem' => 'Match aceito!']);
         } catch (Exception $e) {
@@ -104,13 +112,17 @@ class SolicitacaoMatchController {
 
             $this->dao->atualizarStatus($id, 'recusado');
 
-            $notificacao = new Notificacao(
-                $solicitacao['remetente_id'],
-                'match_recusado',
-                'Seu match com "' . $solicitacao['pet_nome'] . '" foi recusado.',
-                '/backEnd/match.php'
-            );
-            $this->notificacaoDAO->criar($notificacao);
+            try {
+                $notificacao = new Notificacao(
+                    $solicitacao['remetente_id'],
+                    'match_recusado',
+                    'Seu match com "' . $solicitacao['pet_nome'] . '" foi recusado.',
+                    '/backEnd/match.php'
+                );
+                $this->notificacaoDAO->criar($notificacao);
+            } catch (Exception $e) {
+                // Ignora: remetente pode ter sido deletado
+            }
 
             echo json_encode(['sucesso' => true, 'mensagem' => 'Solicitação recusada.']);
         } catch (Exception $e) {
