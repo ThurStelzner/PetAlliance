@@ -25,8 +25,32 @@
     { id: 'm4', ownerName: 'João Pereira', photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&h=600&fit=crop&auto=format', name: 'Mia', breed: 'Persa', type: 'Gato', birthDate: '2022-01-10', weight: '3 kg', vaccinated: true },
   ];
 
-  // --- Helpers ---
-  // Máscaras de entrada
+  // --- API Helper ---
+  async function apiCall(controller, action, params = {}) {
+    const query = new URLSearchParams({ controller, action, ...params }).toString();
+    const response = await fetch(`./api.php?${query}`);
+    const data = await response.json();
+    if (data.erro) throw new Error(data.erro);
+    return data;
+  }
+
+  async function apiPost(controller, action, data = {}) {
+    const query = new URLSearchParams({ controller, action }).toString();
+    const isFormData = data instanceof FormData;
+    const options = {
+      method: 'POST',
+    };
+    if (isFormData) {
+      options.body = data;
+    } else {
+      options.headers = { 'Content-Type': 'application/json' };
+      options.body = JSON.stringify(data);
+    }
+    const response = await fetch(`./api.php?${query}`, options);
+    const resData = await response.json();
+    if (resData.erro) throw new Error(resData.erro);
+    return resData;
+  }
   function maskCPF(event) {
     let input = event.target;
     let value = input.value.replace(/\D/g, '');
@@ -164,9 +188,15 @@
 
   function calcAge(bd) {
     if (!bd) return 'Idade não informada';
-    const diff = Date.now() - new Date(bd).getTime();
+    const date = new Date(bd);
+    if (isNaN(date.getTime())) return 'Idade inválida';
+    
+    const diff = Date.now() - date.getTime();
+    if (diff < 0) return 'Recém-nascido';
+    
     const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
     if (years > 0) return `${years} ano${years > 1 ? 's' : ''}`;
+    
     const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
     return `${months} mês${months !== 1 ? 'es' : ''}`;
   }
@@ -201,7 +231,7 @@
     page: 'home',
     favorites: JSON.parse(localStorage.getItem('pa:favs') || '[]'),
     user: JSON.parse(localStorage.getItem('pa:user') || 'null'),
-    pets: [...PETS], // Inicializa com os pets do mock
+    pets: [], 
     selectedPlan: null,
   };
 
@@ -245,7 +275,7 @@
     div.className = 'card';
     div.innerHTML = `
       <div class="pet-card-media">
-        <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
+        <img src="uploads/animais/${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
       </div>
       <div class="p-4">
         <div class="flex items-start justify-between gap-3 pet-card-content">
@@ -275,33 +305,54 @@
     return div;
   }
 
-  function renderMembersGrid() {
+  async function renderMembersGrid() {
     const container = qs('#members-grid');
     if (!container) return;
     container.innerHTML = '';
-    MEMBER_PETS.forEach(p => container.appendChild(createCard(p)));
+    try {
+      const pets = await apiCall('animal', 'listarMembros', { id: state.user?.cpf || 'guest' });
+      pets.forEach(p => container.appendChild(createCard(p)));
+    } catch (e) {
+      console.error('Erro ao carregar membros:', e);
+    }
   }
 
-  function renderHomeGrid() {
+  async function renderHomeGrid() {
     const container = qs('#home-grid');
+    if (!container) return;
     container.innerHTML = '';
-    state.pets.forEach(p => container.appendChild(createCard(p)));
-    qs('#home-loader').classList.add('hidden');
+    
+    try {
+      const pets = await apiCall('animal', 'listarAnimais', { id: state.user?.cpf || 'guest' });
+      state.pets = pets;
+      pets.forEach(p => container.appendChild(createCard(p)));
+    } catch (e) {
+      console.error('Erro ao carregar pets:', e);
+    } finally {
+      qs('#home-loader')?.classList.add('hidden');
+    }
   }
 
-  function renderFavoritesGrid() {
+  async function renderFavoritesGrid() {
     const grid = qs('#favorites-grid');
     const emptyBox = qs('#favorites-empty');
+    if (!grid) return;
     grid.innerHTML = '';
-    const favs = state.pets.filter(p => state.favorites.includes(p.id));
-    if (favs.length === 0) {
+    
+    try {
+      const favs = await apiCall('animal', 'listarAnimaisFavoritos', { id: state.user?.cpf || '' });
+      if (favs.length === 0) {
+        emptyBox.classList.remove('hidden');
+        grid.classList.add('hidden');
+        return;
+      }
+      emptyBox.classList.add('hidden');
+      grid.classList.remove('hidden');
+      favs.forEach(p => grid.appendChild(createCard(p)));
+    } catch (e) {
+      console.error('Erro ao carregar favoritos:', e);
       emptyBox.classList.remove('hidden');
-      grid.classList.add('hidden');
-      return;
     }
-    emptyBox.classList.add('hidden');
-    grid.classList.remove('hidden');
-    favs.forEach(p => grid.appendChild(createCard(p)));
   }
 
   function renderPlans() {
@@ -444,25 +495,43 @@
     state.selectedPaymentMethod = method;
   }
 
-  function finalizePayment() {
+  async function finalizePayment() {
     const plan = state.selectedPlan;
-    const method = state.selectedPaymentMethod;
-    alert(`Pagamento de ${plan.name} via ${method.toUpperCase()} processado com sucesso!`);
-    closeModal();
-    // Aqui poderia atualizar o status do usuário para premium
+    if (!plan) {
+      alert('Por favor, selecione um plano primeiro!');
+      return;
+    }
+    try {
+      const res = await apiPost('pagamento', 'criarCheckout', { 
+        product_id: plan.id, 
+        preco: plan.price 
+      });
+      if (res.success && res.checkout_url) {
+        window.location.href = res.checkout_url;
+      } else {
+        alert('Erro ao criar checkout: ' + (res.error || 'Erro desconhecido'));
+      }
+    } catch (e) {
+      alert('Erro na transação: ' + e.message);
+    }
   }
 
   // --- Favorites ---
-  function toggleFavorite(id) {
+  async function toggleFavorite(id) {
     if (!state.user) {
       alert('Você precisa estar logado para favoritar animais!');
       navigateTo('login');
       return;
     }
-    const idx = state.favorites.indexOf(id);
-    if (idx === -1) state.favorites.push(id); else state.favorites.splice(idx, 1);
-    localStorage.setItem('pa:favs', JSON.stringify(state.favorites));
-    updateFavBadges();
+    try {
+      await apiPost('animal', 'favoritarAnimal', { petId: id });
+      const idx = state.favorites.indexOf(id);
+      if (idx === -1) state.favorites.push(id); else state.favorites.splice(idx, 1);
+      localStorage.setItem('pa:favs', JSON.stringify(state.favorites));
+      updateFavBadges();
+    } catch (e) {
+      alert('Erro ao favoritar animal: ' + e.message);
+    }
   }
 
   function updateFavBadges() {
@@ -492,7 +561,7 @@
       <div class="pet-modal">
         <div class="pet-modal-header">
           <div class="pet-modal-media">
-            <img src="${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
+            <img src="uploads/animais/${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
           </div>
           <div class="pet-modal-info">
             <h3 class="pet-modal-title">${pet.name}</h3>
@@ -535,29 +604,26 @@
   function closeModal() { const modal = qs('#modal-container'); modal.classList.add('hidden'); modal.classList.remove('open'); qs('#modal-content').innerHTML = ''; }
 
   // --- Auth (very small simulation) ---
-  function handleLogin(e) {
+  async function handleLogin(e) {
     if (e) e.preventDefault();
     const cpf = qs('#login-cpf').value.trim();
     const pass = qs('#login-password').value.trim();
     if (!cpf || !pass) { qs('#login-error').classList.remove('hidden'); return; }
-
-    const registeredUser = JSON.parse(localStorage.getItem('pa:registered_user') || 'null');
     
-    if (registeredUser && normalizeCPF(registeredUser.cpf) === normalizeCPF(cpf)) {
-      // Use existing registered user data
-      state.user = registeredUser;
-    } else {
-      // Fallback to dummy user if not registered or different CPF
-      state.user = { nome: 'Usuário', email: 'user@exemplo.com', cpf };
+    try {
+      const res = await apiPost('usuario', 'login', { cpf, senha: pass });
+      state.user = res.usuario;
+      localStorage.setItem('pa:user', JSON.stringify(state.user));
+      qs('#login-error').classList.add('hidden');
+      updateAuthUI();
+      navigateTo('home');
+    } catch (e) {
+      qs('#login-error').classList.remove('hidden');
     }
-
-    localStorage.setItem('pa:user', JSON.stringify(state.user));
-    qs('#login-error').classList.add('hidden');
-    updateAuthUI();
-    navigateTo('home');
   }
 
-  function handleRegister(e) {
+
+  async function handleRegister(e) {
     if (e) e.preventDefault();
     
     const name = qs('#reg-name').value.trim();
@@ -568,55 +634,23 @@
     const password = qs('#reg-password').value.trim();
     const termsCheck = qs('#reg-terms-check').checked;
     
-    // Validações
+    // Validações básicas no front
     if (!name || !email || !cpf || !phone || !cep || !password) { 
       showErrorAlert('Por favor, preencha todos os campos obrigatórios.');
       return; 
     }
-    
-    if (name.length < 3) {
-      showErrorAlert('O nome deve ter pelo menos 3 caracteres.');
-      return;
-    }
-    
-    if (!validateEmail(email)) {
-      showErrorAlert('Email inválido.\n\nO email deve conter @ e . (exemplo: seu@email.com)');
-      return;
-    }
-    
-    if (!validateCPF(cpf)) {
-      showErrorAlert('CPF inválido.\n\nDigite um CPF válido no formato: 000.000.000-00');
-      return;
-    }
-    
-    if (!validatePhone(phone)) {
-      showErrorAlert('Telefone inválido.\n\nDigite um telefone válido no formato: (00) 00000-0000');
-      return;
-    }
-    
-    if (!validateCEP(cep)) {
-      showErrorAlert('CEP inválido.\n\nDigite um CEP válido no formato: 00000-000');
-      return;
-    }
-    
-    if (password.length < 6) {
-      showErrorAlert('A senha deve ter pelo menos 6 caracteres.');
-      return;
-    }
-    
     if (!termsCheck) {
-      showErrorAlert('Você deve aceitar os Termos de Uso e a Política de Privacidade.');
+      showErrorAlert('Você deve aceitar os Termos de Uso.');
       return;
     }
     
-    // Se passou em todas as validações, registrar
-    state.user = { nome: name, email, cpf, phone, cep };
-    localStorage.setItem('pa:registered_user', JSON.stringify(state.user));
-    localStorage.setItem('pa:user', JSON.stringify(state.user));
-    qs('#reg-error').classList.add('hidden');
-    updateAuthUI();
-    alert('✅ Cadastro realizado com sucesso!');
-    navigateTo('home');
+    try {
+      const res = await apiPost('usuario', 'registerFromRequest', { nome: name, email, cpf, phone, cep, senha: password });
+      alert('✅ Cadastro realizado com sucesso!');
+      navigateTo('login');
+    } catch (e) {
+      showErrorAlert(e.message);
+    }
   }
 
   function logout() { 
@@ -665,21 +699,27 @@
     applyTheme(currentTheme);
   }
 
-  function updateProfileUI() {
+  async function updateProfileUI() {
     if (!state.user) return;
-    qs('#profile-name').textContent = state.user.nome || 'Usuário';
-    qs('#profile-email').textContent = state.user.email || 'email@exemplo.com';
-    
-    // Detalhes na grade
-    qs('#profile-name-detail').textContent = state.user.nome || '-';
-    qs('#profile-email-detail').textContent = state.user.email || '-';
-    qs('#profile-cpf').textContent = state.user.cpf || '-';
-    qs('#profile-cep').textContent = state.user.cep || '-';
-    qs('#profile-phone').textContent = state.user.phone || '-';
-    
-    const avatarContainer = qs('#profile-avatar-container');
-    if (avatarContainer && state.user.avatar) {
-      avatarContainer.innerHTML = `<img src="${state.user.avatar}" class="avatar-img">`;
+    try {
+      const user = await apiCall('usuario', 'read', { cpf: state.user.cpf });
+      state.user = user;
+      
+      qs('#profile-name').textContent = user.nome || 'Usuário';
+      qs('#profile-email').textContent = user.email || 'email@exemplo.com';
+      
+      qs('#profile-name-detail').textContent = user.nome || '-';
+      qs('#profile-email-detail').textContent = user.email || '-';
+      qs('#profile-cpf').textContent = user.cpf || '-';
+      qs('#profile-cep').textContent = user.cep || '-';
+      qs('#profile-phone').textContent = user.phone || '-';
+      
+      const avatarContainer = qs('#profile-avatar-container');
+      if (avatarContainer && user.imagem) {
+        avatarContainer.innerHTML = `<img src="uploads/${user.imagem}" class="avatar-img">`;
+      }
+    } catch (e) {
+      console.error('Erro ao atualizar perfil:', e);
     }
   }
 
@@ -706,36 +746,33 @@
     }
   }
 
-  function saveProfile() {
+  async function saveProfile() {
     if (!state.user) return;
-
-    const newName = qs('#edit-name').value.trim();
-    const newEmail = qs('#edit-email').value.trim();
-    const newCpf = qs('#edit-cpf').value.trim();
-    const newCep = qs('#edit-cep').value.trim();
-    const newPhone = qs('#edit-phone').value.trim();
-    const newPassword = qs('#edit-password').value.trim();
     
-    if (!newName || !newEmail || !newCpf || !newCep || !newPhone) {
+    const data = {
+      nome: qs('#edit-name').value.trim(),
+      email: qs('#edit-email').value.trim(),
+      cpf: qs('#edit-cpf').value.trim(),
+      cep: qs('#edit-cep').value.trim(),
+      phone: qs('#edit-phone').value.trim(),
+      senha: qs('#edit-password').value.trim()
+    };
+    
+    if (!data.nome || !data.email || !data.cpf || !data.cep || !data.phone) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
     
-    state.user.nome = newName;
-    state.user.email = newEmail;
-    state.user.cpf = newCpf;
-    state.user.cep = newCep;
-    state.user.phone = newPhone;
-    if (newPassword) {
-      state.user.password = newPassword;
+    try {
+      await apiPost('usuario', 'updateUsuarioFromRequest', data);
+      await updateProfileUI();
+      toggleProfileEdit();
+      alert('Perfil atualizado com sucesso!');
+    } catch (e) {
+      alert('Erro ao salvar perfil: ' + e.message);
     }
-    
-    localStorage.setItem('pa:user', JSON.stringify(state.user));
-
-    updateProfileUI();
-    toggleProfileEdit();
-    alert('Perfil atualizado com sucesso!');
   }
+
 
   // Export to window for HTML onclick handlers
   window.navigateTo = navigateTo;
@@ -799,41 +836,49 @@
     reader.readAsDataURL(file);
   }
 
-  function renderMyAnimals() {
+  async function renderMyAnimals() {
     const grid = qs('#my-animals-grid');
     const empty = qs('#my-animals-empty');
     if (!grid || !empty) return;
-
     grid.innerHTML = '';
-    const myPets = state.pets.filter(pet => pet.userId === state.user?.id);
-
-    if (myPets.length === 0) {
+    try {
+      const myPets = await apiCall('animal', 'readByDonoId', { donoId: state.user?.cpf || '' });
+      if (myPets.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      myPets.forEach(pet => {
+        grid.appendChild(createCard(pet));
+      });
+    } catch (e) {
+      console.error('Erro ao carregar meus animais:', e);
       empty.classList.remove('hidden');
-      return;
     }
-    empty.classList.add('hidden');
-    myPets.forEach(pet => {
-      grid.appendChild(createCard(pet));
-    });
   }
 
-  function renderMatches() {
+
+  async function renderMatches() {
     const grid = qs('#matches-grid');
     const empty = qs('#matches-empty');
     if (!grid || !empty) return;
-
     grid.innerHTML = '';
-    const matches = state.pets.filter(pet => pet.userId !== state.user?.id && Math.random() > 0.7);
-
-    if (matches.length === 0) {
+    try {
+      const matches = await apiCall('animal', 'buscarAnimais', { termo: '', usuarioId: state.user?.cpf || '' });
+      if (matches.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      matches.forEach(pet => {
+        grid.appendChild(createCard(pet));
+      });
+    } catch (e) {
+      console.error('Erro ao carregar matches:', e);
       empty.classList.remove('hidden');
-      return;
     }
-    empty.classList.add('hidden');
-    matches.forEach(pet => {
-      grid.appendChild(createCard(pet));
-    });
   }
+
 
   function handleRegisterAnimalScroll(event) {
     const contentDiv = event.target;
@@ -937,34 +982,19 @@
 
 
 
-  function handleAnimalRegister(event) {
+  async function handleAnimalRegister(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const newPet = {
-      id: Date.now(),
-      userId: state.user?.cpf || 'unknown',
-      ownerName: state.user?.nome || 'Usuário',
-      name: formData.get('petName'),
-      type: formData.get('type'),
-      breed: formData.get('breed'),
-      color: formData.get('color'),
-      gender: formData.get('gender'),
-      size: formData.get('size'),
-      birthDate: formData.get('birthDate'),
-      weight: formData.get('weight'),
-      description: formData.get('description'),
-      vaccinated: formData.get('vaccinated'),
-      photo: 'assets/img/default-pet.png', // Simplified for static demo
-      breedCert: formData.get('breedCert')?.name || '',
-      vaccinePhoto: formData.get('vaccinePhoto')?.name || '',
-      certPhoto: formData.get('certPhoto')?.name || '',
-      favorites: 0
-    };
-    state.pets.push(newPet);
-    closeModal();
-    renderMyAnimals();
-    renderHomeGrid();
-    alert('Animal cadastrado com sucesso!');
+    
+    try {
+      await apiPost('animal', 'criarAnimal', formData);
+      closeModal();
+      renderMyAnimals();
+      renderHomeGrid();
+      alert('Animal cadastrado com sucesso!');
+    } catch (e) {
+      alert('Erro ao cadastrar animal: ' + e.message);
+    }
   }
 
   // --- Mobile menu ---

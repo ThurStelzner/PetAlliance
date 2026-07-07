@@ -1,9 +1,9 @@
 <?php
-    require_once __DIR__ . '/../../backEnd/controllers/api/usuarioController.php';
+    require_once __DIR__ . '/../controllers/api/usuarioController.php';
 
     session_start();
 
-    if(!$_SESSION['usuario_id']) {
+    if(!$_SESSION['usuario_cpf']) {
         header('Location: /index.php');
         exit();
     }

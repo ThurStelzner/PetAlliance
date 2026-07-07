@@ -15,7 +15,7 @@
             $animalId = $dados['animal_id'] ?? null;
             $produtoId = $dados['product_id'] ?? null;
             $preco = $dados['preco'] ?? null;
-            $usuarioId = $_SESSION['usuario_id'] ?? null;
+            $usuarioId = $_SESSION['usuario_cpf'] ?? null;
 
             if ((!$animalId && !$produtoId) || !$preco || !$usuarioId) {
                 echo json_encode([
@@ -34,7 +34,7 @@
         }
 
         public function historicoPagamentos() {
-            $usuarioId = $_SESSION['usuario_id'] ?? null;
+            $usuarioId = $_SESSION['usuario_cpf'] ?? null;
             
             if (!$usuarioId) {
                 echo json_encode([]);

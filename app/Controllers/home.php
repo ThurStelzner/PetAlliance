@@ -1,6 +1,6 @@
 <?php
-    require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
-    require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
+    require_once __DIR__ . '/controllers/api/animalController.php';
+    require_once __DIR__ . "/models/usuarioDAO.php";
 
     session_start();
 

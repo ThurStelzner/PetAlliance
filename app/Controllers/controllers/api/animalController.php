@@ -45,15 +45,47 @@
             echo json_encode($animais);
         }
 
-        public function criarAnimal(Animal $animal) {
+        public function criarAnimal() {
             try {
-                return $this->dao->cadastrarAnimal($animal);
-            } catch (InvalidArgumentException $e) {
-                throw $e;
+                $donoId = $_SESSION['usuario_cpf'] ?? null;
+                if (!$donoId) {
+                    echo json_encode(["erro" => "Usuário não autenticado."]);
+                    return;
+                }
+
+                $animal = new Animal(
+                    $donoId,
+                    $_FILES['photo']['name'] ?? 'placeholder.webp',
+                    $_POST['petName'] ?? '',
+                    $_POST['breed'] ?? '',
+                    $_POST['color'] ?? '',
+                    $_POST['gender'] ?? '',
+                    $_POST['type'] ?? '',
+                    $_POST['size'] ?? '',
+                    $_POST['birthDate'] ?? '',
+                    $_POST['weight'] ?? '',
+                    $_POST['description'] ?? '',
+                    $_POST['vaccinated'] ?? '',
+                    $_POST['breedCert'] ?? '',
+                    $_POST['certPhoto'] ?? '',
+                    $_POST['vaccinePhoto'] ?? ''
+                );
+
+                // In a real app, we would handle file uploads here 
+                // But Animal model's setters are already doing some of it.
+                // Let's just call the DAO.
+                
+                $this->dao->cadastrarAnimal($animal);
+                echo json_encode(["success" => true, "message" => "Animal cadastrado com sucesso."]);
             } catch (Exception $e) {
-                throw $e;
+                echo json_encode(["erro" => $e->getMessage()]);
             }
         }
+        public function listarMembros($id) {
+            $animais = $this->dao->listarAnimaisMembros($id);
+            echo json_encode($animais);
+        }
+
         public function deletarAnimal($id) {
             $this->dao->delete($id);
         

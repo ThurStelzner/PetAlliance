@@ -1,20 +1,34 @@
 <script>
-    window.API_URL_PERFIL = "/backEnd/usuario/editarPerfil.php";
+    window.API_URL_PERFIL = "/public/api.php?controller=usuario&action=updateUsuarioFromRequest";
 </script>
 <script src="/frontEnd/utils/editarPerfil.js"></script>
 
 <form id="editar-perfil-form" method="POST" enctype="multipart/form-data">
-    <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" style="width: 10rem; height: 10rem; object-fit: cover;">
-    <a href="/backEnd/usuario/editarFotoUsuario.php">Trocar Foto</a>
+    <div class="profile-upload-section" style="text-align: center; margin-bottom: 1.5rem;">
+        <div id="profile-preview-container" style="margin-bottom: 1rem;">
+            <!-- Imagem de preview injetada pelo JS -->
+        </div>
+        <label for="foto_perfil" class="btn-secondary" style="cursor: pointer; padding: 0.5rem 1rem; border-radius: 5px; border: 1px solid #ccc; display: inline-block;">
+            Trocar Foto de Perfil
+        </label>
+        <input type="file" name="foto_perfil" id="foto_perfil" accept="image/*" style="display: none;">
+    </div>
+
     <div id="etapa1">
         <h3>Informações pessoais</h3>
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" id="nome" placeholder="Seu Nome aqui" required>
-        <label for="cep">CEP:</label>
-        <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="9" minlength="8" required>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" placeholder="Seu Email aqui" required>
-        <button type="submit">Atualizar Perfil</button>
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" placeholder="Seu Nome aqui" required>
+        </div>
+        <div class="form-group">
+            <label for="cep">CEP:</label>
+            <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="9" minlength="8" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" placeholder="Seu Email aqui" required>
+        </div>
+        <button type="submit" class="btn-primary">Atualizar Perfil</button>
     </div>
 </form>
 

@@ -1,7 +1,7 @@
 <?php
 
-    require_once __DIR__ . "/../../backEnd/config/config.php";
-    require_once __DIR__ . "/../../backEnd/models/animal.php";
+    require_once __DIR__ . "/../config/config.php";
+    require_once __DIR__ . "/animal.php";
 
     class AnimalDAO {
         private $pdo;
@@ -249,15 +249,16 @@
         }
 
         public function readAll($usuarioId) {
-            $sql = "SELECT p.*, 
+            $sql = "SELECT p.*, u.nome AS dono_nome,
                     EXISTS (
                         SELECT 1
                         FROM tb_favoritos f
                         WHERE f.id_pet = p.id
                             AND f.id_usuario = ?
                     ) AS favoritado
-                FROM tb_pets p
-                ORDER BY p.nome;";
+                    FROM tb_pets p
+                    LEFT JOIN tb_usuarios u ON p.dono_id = u.id
+                    ORDER BY p.nome;";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$usuarioId]);
             $animais = [];
@@ -280,13 +281,15 @@
                 $dados['foto_certificado'],
                 $dados['foto_vacinas'],
                 $dados['id'] ?? null,
-                $dados['favoritado'] ?? 0
+                $dados['favoritado'] ?? 0,
+                $dados['dono_nome'] ?? 'Desconhecido'
               );
               $animais[] = $animal; // adiciona ao array
             }
             
             return $animais;
-          }
+        }
+
 
         public function readByDonoId($donoId) {
             $sql = "SELECT * FROM tb_pets WHERE dono_id = ? ORDER BY nome";
@@ -318,10 +321,53 @@
             
             return $animais;
         }
+        public function listarAnimaisMembros($usuarioId) {
+            $sql = "SELECT p.*, u.nome AS dono_nome,
+                    EXISTS (
+                        SELECT 1
+                        FROM tb_favoritos f
+                        WHERE f.id_pet = p.id
+                            AND f.id_usuario = ?
+                    ) AS favoritado
+                    FROM tb_pets p
+                    INNER JOIN tb_pagamentos pg ON p.dono_id = pg.usuario_id
+                    LEFT JOIN tb_usuarios u ON p.dono_id = u.id
+                    ORDER BY p.nome;";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            $animais = [];
+        
+            while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $animal = new Animal(
+                $dados['dono_id'],
+                $dados['foto_pet'],
+                $dados['nome'],
+                $dados['raca'],
+                $dados['cor'],
+                $dados['sexo'],
+                $dados['tipo'],
+                $dados['porte'],
+                $dados['data_nascimento'],
+                $dados['peso'],
+                $dados['descricao'],
+                $dados['vacinado'],
+                $dados['certificado_raca'],
+                $dados['foto_certificado'],
+                $dados['foto_vacinas'],
+                $dados['id'] ?? null,
+                $dados['favoritado'] ?? 0,
+                $dados['dono_nome'] ?? 'Desconhecido'
+              );
+              $animais[] = $animal;
+            }
+            
+            return $animais;
+        }
+
         public function delete($id) {
             $pdo = Conexao::getConexao();
         
-            $arquivo = __DIR__ . "/../../uploads/animais/";
+            $arquivo = __DIR__ . "/../../public/uploads/animais/";
         
             $sql = "SELECT * FROM tb_pets WHERE id = ?";
             $stmt = $pdo->prepare($sql);

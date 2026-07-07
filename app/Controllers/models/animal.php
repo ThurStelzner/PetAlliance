@@ -2,6 +2,7 @@
 
 class Animal implements JsonSerializable {
     private $dono_id;
+    private $ownerName;
     private $foto_pet;
     private $nome;
     private $raca;
@@ -20,9 +21,10 @@ class Animal implements JsonSerializable {
     private $id;
     private $favoritado;
 
-    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina, $id = null,$favoritado = false
+    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina, $id = null,$favoritado = false, $ownerName = null
     ) {
         $this->dono_id = $dono_id;
+        $this->ownerName = $ownerName;
         $this->foto_pet = $foto_pet;
         $this->nome = $nome;
         $this->raca = $raca;
@@ -41,6 +43,14 @@ class Animal implements JsonSerializable {
         $this->favoritado = (bool) $favoritado;
     }
 
+
+    public function getOwnerName() {
+        return $this->ownerName;
+    }
+
+    public function setOwnerName($ownerName) {
+        $this->ownerName = $ownerName;
+    }
 
     public function getId() {
         return $this->id;
@@ -148,7 +158,7 @@ class Animal implements JsonSerializable {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $this->foto_pet = uniqid('pet_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $this->foto_pet);
+                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../public/uploads/animais/' . $this->foto_pet);
                 }
             }
     }
@@ -249,7 +259,7 @@ class Animal implements JsonSerializable {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $this->foto_certificado = uniqid('cert_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../uploads/animais/' . $this->foto_certificado);
+                    move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], '../../public/uploads/animais/' . $this->foto_certificado);
                 }
         }
             
@@ -265,29 +275,31 @@ class Animal implements JsonSerializable {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $this->foto_vacina = uniqid('vaci_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../uploads/animais/' . $this->foto_vacina);
+                    move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], '../../public/uploads/animais/' . $this->foto_vacina);
                 }
-            }
         }
+    }
+
 
     public function jsonSerialize(): array {
         return [
             'id' => $this->id,
-            'dono_id' => $this->dono_id,
-            'foto_pet' => $this->foto_pet,
-            'nome' => $this->nome,
-            'raca' => $this->raca,
-            'cor' => $this->cor,
-            'sexo' => $this->sexo,
-            'tipo' => $this->tipo,
-            'porte' => $this->porte,
-            'data_nascimento' => $this->data_nascimento,
-            'peso' => $this->peso,
-            'descricao' => $this->descricao,
-            'vacinado' => $this->vacinado,
-            'certificado' => $this->certificado,
-            'foto_certificado' => $this->foto_certificado,
-            'foto_vacina' => $this->foto_vacina,
+            'ownerId' => $this->dono_id,
+            'ownerName' => $this->ownerName,
+            'photo' => $this->foto_pet,
+            'name' => $this->nome,
+            'breed' => $this->raca,
+            'color' => $this->cor,
+            'gender' => $this->sexo,
+            'type' => $this->tipo,
+            'size' => $this->porte,
+            'birthDate' => $this->data_nascimento,
+            'weight' => $this->peso,
+            'description' => $this->descricao,
+            'vaccinated' => $this->vacinado,
+            'breedCert' => $this->certificado,
+            'certPhoto' => $this->foto_certificado,
+            'vaccinePhoto' => $this->foto_vacina,
             'favoritado' => $this->favoritado,
         ];
     }

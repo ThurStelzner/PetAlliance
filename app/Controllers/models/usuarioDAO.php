@@ -1,7 +1,7 @@
 <?php
 
-    require_once __DIR__ . "/../../backEnd/config/config.php";
-    require_once __DIR__ . "/../../backEnd/models/usuario.php";
+    require_once __DIR__ . "/../config/config.php";
+    require_once __DIR__ . "/usuario.php";
 
     class UsuarioDAO {
         private $pdo;
@@ -90,7 +90,7 @@
 
         public function cadastrarUsuario(Usuario $usuario) {
             if($this->validaCPF($usuario->getCpf()) === false) {
-                throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF Informado é inválido</p>");
+                throw new InvalidArgumentException("CPF Informado é inválido");
             } else {
                 try {
                     $sql = "INSERT INTO tb_usuarios (foto_perfil, cpf, cep, nome, email, senha) VALUES (?,?,?,?,?,?)";
@@ -107,9 +107,9 @@
                     return $usuario;
                 } catch (PDOException $e) {
                     if($e->errorInfo[1] == 1062) {
-                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>O CPF ou E-mail informado já está cadastrado.</p>");
+                        throw new InvalidArgumentException("O CPF ou E-mail informado já está cadastrado.");
                     } else if ($e->errorInfo[1] == 1406) {
-                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF ou CEP inválido!</p>");
+                        throw new InvalidArgumentException("CPF ou CEP inválido!");
                     }
                     throw $e;
                 }
@@ -124,7 +124,15 @@
             $dados = $stmt->fetch(PDO::FETCH_ASSOC);
         
             if (!$dados) return null;
-            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email'],$dados['senha'],);
+            $usuario = new Usuario(
+                $dados['foto_perfil'],
+                $dados['cpf'],
+                $dados['cep'],
+                $dados['tipo_usuario'] ?? 0,
+                $dados['nome'],
+                $dados['email'],
+                $dados['senha']
+            );
             $usuario->setId($dados['id']);
         
             return $usuario;
