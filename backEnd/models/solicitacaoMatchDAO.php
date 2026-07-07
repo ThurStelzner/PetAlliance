@@ -23,10 +23,11 @@ class SolicitacaoMatchDAO {
     }
 
     public function listarPorDono($donoId) {
-        $sql = "SELECT s.*, p.nome AS pet_nome, p.foto_pet AS pet_foto, u.nome AS remetente_nome, u.foto_perfil AS remetente_imagem
+        $sql = "SELECT s.*, p.nome AS pet_nome, p.foto_pet AS pet_foto,
+                       COALESCE(u.nome, 'Usuário') AS remetente_nome, COALESCE(u.foto_perfil, 'placeholder.webp') AS remetente_imagem
                 FROM tb_solicitacoes_match s
                 INNER JOIN tb_pets p ON s.pet_id = p.id
-                INNER JOIN tb_usuarios u ON s.remetente_id = u.id
+                LEFT JOIN tb_usuarios u ON s.remetente_id = u.id
                 WHERE p.dono_id = ?
                 ORDER BY FIELD(s.status, 'pendente', 'aceito', 'recusado'), s.criado_em DESC";
         $stmt = $this->pdo->prepare($sql);
