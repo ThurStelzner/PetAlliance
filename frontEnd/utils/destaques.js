@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function carregarDestaques() {
+    function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+async function carregarDestaques() {
         try {
             const resp = await fetch('/backEnd/home.php?route=animais_destaque');
             const animais = await resp.json();
@@ -26,11 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             container.innerHTML = animais.map(a => {
                 const foto = a.foto_pet || 'placeholder.webp';
-                return '<div style="min-width:180px;flex-shrink:0;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;" onclick="destaquesVerDetalhes(' + a.id + ')">' +
-                    '<img src="/uploads/animais/' + foto + '" alt="' + (a.nome || '') + '" style="width:100%;height:140px;object-fit:cover;">' +
+                return '<div style="min-width:180px;flex-shrink:0;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;" onclick="destaquesVerDetalhes(' + escapeHtml(a.id) + ')">' +
+                    '<img src="/uploads/animais/' + escapeHtml(foto) + '" alt="' + escapeHtml(a.nome || '') + '" style="width:100%;height:140px;object-fit:cover;">' +
                     '<div style="padding:0.5rem;">' +
-                        '<strong style="color:#244C4E;">' + (a.nome || '') + '</strong>' +
-                        '<p style="font-size:0.8rem;color:#666;margin:0;">' + (a.raca || a.tipo || '') + '</p>' +
+                        '<strong style="color:#244C4E;">' + escapeHtml(a.nome || '') + '</strong>' +
+                        '<p style="font-size:0.8rem;color:#666;margin:0;">' + escapeHtml(a.raca || a.tipo || '') + '</p>' +
                     '</div>' +
                 '</div>';
             }).join('');

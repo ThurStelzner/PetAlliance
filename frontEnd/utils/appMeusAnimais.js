@@ -1,3 +1,8 @@
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const API_URL_MEUS_ANIMAIS = `/backEnd/animal/meusAnimais.php?route=animais`;
     const container = document.getElementById("animais-container");
@@ -88,14 +93,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const classeBotao = estaDestacado ? "remover-destaque-btn" : "destacar-btn";
                 card.innerHTML =
                     getCarrosselHtml(animal) +
-                    '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
-                    '<p>' + (animal.descricao || "Não informada") + '</p>' +
-                    '<p>' + (animal.tipo || "Não informado") + '</p>' +
-                    '<p>' + (animal.porte || "Não informado") + '</p>' +
-                    '<p>' + (animal.sexo || "Não informado") + '</p>' +
-                    '<button type="button" class="detalhes-btn" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
-                    '<button type="button" class="' + classeBotao + '" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">' + textoBotao + '</button>' +
-                    '<button type="button" class="editar-btn" data-animal-id="' + animal.id + '" style="margin-left:0.25rem;">Editar</button>';
+                    '<h3>' + escapeHtml(animal.nome || "Sem nome") + '</h3>' +
+                    '<p>' + escapeHtml(animal.descricao || "Não informada") + '</p>' +
+                    '<p>' + escapeHtml(animal.tipo || "Não informado") + '</p>' +
+                    '<p>' + escapeHtml(animal.porte || "Não informado") + '</p>' +
+                    '<p>' + escapeHtml(animal.sexo || "Não informado") + '</p>' +
+                    '<button type="button" class="detalhes-btn" data-animal-id="' + escapeHtml(animal.id) + '">Ver Detalhes</button>' +
+                    '<button type="button" class="' + escapeHtml(classeBotao) + '" data-animal-id="' + escapeHtml(animal.id) + '" data-nome="' + escapeHtml(animal.nome || 'Animal') + '">' + escapeHtml(textoBotao) + '</button>' +
+                    '<button type="button" class="editar-btn" data-animal-id="' + escapeHtml(animal.id) + '" style="margin-left:0.25rem;">Editar</button>';
                 container.appendChild(card);
                 carregarCarrosselEventos(card);
             });

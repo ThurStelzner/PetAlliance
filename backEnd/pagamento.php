@@ -11,12 +11,11 @@
         exit;
     }
 
-    if (!$_SESSION['usuario_id']) {
+    if (!isset($_SESSION['usuario_id']) || !$_SESSION['usuario_id']) {
         header('Location: /index.php');
         exit();
     }
 
-    header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 

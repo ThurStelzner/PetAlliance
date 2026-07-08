@@ -1,21 +1,17 @@
 <?php
-    require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
-    require_once __DIR__ . '/../backEnd/controllers/api/MembroController.php';
-    require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
+    require_once __DIR__ . '/controllers/api/animalController.php';
+    require_once __DIR__ . '/controllers/api/MembroController.php';
+    require_once __DIR__ . "/models/usuarioDAO.php";
 
     session_start();
 
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-    $metodo = $_SERVER['REQUEST_METHOD'];
-    $usuarioId = $_SESSION['usuario_id'];
-
-    if(!$_SESSION['usuario_id']) {
+    if(!isset($_SESSION['usuario_id']) || !$_SESSION['usuario_id']) {
         header('Location: /index.php');
         exit();
     }
+
+    $metodo = $_SERVER['REQUEST_METHOD'];
+    $usuarioId = $_SESSION['usuario_id'];
 
     $usuarioDAO = new UsuarioDAO();
 
@@ -181,10 +177,10 @@
         exit;
     }
 
-    require __DIR__ . '/../frontEnd/view/navBar.html'; ?>
+    require __DIR__ . '/../frontEnd/view/navBar.php'; ?>
     <script>
         window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
-        window.USUARIO_ID = <?= $usuarioId ?>;
+        window.USUARIO_ID = <?= (int) $usuarioId ?>;
     </script>
     <?php require __DIR__ . '/../frontEnd/view/destaques.html'; ?>
     <script src="/frontEnd/utils/destaques.js"></script>

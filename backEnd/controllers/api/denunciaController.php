@@ -13,6 +13,25 @@ class DenunciaController {
     }
 
     public function criarDenuncia(Denuncia $denuncia) {
+        $pdo = Conexao::getConexao();
+        $alvoId = $denuncia->getAlvoId();
+
+        if ($denuncia->getTipoAlvo() === 'animal' && $alvoId) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM tb_pets WHERE id = ?");
+            $stmt->execute([$alvoId]);
+            if (!$stmt->fetchColumn()) {
+                throw new InvalidArgumentException("Animal alvo da denúncia não encontrado.");
+            }
+        }
+
+        if ($denuncia->getTipoAlvo() === 'usuario' && $alvoId) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM tb_usuarios WHERE id = ?");
+            $stmt->execute([$alvoId]);
+            if (!$stmt->fetchColumn()) {
+                throw new InvalidArgumentException("Usuário alvo da denúncia não encontrado.");
+            }
+        }
+
         try {
             return $this->dao->cadastrar($denuncia);
         } catch (InvalidArgumentException $e) {

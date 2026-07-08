@@ -11,6 +11,7 @@ if(!$_SESSION['usuario_id']) {
     exit();
 }
 
+require __DIR__ . "/../../frontEnd/view/navBar.php";
 require __DIR__ . "/../../frontEnd/view/cadastrarDenuncia.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";
 
@@ -39,8 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
 
     } catch (InvalidArgumentException $e) {
-        echo $e->getMessage();
+        echo htmlspecialchars($e->getMessage());
     } catch (PDOException $e) {
-        echo $e->getMessage();
+        echo htmlspecialchars($e->getMessage());
     }
 }

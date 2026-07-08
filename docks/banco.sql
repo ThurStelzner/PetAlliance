@@ -53,9 +53,9 @@ CREATE TABLE tb_matches (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     respondido_em TIMESTAMP,
     CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_animais(id),
+    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_pets(id),
     CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
+    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_pets(id),
     CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
 -- BLOQUEIOS

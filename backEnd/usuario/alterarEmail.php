@@ -25,7 +25,7 @@
             $senha = $_POST['senha'] ?? '';
             $novoEmail = $_POST['novo_email'] ?? '';
 
-            $senhaCorreta = password_verify($senha, $usuarioAtual->getSenha()) || ($senha === $usuarioAtual->getSenha());
+            $senhaCorreta = password_verify($senha, $usuarioAtual->getSenha());
             if (!$senhaCorreta) {
                 header("Location: /backEnd/usuario/alterarEmail.php?erro=senha_incorreta");
                 exit();
@@ -141,5 +141,5 @@
     $erro = $_GET['erro'] ?? '';
     $sucesso = $_GET['sucesso'] ?? '';
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/alterarEmail.html";

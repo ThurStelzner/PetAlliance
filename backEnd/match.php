@@ -5,11 +5,10 @@ require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
 
 session_start();
 
-header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-if (!isset($_SESSION['usuario_cpf'])) {
+if (!isset($_SESSION['usuario_cpf']) || !isset($_SESSION['usuario_id'])) {
     die("Usuário não está logado.");
 }
 
@@ -42,6 +41,7 @@ try {
     }
 
     if ($metodo === 'POST' && isset($_GET['route'])) {
+        session_regenerate_id(true);
         if ($_GET['route'] === 'enviar') {
             $controller = new SolicitacaoMatchController();
             $controller->enviarSolicitacao();
@@ -70,11 +70,11 @@ try {
     exit;
 }
 
-require __DIR__ . '/../frontEnd/view/navBar.html';
+require __DIR__ . '/../frontEnd/view/navBar.php';
 require __DIR__ . '/../frontEnd/view/notificacoes.html';
 ?>
 <script>
-    window.USUARIO_ID = <?= $usuarioId ?>;
+    window.USUARIO_ID = <?= (int) $usuarioId ?>;
 </script>
 <?php
 require __DIR__ . '/../frontEnd/view/footer.html';
