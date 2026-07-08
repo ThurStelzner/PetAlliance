@@ -142,10 +142,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         animais.forEach(animal => {
             const card = document.createElement("article");
             card.classList.add("animal-card");
-            const matchStatus = matchStatusMap[animal.id];
-            const matchBtnHtml = animal.dono_id != window.USUARIO_ID
-                ? `<button type="button" class="match-btn" data-animal-id="${animal.id}" ${matchStatus ? 'disabled' : ''}>${matchStatus ? 'Pendente' : 'Dar Match'}</button>`
-                : '';
+            const matchData = matchStatusMap[animal.id];
+            let matchBtnHtml = '';
+            if (animal.dono_id != window.USUARIO_ID) {
+                if (matchData && matchData.status === 'pendente') {
+                    matchBtnHtml = `<button type="button" class="match-btn" data-animal-id="${animal.id}" disabled>Pendente</button>`;
+                } else                 if (matchData && matchData.status === 'aceito') {
+                    matchBtnHtml = `<a href="/backEnd/chat.php?solicitacao_id=${matchData.solicitacao_id}" class="match-btn">Iniciar Chat</a>`;
+                } else {
+                    matchBtnHtml = `<button type="button" class="match-btn" data-animal-id="${animal.id}">Dar Match</button>`;
+                }
+            }
             card.innerHTML =
                 getCarrosselHtml(animal) +
                 `<h3>${escapeHtml(animal.nome || "Sem nome")}</h3>` +
@@ -231,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const data = await response.json();
             if (data.sucesso) {
                 alert(data.mensagem);
-                matchStatusMap[animalId] = "pendente";
+                matchStatusMap[animalId] = { status: "pendente" };
                 matchBtn.textContent = "Pendente";
                 matchBtn.disabled = true;
             } else {
