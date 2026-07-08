@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
             $_SESSION['usuario_email'] = $usuario->getEmail();
             $_SESSION['usuario_imagem'] = $usuario->getImagem();
         }
-        header("Location: /backEnd/home.php");
+        header("Location: /backEnd/home.php?sucesso=1");
         exit();
     } else {
         $_SESSION['mensagem_erro'] = $resultado['message'];

@@ -44,7 +44,8 @@
                 return $senha;
             }
 
-            if (password_get_info($senha)['algo'] !== 0) {
+            $algo = password_get_info($senha)['algo'];
+            if ($algo > 0) {
                 return $senha;
             }
 

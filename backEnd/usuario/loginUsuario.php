@@ -19,7 +19,7 @@
         } elseif ($cpf !== $usuario->getCpf()) {
             echo "Cpf inválido!";
         } else {
-            $senhaCorreta = password_verify($senha, $usuario->getSenha()) || ($senha === $usuario->getSenha());
+            $senhaCorreta = password_verify($senha, $usuario->getSenha());
 
             if (!$senhaCorreta) {
                 echo "Senha inválida!";
