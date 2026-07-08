@@ -43,7 +43,7 @@
                         throw new InvalidArgumentException('Arquivo muito grande: ' . $_FILES['fotos']['name'][$i]);
                     }
                     $extensao = strtolower(pathinfo($_FILES['fotos']['name'][$i], PATHINFO_EXTENSION));
-if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoCertificado']['tmp_name'])) {
+if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos']['tmp_name'][$i])) {
                         throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['fotos']['name'][$i]);
                     }
                     $nomeArquivo = uniqid('pet_') . '.' . $extensao;
