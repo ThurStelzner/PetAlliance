@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
+    require_once __DIR__ . '/../backEnd/controllers/api/MembroController.php';
     require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
 
     session_start();
@@ -27,6 +28,30 @@
 
     $ehAdmin = $usuario && $usuario->getTipo() == 1;
 
+    // Verificar pagamento pendente ao retornar do AbacatePay
+    $checkoutIdPendente = $_SESSION['ultimo_checkout_id'] ?? null;
+    $produtoIdPendente = $_SESSION['ultimo_produto_id'] ?? null;
+    unset($_SESSION['ultimo_checkout_id'], $_SESSION['ultimo_produto_id']);
+
+    if ($checkoutIdPendente && $produtoIdPendente) {
+        require_once __DIR__ . '/../backEnd/models/PagamentoAbacatePay.php';
+        $pagamentoService = new PagamentoAbacatePay();
+
+        $statusApi = $pagamentoService->consultarStatusApiAbacatePay($checkoutIdPendente);
+
+        if ($statusApi) {
+            $statusApiValue = $statusApi['status'] ?? 'PENDING';
+
+            if ($statusApiValue === 'PAID') {
+                $transacaoId = $statusApi['transactionId'] ?? $statusApi['transaction_id'] ?? null;
+                $pagamentoService->atualizarStatusPagamento($checkoutIdPendente, 'PAID', $transacaoId);
+                $_SESSION['flash'] = [
+                    'tipo' => 'sucesso',
+                    'mensagem' => 'Pagamento confirmado! Seja bem-vindo como membro.'
+                ];
+            }
+        }
+    }
 
     try {
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'buscar_animais') {
@@ -63,6 +88,48 @@
             $controllerAnimal->favoritarAnimal($usuarioId, $_GET['idAnimal']);
             exit;
         }
+
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais_destaque') {
+            header('Content-Type: application/json');
+            $controllerMembro = new MembroController();
+            $controllerMembro->jsonAnimaisDestaque();
+            exit;
+        }
+
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'meus_destaques_ids') {
+            header('Content-Type: application/json');
+            $controllerMembro = new MembroController();
+            $destaques = $controllerMembro->listarMeusDestaques($usuarioId);
+            $ids = array_map(function($a) { return (int)$a['id']; }, $destaques);
+            echo json_encode($ids);
+            exit;
+        }
+
+        if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'destacar_animal') {
+            header('Content-Type: application/json');
+            $dados = json_decode(file_get_contents("php://input"), true);
+            $animalId = $dados['animal_id'] ?? null;
+            if (!$animalId) {
+                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                exit;
+            }
+            $controllerMembro = new MembroController();
+            $controllerMembro->destacarAnimal($usuarioId, $animalId);
+            exit;
+        }
+
+        if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'remover_destaque') {
+            header('Content-Type: application/json');
+            $dados = json_decode(file_get_contents("php://input"), true);
+            $animalId = $dados['animal_id'] ?? null;
+            if (!$animalId) {
+                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                exit;
+            }
+            $controllerMembro = new MembroController();
+            $controllerMembro->removerDestaque($usuarioId, $animalId);
+            exit;
+        }
     } catch (Exception $e) {
         header('Content-Type: application/json');
         http_response_code(500);
@@ -74,7 +141,15 @@
     unset($_SESSION['flash']);
 
     if ($flashMessage){
-        echo '<script>window.flashMessage = ' . json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) . ';</script>';
+        $jsonMsg = json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
+        echo '<script>window.flashMessage = ' . $jsonMsg . ';</script>';
+        echo '<div id="flash-message" class="flash-' . ($flashMessage['tipo'] ?? 'info') . '" style="padding:1rem;margin:1rem;border-radius:8px;text-align:center;font-weight:bold;';
+        if (($flashMessage['tipo'] ?? '') === 'sucesso') {
+            echo 'background:#d4edda;color:#155724;border:1px solid #c3e6cb;';
+        } else {
+            echo 'background:#fff3cd;color:#856404;border:1px solid #ffeeba;';
+        }
+        echo '">' . htmlspecialchars($flashMessage['mensagem'] ?? '') . '</div>';
     }
     try {
         if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
@@ -90,7 +165,14 @@
         exit;
     }
 
-    require __DIR__ . '/../frontEnd/view/navBar.html';
+    require __DIR__ . '/../frontEnd/view/navBar.html'; ?>
+    <script>
+        window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
+        window.USUARIO_ID = <?= $usuarioId ?>;
+    </script>
+    <?php require __DIR__ . '/../frontEnd/view/destaques.html'; ?>
+    <script src="/frontEnd/utils/destaques.js"></script>
+    <?php
     require __DIR__ . '/../frontEnd/view/home.html';
 
     if (isset($_GET['mensagem'])) {
@@ -107,12 +189,6 @@
             echo 'Ocorreu um erro';
         }
     }
-    ?>
-    <script>
-        window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
-        window.USUARIO_ID = <?= $usuarioId ?>;
-    </script>
-    <?php
     require __DIR__ . '/../frontEnd/view/footer.html';
 ?>
 

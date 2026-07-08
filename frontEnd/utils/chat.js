@@ -71,6 +71,15 @@ async function abrirConversa(conversaId, solicitacaoId) {
     document.getElementById("chat-placeholder").style.display = "none";
     document.getElementById("chat-active").style.display = "flex";
 
+
+    if (!dadosConversaAtual || dadosConversaAtual.id != solicitacaoId) {
+        try {
+            const resp = await fetch(API_BASE + "dados_conversa&solicitacao_id=" + solicitacaoId, { credentials: "same-origin" });
+            const data = await resp.json();
+            if (data.sucesso) dadosConversaAtual = data.dados;
+        } catch (e) { console.error(e); }
+    }
+
     carregarHeader();
     await carregarMensagens();
     carregarConversas();

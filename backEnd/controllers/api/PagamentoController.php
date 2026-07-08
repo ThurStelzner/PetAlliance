@@ -26,6 +26,12 @@
             }
 
             $resultado = $this->pagamentoService->criarCheckout($animalId, $produtoId, $preco, $usuarioId);
+
+            if ($resultado['success'] && isset($resultado['id'])) {
+                $_SESSION['ultimo_checkout_id'] = $resultado['id'];
+                $_SESSION['ultimo_produto_id'] = $produtoId;
+            }
+
             echo json_encode($resultado);
         }
 

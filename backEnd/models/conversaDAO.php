@@ -31,15 +31,15 @@ class ConversaDAO {
     }
 
     public function listarPorUsuario($usuarioId) {
-        $sql = "SELECT c.*, s.pet_id, p.nome AS pet_nome, p.foto_pet,
+        $sql = "SELECT c.id, c.ativa, s.id AS solicitacao_id, s.pet_id, p.nome AS pet_nome, p.foto_pet,
                        s.remetente_id,
-                       CASE WHEN s.remetente_id = ? THEN u2.nome ELSE u.nome END AS outro_nome,
-                       CASE WHEN s.remetente_id = ? THEN u2.foto_perfil ELSE u.foto_perfil END AS outro_foto
-                FROM tb_conversas c
-                INNER JOIN tb_solicitacoes_match s ON c.solicitacao_id = s.id
+                       CASE WHEN s.remetente_id = ? THEN COALESCE(u.nome, 'Usuário') ELSE COALESCE(u2.nome, 'Usuário') END AS outro_nome,
+                       CASE WHEN s.remetente_id = ? THEN COALESCE(u.foto_perfil, 'placeholder.webp') ELSE COALESCE(u2.foto_perfil, 'placeholder.webp') END AS outro_foto
+                FROM tb_solicitacoes_match s
                 INNER JOIN tb_pets p ON s.pet_id = p.id
-                INNER JOIN tb_usuarios u ON p.dono_id = u.id
-                INNER JOIN tb_usuarios u2 ON s.remetente_id = u2.id
+                LEFT JOIN tb_usuarios u ON p.dono_id = u.id
+                LEFT JOIN tb_usuarios u2 ON s.remetente_id = u2.id
+                LEFT JOIN tb_conversas c ON c.solicitacao_id = s.id
                 WHERE (p.dono_id = ? OR s.remetente_id = ?) AND s.status = 'aceito'
                 ORDER BY c.id DESC";
         $stmt = $this->pdo->prepare($sql);

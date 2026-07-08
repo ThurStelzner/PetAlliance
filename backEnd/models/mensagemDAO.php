@@ -32,24 +32,25 @@ class MensagemDAO {
     }
 
     public function listarPorConversa($conversaId, $antes = null, $limite = 50) {
+        $limite = max(1, (int) $limite);
         if ($antes) {
             $sql = "SELECT m.*, u.nome AS remetente_nome, u.foto_perfil AS remetente_foto
                     FROM tb_mensagens m
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ? AND m.id < ?
                     ORDER BY m.data_envio DESC
-                    LIMIT ?";
+                    LIMIT $limite";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId, $antes, $limite]);
+            $stmt->execute([$conversaId, $antes]);
         } else {
             $sql = "SELECT m.*, u.nome AS remetente_nome, u.foto_perfil AS remetente_foto
                     FROM tb_mensagens m
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ?
                     ORDER BY m.data_envio DESC
-                    LIMIT ?";
+                    LIMIT $limite";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId, $limite]);
+            $stmt->execute([$conversaId]);
         }
         return array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 require_once __DIR__ . "/../../config/config.php";
 require_once __DIR__ . "/../../models/mensagem.php";
@@ -107,13 +107,13 @@ class ChatController {
             $conversaId = $conversa ? $conversa['id'] : null;
 
             $pdo = Conexao::getConexao();
-            $sql = "SELECT s.*, p.nome AS pet_nome, p.foto_pet,
-                           u.nome AS dono_nome, u.foto_perfil AS dono_foto,
-                           rem.nome AS remetente_nome, rem.foto_perfil AS remetente_foto
+            $sql = "SELECT s.*, p.nome AS pet_nome, p.foto_pet, p.dono_id,
+                           COALESCE(u.nome, 'Usuário') AS dono_nome, COALESCE(u.foto_perfil, 'placeholder.webp') AS dono_foto,
+                           COALESCE(rem.nome, 'Usuário') AS remetente_nome, COALESCE(rem.foto_perfil, 'placeholder.webp') AS remetente_foto
                     FROM tb_solicitacoes_match s
                     INNER JOIN tb_pets p ON s.pet_id = p.id
-                    INNER JOIN tb_usuarios u ON p.dono_id = u.id
-                    INNER JOIN tb_usuarios rem ON s.remetente_id = rem.id
+                    LEFT JOIN tb_usuarios u ON p.dono_id = u.id
+                    LEFT JOIN tb_usuarios rem ON s.remetente_id = rem.id
                     WHERE s.id = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$solicitacaoId]);

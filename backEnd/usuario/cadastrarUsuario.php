@@ -10,7 +10,6 @@
     session_start();
 
     require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
     
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         try {
@@ -95,3 +94,4 @@
             echo $e->getMessage();
         }
     }
+    require __DIR__ . "/../../frontEnd/view/footer.html";

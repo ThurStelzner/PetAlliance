@@ -25,5 +25,6 @@
     }
 
     require __DIR__ . "/../../frontEnd/view/navBar.html";
+    ?><script>window.USUARIO_ID = <?= $usuarioId ?>;</script><?php
     require __DIR__ . "/../../frontEnd/view/favoritos.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
