@@ -142,6 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         animais.forEach(animal => {
             const card = document.createElement("article");
             card.classList.add("animal-card");
+            const matchStatus = matchStatusMap[animal.id];
+            const matchBtnHtml = animal.dono_id != window.USUARIO_ID
+                ? `<button type="button" class="match-btn" data-animal-id="${animal.id}" ${matchStatus ? 'disabled' : ''}>${matchStatus ? 'Pendente' : 'Dar Match'}</button>`
+                : '';
             card.innerHTML =
                 getCarrosselHtml(animal) +
                 `<h3>${escapeHtml(animal.nome || "Sem nome")}</h3>` +
@@ -151,6 +155,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `<p>${escapeHtml(animal.sexo || "Não informado")}</p>` +
                 `<button type="button" class="detalhes-btn" data-animal-id="${escapeHtml(animal.id)}">Ver Detalhes</button>` +
                 `<button type="button" class="favoritar-btn" data-animal-id="${escapeHtml(animal.id)}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>` +
+                matchBtnHtml +
                 (window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : "");
             container.appendChild(card);
             carregarCarrosselEventos(card);
