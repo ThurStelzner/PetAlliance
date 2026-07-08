@@ -192,7 +192,7 @@ async function carregarDestaques() {
             const data = await response.json();
             if (data.sucesso) {
                 alert(data.mensagem);
-                matchStatusMap[animalId] = { status: "pendente" };
+                matchStatusMap[animalId] = { status: "pendente", solicitacao_id: data.solicitacao_id };
                 matchBtn.textContent = "Pendente";
                 matchBtn.disabled = true;
             } else {
