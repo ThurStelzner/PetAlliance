@@ -1,0 +1,215 @@
+# Teste de Mesa — Validação de Algoritmos
+
+## 1. Objetivo
+
+Registrar manualmente a execução lógica de variáveis e regras de negócio para validar algoritmos críticos do Pet Alliance **antes e durante a codificação**.
+
+---
+
+## 2. TM01 — Validação de CPF
+
+**Onde se aplica:** Cadastro de Usuário (`backEnd/models/usuarioDAO.php` — método `validaCPF`)
+
+**Regra:** O CPF brasileiro é validado pelo cálculo dos dígitos verificadores (DV). Formato: 11 dígitos.
+
+### Algoritmo (simplificado)
+
+```
+1. Remover máscaras (., -)
+2. Verificar se tem 11 dígitos
+3. Verificar se não é sequência repetida (ex: 111.111.111-11)
+4. Calcular 1º dígito verificador:
+   - Soma = Σ (dígito[i] × (10 - i)) para i = 0..8
+   - Resto = (soma × 10) % 11
+   - Se resto == 10, resto = 0
+   - DV1 deve ser == dígito[9]
+5. Calcular 2º dígito verificador:
+   - Soma = Σ (dígito[i] × (11 - i)) para i = 0..9
+   - Resto = (soma × 10) % 11
+   - Se resto == 10, resto = 0
+   - DV2 deve ser == dígito[10]
+```
+
+### Tabela de Teste — CPF Válido: `529.982.247-25`
+
+| Passo | Variável | Cálculo | Resultado |
+|---|---|---|---|
+| 1 | dígitos | `[5,2,9,9,8,2,2,4,7,2,5]` | OK — 11 dígitos |
+| 2 | sequência repetida? | 5≠2 → não é repetida | OK |
+| 3 | soma1 | 5×10 + 2×9 + 9×8 + 9×7 + 8×6 + 2×5 + 2×4 + 4×3 + 7×2 | = 50+18+72+63+48+10+8+12+14 = **295** |
+| 4 | resto1 | (295×10) % 11 = 2950 % 11 | **2** |
+| 5 | DV1 esperado | dígito[9] = **2** | **OK** ✅ |
+| 6 | soma2 | 5×11 + 2×10 + 9×9 + 9×8 + 8×7 + 2×6 + 2×5 + 4×4 + 7×3 + 2×2 | = 55+20+81+72+56+12+10+16+21+4 = **347** |
+| 7 | resto2 | (347×10) % 11 = 3470 % 11 | **5** |
+| 8 | DV2 esperado | dígito[10] = **5** | **OK** ✅ |
+
+**Resultado Final: CPF 529.982.247-25 → VÁLIDO** ✅
+
+### Tabela de Teste — CPF Inválido: `123.456.789-00`
+
+| Passo | Variável | Cálculo | Resultado |
+|---|---|---|---|
+| 1 | dígitos | `[1,2,3,4,5,6,7,8,9,0,0]` | OK — 11 dígitos |
+| 2 | sequência repetida? | Não | OK |
+| 3 | soma1 | 1×10 + 2×9 + 3×8 + 4×7 + 5×6 + 6×5 + 7×4 + 8×3 + 9×2 | = 10+18+24+28+30+30+28+24+18 = **210** |
+| 4 | resto1 | (210×10) % 11 = 2100 % 11 | **10 → 0** |
+| 5 | DV1 esperado | dígito[9] = **0** | **OK** ✅ |
+| 6 | soma2 | 1×11 + 2×10 + 3×9 + 4×8 + 5×7 + 6×6 + 7×5 + 8×4 + 9×3 + 0×2 | = 11+20+27+32+35+36+35+32+27+0 = **255** |
+| 7 | resto2 | (255×10) % 11 = 2550 % 11 | **9** |
+| 8 | DV2 esperado = 9 | dígito[10] = **0** ≠ **9** | **FALHA** ❌ |
+
+**Resultado Final: CPF 123.456.789-00 → INVÁLIDO** ✅ (corretamente rejeitado)
+
+---
+
+## 3. TM02 — Validação de Senha (Critérios Fortes)
+
+**Onde se aplica:** Cadastro de Usuário (RF02.3)
+
+**Regra:** Senha deve conter ao menos 1 letra **maiúscula**, 1 **minúscula** e 1 **número**. Mínimo 8 caracteres.
+
+### Tabela de Teste
+
+| Cenário | Senha | ≥ 8 chars | Maiúscula | Minúscula | Número | Resultado |
+|---|---|---|---|---|---|---|
+| Válida | `Senha123` | ✅ (8) | ✅ S | ✅ e,n,h,a | ✅ 1,2,3 | **VÁLIDA** ✅ |
+| Só números | `12345678` | ✅ | ❌ | ❌ | ✅ | **INVÁLIDA** ❌ |
+| Só minúsculas | `senhafraca` | ✅ | ❌ | ✅ | ❌ | **INVÁLIDA** ❌ |
+| Curta + forte | `Ab1` | ❌ (3) | ✅ | ✅ | ✅ | **INVÁLIDA** ❌ |
+| Maiúscula+faltando número | `SenhaFraca` | ✅ | ✅ | ✅ | ❌ | **INVÁLIDA** ❌ |
+| Válida complexa | `MinhaSenha1` | ✅ | ✅ M | ✅ i,n,h,a,e,n,h,a | ✅ 1 | **VÁLIDA** ✅ |
+
+---
+
+## 4. TM03 — Bloqueio de Login por Tentativas
+
+**Onde se aplica:** RF01.5 — `backEnd/controllers/api/usuarioController.php`
+
+**Regra:** Após 5 tentativas de login com senha incorreta, a conta é bloqueada (`tb_usuarios.bloqueado = TRUE`).
+
+### Tabela de Teste
+
+| Tentativa | Ação | `tentativas_login` (antes) | Senha correta? | Resultado | `tentativas_login` (depois) | `bloqueado` |
+|---|---|---|---|---|---|---|
+| 1 | Login "joao" + senha "Errada1" | 0 | ❌ | "Senha incorreta" | 1 | FALSE |
+| 2 | Login "joao" + senha "Errada2" | 1 | ❌ | "Senha incorreta" | 2 | FALSE |
+| 3 | Login "joao" + senha "Errada3" | 2 | ❌ | "Senha incorreta" | 3 | FALSE |
+| 4 | Login "joao" + senha "Errada4" | 3 | ❌ | "Senha incorreta" | 4 | FALSE |
+| 5 | Login "joao" + senha "Errada5" | 4 | ❌ | "Senha incorreta" | 5 | **TRUE** ✅ |
+| 6 | Login "joao" + senha "Correta1" | 5 | ✅ | **"Conta bloqueada"** | 5 | TRUE (bloqueado) |
+
+### Fluxo de desbloqueio
+
+| Ação | Resultado Esperado |
+|---|---|
+| Admin desbloqueia manualmente (BD: `UPDATE tb_usuarios SET bloqueado = 0, tentativas_login = 0 WHERE id = X`) | Conta liberada |
+| Usuário tenta login com credenciais corretas **após desbloqueio** | Login OK ✅ |
+
+---
+
+## 5. TM04 — Fluxo de Match
+
+**Onde se aplica:** RF05 — `backEnd/controllers/api/solicitacaoMatchController.php`
+
+**Regra:** Match ocorre entre dois usuários donos de pets. Chat é liberado apenas quando match é aceito.
+
+### Estados possíveis da solicitação
+
+| Estado | Significado |
+|---|---|
+| `pendente` | Solicitação enviada, aguardando resposta |
+| `aceito` | Match confirmado, chat liberado |
+| `recusado` | Match negado |
+
+### Tabela de Transição de Estados
+
+```
+                    ┌──────────┐
+                    │ pendente │
+                    └────┬─────┘
+                 ┌───────┴────────┐
+                 ▼                ▼
+            ┌────────┐     ┌──────────┐
+            │ aceito │     │ recusado │
+            └───┬────┘     └──────────┘
+                │
+                ▼
+         ┌──────────────┐
+         │ chat liberado │
+         └──────────────┘
+```
+
+### Matriz de Decisão
+
+| Cenário | Usuário tem pet? | Pet alvo existe? | Já enviou match? | Match ativo? | Resultado |
+|---|---|---|---|---|---|
+| A → B válido | ✅ Sim | ✅ Sim | ❌ Não | ❌ Não | ✅ Solicitação criada (pendente) |
+| A → B sem pet | ❌ Não | ✅ Sim | ❌ Não | ❌ Não | ❌ Bloqueado: "Cadastre um pet" |
+| A → B já enviou | ✅ Sim | ✅ Sim | ✅ Sim | ❌ Não | ❌ Bloqueado: "Já enviou solicitação" |
+| A → B já match | ✅ Sim | ✅ Sim | ✅ Sim | ✅ Sim | ❌ Bloqueado: "Match já existe" |
+| A → B recusado | ✅ Sim | ✅ Sim | ❌ (recusado) | ❌ Não | ✅ Pode reenviar? (depende da regra de negócio) |
+
+---
+
+## 6. TM05 — Cálculo de Taxas e Planos
+
+**Onde se aplica:** RF08 — `backEnd/config/planos.php` e lógica de destaque
+
+**Regra:** O sistema oferece 4 planos de assinatura com limites de destaques e preços fixos.
+
+### Tabela de Planos
+
+| Produto ID (enviroment) | Nome | `max_destaques` | `preco` (R$) | Taxa calculada (10% exemplo) |
+|---|---|---|---|---|
+| `ABACATEPAY_PRODUCT_ID` | Iniciante | 5 | 7,50 | 0,75 |
+| `ABACATEPAY_PRODUCT2_ID` | Básico | 10 | 15,00 | 1,50 |
+| `ABACATEPAY_PRODUCT3_ID` | Profissional | 20 | 30,00 | 3,00 |
+| `ABACATEPAY_PRODUCT4_ID` | Premium | 30 | 45,00 | 4,50 |
+
+### Teste de Mesa — Controle de Destaques
+
+**Regra:** Um usuário não pode destacar mais animais do que seu plano permite.
+
+| Cenário | Plano | Limite | Pets em destaque | Tenta destacar | Resultado |
+|---|---|---|---|---|---|
+| Dentro do limite | Básico | 10 | 3 | Pet #4 | ✅ Destaque ativado |
+| Atingiu o limite | Básico | 10 | 10 | Pet #11 | ❌ "Limite de destaques atingido" |
+| Sem plano (padrão) | — | 0 | 0 | Pet #1 | ❌ "Adquira um plano primeiro" |
+| Profissional | Profissional | 20 | 18 | Pet #19 | ✅ Destaque ativado |
+| Remover destaque | Profissional | 20 | 18 | Remove pet #5 | Destagues = 17 |
+
+### Teste de Mesa — Cálculo de Transação (Venda)
+
+**Regra:** A taxa da plataforma é uma porcentagem sobre o valor da venda.
+
+```
+Taxa = ValorVenda × PercentualTaxa
+ValorLiquidoVendedor = ValorVenda - Taxa
+```
+
+| Valor Venda (R$) | Taxa (%) | Taxa (R$) | Valor Líquido (R$) |
+|---|---|---|---|
+| 1.000,00 | 5% | 50,00 | 950,00 |
+| 2.500,00 | 5% | 125,00 | 2.375,00 |
+| 500,00 | 5% | 25,00 | 475,00 |
+| 0,00 | 5% | 0,00 | 0,00 |
+
+---
+
+## 7. Resumo dos Testes de Mesa
+
+| TM | Algoritmo | Cenários Testados | Resultado |
+|---|---|---|---|
+| TM01 | Validação de CPF | 2 (válido + inválido) | ✅ |
+| TM02 | Validação de Senha | 6 cenários | ✅ |
+| TM03 | Bloqueio de Login | 6 tentativas + desbloqueio | ✅ |
+| TM04 | Fluxo de Match | 5 cenários + máquina de estados | ✅ |
+| TM05 | Taxas e Planos | 4 planos + 5 cenários de destaque + 4 transações | ✅ |
+
+---
+
+## 8. Histórico de Revisões
+
+| Versão | Data | Autor | Alteração |
+|---|---|---|---|
+| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |
