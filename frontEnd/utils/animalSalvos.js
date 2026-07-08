@@ -1,5 +1,3 @@
-const params = new URLSearchParams(window.location.search);
-
 window.addEventListener("DOMContentLoaded", () => {
     const formulario = document.querySelector("form");
     const certificado = document.getElementById("certificado");

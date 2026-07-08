@@ -1,5 +1,3 @@
-const params = new URLSearchParams(window.location.search);
-
 const formulario = document.querySelector("form");
 
 formulario.addEventListener("submit", () => {
