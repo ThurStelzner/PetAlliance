@@ -178,10 +178,3 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 3. **Defeitos:** ao marcar um CT como `Failed`, abrir um registro de defeito (ID único) e vincular nesta matriz
 4. **Ao final do ciclo:** preencher os indicadores de cobertura
 
----
-
-## 7. Histórico de Revisões
-
-| Versão | Data | Autor | Alteração |
-|---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |

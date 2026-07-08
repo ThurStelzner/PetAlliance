@@ -127,11 +127,3 @@ flowchart TD
     K -- Não --> M[Correções necessárias]
     M --> C
 ```
-
----
-
-## 6. Histórico de Revisões
-
-| Versão | Data | Autor | Alteração |
-|---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |

@@ -73,10 +73,3 @@ Este documento lista de forma explícita **o que NÃO será testado** no ciclo a
 2. Caso o cliente deseje incluir algum item deste documento no escopo, deve ser feita uma **solicitação formal de mudança**, com reavaliação de prazo e custo.
 3. Este documento deve ser revisado a cada novo ciclo de testes.
 
----
-
-## 4. Histórico de Revisões
-
-| Versão | Data | Autor | Alteração |
-|---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |
