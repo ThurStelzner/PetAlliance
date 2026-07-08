@@ -12,7 +12,6 @@ O sistema deve permitir que o usuário realize login na plataforma.
 - RF01.2: Validar se o email existe.
 - RF01.3: Senha com no mínimo 8 caracteres.
 - RF01.4: Recuperação de senha por email.
-- RF01.5: Bloqueio após 5 tentativas incorretas.
 
 [RF02] CADASTRO DE USUÁRIO
 O sistema deve permitir o cadastro de novos usuários.
@@ -20,13 +19,12 @@ O sistema deve permitir o cadastro de novos usuários.
 - RF02.1: CPF único (não duplicado).
 - RF02.2: Email único.
 - RF02.3: Senha deve conter: Maiúscula, Minúscula e Número.
-- RF02.4: Validação de CAPTCHA.
 - RF02.5: Envio de email de confirmação.
 
 [RF03] CADASTRO DE PET
 Permitir o registro de animais no sistema.
 - Dados: Foto, Nome, Raça, Cor, Sexo, Tipo, Porte, Idade, Peso, Descrição.
-- RF03.1: Limite de até 5 fotos.
+- RF03.1: Limite de até 10 fotos.
 - RF03.2: Foto é item obrigatório.
 - RF03.3: Carteira de vacinação obrigatória.
 - RF03.4: Certificado de raça (opcional).
