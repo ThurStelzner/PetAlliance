@@ -21,7 +21,6 @@ CREATE TABLE tb_usuarios (
 CREATE TABLE tb_pets (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     dono_id BIGINT UNSIGNED NOT NULL,
-    foto_pet VARCHAR(250) DEFAULT"placeholder.webp",
     nome VARCHAR(50) NOT NULL,
     raca VARCHAR(50),
     cor VARCHAR(30),
@@ -57,7 +56,6 @@ CREATE TABLE tb_matches (
     CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
     CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
-
 -- BLOQUEIOS
 CREATE TABLE tb_bloqueios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

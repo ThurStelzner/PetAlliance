@@ -46,23 +46,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
             await carregarMeusDestaques();
 
+            function getCarrosselHtml(animal) {
+                const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
+                const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
+                const imgs = fotos.map(f =>
+                    '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">'
+                ).join('');
+                return '<div class="animal-fotos-carrossel" data-fotos=\'' + fotosJson + '\'><div class="carrossel-track">' + imgs + '</div></div>';
+            }
+
+            function carregarCarrosselEventos(card) {
+                const carrossel = card.querySelector('.animal-fotos-carrossel');
+                if (!carrossel) return;
+                let fotos = [];
+                try { fotos = JSON.parse(carrossel.dataset.fotos); } catch(e) {}
+                if (fotos.length <= 1) return;
+                let intervalo = null;
+                let idx = 0;
+                carrossel.addEventListener('mouseenter', function() {
+                    const track = this.querySelector('.carrossel-track');
+                    if (!track) return;
+                    intervalo = setInterval(function() {
+                        idx = (idx + 1) % fotos.length;
+                        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                    }, 1800);
+                });
+                carrossel.addEventListener('mouseleave', function() {
+                    clearInterval(intervalo);
+                    intervalo = null;
+                    idx = 0;
+                    const track = this.querySelector('.carrossel-track');
+                    if (track) track.style.transform = 'translateX(0)';
+                });
+            }
+
             animais.forEach(animal => {
                 const card = document.createElement("article");
                 card.classList.add("animal-card");
                 const estaDestacado = meusDestaquesIds.has(animal.id);
                 const textoBotao = estaDestacado ? "Remover Destaque" : "Destacar";
                 const classeBotao = estaDestacado ? "remover-destaque-btn" : "destacar-btn";
-                card.innerHTML = `
-                    <img src="/uploads/animais/${animal.foto_pet || 'placeholder.webp'}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
-                    <h3>${animal.nome || "Sem nome"}</h3>
-                    <p>${animal.descricao || "Não informada"}</p>
-                    <p>${animal.tipo || "Não informado"}</p>
-                    <p>${animal.porte || "Não informado"}</p>
-                    <p>${animal.sexo || "Não informado"}</p>
-                    <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
-                    <button type="button" class="${classeBotao}" data-animal-id="${animal.id}" data-nome="${animal.nome || 'Animal'}">${textoBotao}</button>
-                `;
+                card.innerHTML =
+                    getCarrosselHtml(animal) +
+                    '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
+                    '<p>' + (animal.descricao || "Não informada") + '</p>' +
+                    '<p>' + (animal.tipo || "Não informado") + '</p>' +
+                    '<p>' + (animal.porte || "Não informado") + '</p>' +
+                    '<p>' + (animal.sexo || "Não informado") + '</p>' +
+                    '<button type="button" class="detalhes-btn" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
+                    '<button type="button" class="' + classeBotao + '" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">' + textoBotao + '</button>' +
+                    '<button type="button" class="editar-btn" data-animal-id="' + animal.id + '" style="margin-left:0.25rem;">Editar</button>';
                 container.appendChild(card);
+                carregarCarrosselEventos(card);
             });
         } catch (error) {
             console.error("Erro ao carregar seus animais:", error);
@@ -100,6 +135,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const animalId = button.dataset.animalId;
         if (animalId) {
             carregarDetalhesAnimal(animalId);
+        }
+    });
+
+    container.addEventListener("click", (event) => {
+        const target = event.target;
+        const btn = target instanceof Element ? target.closest(".editar-btn") : null;
+        if (!btn) return;
+        const animalId = btn.dataset.animalId;
+        if (animalId) {
+            window.location.href = '/backEnd/animal/editarAnimal.php?id=' + animalId;
         }
     });
 
@@ -206,11 +251,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("Animal inválido recebido do servidor.");
             }
 
-            const fotoAnimal = (animal.foto_pet || "placeholder.webp").toString().trim() || "placeholder.webp";
+            const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
+            const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
+            const imgsHtml = fotos.map(function(f) {
+                return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
+            }).join('');
+
+            var galeriaHtml = '<div class="modal-gallery" data-fotos=\'' + fotosJson + '\' data-index="0">' +
+                '<div class="gallery-track">' + imgsHtml + '</div>';
+            if (fotos.length > 1) {
+                galeriaHtml += '<button type="button" class="gallery-prev">&#10094;</button>' +
+                               '<button type="button" class="gallery-next">&#10095;</button>';
+            }
+            galeriaHtml += '</div>';
+
             openModal(`
                 <div class="modal-content">
                     <button type="button" class="modal-close">×</button>
-                    <img src="/uploads/animais/${fotoAnimal}" alt="Foto de ${animal.nome || 'Animal'}" style="max-width: 10rem; height: 10rem; object-fit: cover;" class="modal-animal-image" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
+                    ${galeriaHtml}
                     <h3>${animal.nome || "Sem nome"}</h3>
                     <p><strong>Data de Nascimento:</strong> ${animal.data_nascimento || "Não informada"}</p>
                     <p><strong>Descrição:</strong> ${animal.descricao || "Não informada"}</p>
@@ -224,6 +282,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
                 </div>
             `);
+
+            setTimeout(function() {
+                var modal = document.getElementById('animais-modal');
+                if (!modal) return;
+                var galeria = modal.querySelector('.modal-gallery');
+                if (!galeria) return;
+                var track = galeria.querySelector('.gallery-track');
+                if (!track) return;
+                var imgs = track.querySelectorAll('img');
+                if (imgs.length <= 1) return;
+                var prevBtn = galeria.querySelector('.gallery-prev');
+                var nextBtn = galeria.querySelector('.gallery-next');
+                var idx = 0;
+                function atualizarGaleria() {
+                    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                }
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function() {
+                        idx = (idx + 1) % imgs.length;
+                        atualizarGaleria();
+                    });
+                }
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function() {
+                        idx = (idx - 1 + imgs.length) % imgs.length;
+                        atualizarGaleria();
+                    });
+                }
+            }, 0);
         } catch (error) {
             console.error("Erro ao carregar detalhes do animal:", error);
         }

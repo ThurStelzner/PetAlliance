@@ -78,7 +78,7 @@
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'detalhes_animal' && isset($_GET['id'])) {
             header('Content-Type: application/json');
             $controllerAnimal = new AnimalController();
-            $controllerAnimal->read($_GET['id']);
+            $controllerAnimal->read($_GET['id'], $usuarioId);
             exit;
         }
 
@@ -128,6 +128,22 @@
             }
             $controllerMembro = new MembroController();
             $controllerMembro->removerDestaque($usuarioId, $animalId);
+            exit;
+        }
+
+        if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'remover_foto') {
+            header('Content-Type: application/json');
+            $dados = json_decode(file_get_contents("php://input"), true);
+            $petId = $dados['pet_id'] ?? null;
+            $fotoPath = $dados['foto_path'] ?? null;
+            if (!$petId || !$fotoPath) {
+                echo json_encode(['success' => false, 'error' => 'Dados incompletos.']);
+                exit;
+            }
+            require_once __DIR__ . '/../backEnd/models/animalDAO.php';
+            $dao = new AnimalDAO();
+            $resultado = $dao->removerFotoByPath($petId, $fotoPath);
+            echo json_encode(['success' => $resultado, 'error' => $resultado ? null : 'Foto não encontrada.']);
             exit;
         }
     } catch (Exception $e) {
