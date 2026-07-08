@@ -40,6 +40,22 @@ CREATE TABLE tb_pets (
     CONSTRAINT fk_pets_dono FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
+-- MATCH
+CREATE TABLE tb_matches (
+    id SERIAL PRIMARY KEY, 
+    id_usuario1 BIGINT UNSIGNED NOT NULL,  
+    id_animal1 BIGINT UNSIGNED NOT NULL,   
+    id_usuario2 BIGINT UNSIGNED NOT NULL,  
+    id_animal2 BIGINT UNSIGNED NOT NULL,   
+    aceito BOOLEAN DEFAULT FALSE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    respondido_em TIMESTAMP,
+    CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
+    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_animais(id),
+    CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
+    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
+    CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
+);
 -- BLOQUEIOS
 CREATE TABLE tb_bloqueios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -121,9 +137,22 @@ CREATE TABLE tb_pagamentos (
     status_pagamento ENUM('PENDING', 'PAID', 'REFUNDED', 'EXPIRED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
     id_transacao_abacatepay VARCHAR(255) UNIQUE NULL,
     valor DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    plano_nome VARCHAR(30) NULL,
+    plano_max_destaques INT NULL,
+    plano_expiracao DATE NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_pagamentos_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE SET NULL
+);
+
+-- PETS DESTACADOS POR MEMBROS
+CREATE TABLE tb_pets_membros (
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    animal_id BIGINT UNSIGNED NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (usuario_id, animal_id),
+    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
 -- VENDAS

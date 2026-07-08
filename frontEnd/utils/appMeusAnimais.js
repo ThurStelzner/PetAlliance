@@ -7,6 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    let meusDestaquesIds = new Set();
+
+    async function carregarMeusDestaques() {
+        try {
+            const res = await fetch('/backEnd/home.php?route=meus_destaques_ids');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                meusDestaquesIds = new Set(data);
+            }
+        } catch (e) {
+            console.error('Erro ao carregar destaques:', e);
+        }
+    }
+
     async function carregarMeusAnimais() {
         try {
             const response = await fetch(API_URL_MEUS_ANIMAIS);
@@ -29,9 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            await carregarMeusDestaques();
+
             animais.forEach(animal => {
                 const card = document.createElement("article");
                 card.classList.add("animal-card");
+                const estaDestacado = meusDestaquesIds.has(animal.id);
+                const textoBotao = estaDestacado ? "Remover Destaque" : "Destacar";
+                const classeBotao = estaDestacado ? "remover-destaque-btn" : "destacar-btn";
                 card.innerHTML = `
                     <img src="/uploads/animais/${animal.foto_pet || 'placeholder.webp'}" alt="${animal.nome || 'Animal'}" class="animal-image" style="max-width: 10rem; height: 10rem; object-fit: cover;" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">
                     <h3>${animal.nome || "Sem nome"}</h3>
@@ -40,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${animal.porte || "Não informado"}</p>
                     <p>${animal.sexo || "Não informado"}</p>
                     <button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>
+                    <button type="button" class="${classeBotao}" data-animal-id="${animal.id}" data-nome="${animal.nome || 'Animal'}">${textoBotao}</button>
                 `;
                 container.appendChild(card);
             });
@@ -79,6 +100,48 @@ document.addEventListener("DOMContentLoaded", () => {
         const animalId = button.dataset.animalId;
         if (animalId) {
             carregarDetalhesAnimal(animalId);
+        }
+    });
+
+    container.addEventListener("click", async (event) => {
+        const target = event.target;
+        const button = target instanceof Element ? target.closest(".destacar-btn, .remover-destaque-btn") : null;
+        if (!button) return;
+
+        const animalId = button.dataset.animalId;
+        const nome = button.dataset.nome || "Animal";
+        const isRemover = button.classList.contains("remover-destaque-btn");
+
+        if (isRemover) {
+            if (!confirm(`Tem certeza que deseja remover o destaque de ${nome}?`)) return;
+
+            const res = await fetch('/backEnd/home.php?route=remover_destaque', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ animal_id: animalId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message || "Destaque removido.");
+                carregarMeusAnimais();
+            } else {
+                alert(data.error || "Erro ao remover destaque.");
+            }
+        } else {
+            if (!confirm(`Tem certeza que deseja destacar ${nome}?`)) return;
+
+            const res = await fetch('/backEnd/home.php?route=destacar_animal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ animal_id: animalId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message || "Animal destacado com sucesso!");
+                carregarMeusAnimais();
+            } else {
+                alert(data.error || "Erro ao destacar animal.");
+            }
         }
     });
 
