@@ -114,9 +114,22 @@
         }
 
         private function registrarPagamento($usuarioId, $produtoId, $checkoutId, $preco) {
-            $sql = "INSERT INTO tb_pagamentos (usuario_id, prod_id_abacatepay, id_transacao_abacatepay, status_pagamento, valor) VALUES (?, ?, ?, 'PENDING', ?)";
+            $planoNome = null;
+            $planoMax = null;
+
+            $planosFile = __DIR__ . '/../config/planos.php';
+            if (file_exists($planosFile)) {
+                $PLANOS = [];
+                require $planosFile;
+                if (isset($PLANOS[$produtoId])) {
+                    $planoNome = $PLANOS[$produtoId]['nome'] ?? null;
+                    $planoMax = $PLANOS[$produtoId]['max_destaques'] ?? null;
+                }
+            }
+
+            $sql = "INSERT INTO tb_pagamentos (usuario_id, prod_id_abacatepay, id_transacao_abacatepay, status_pagamento, valor, plano_nome, plano_max_destaques) VALUES (?, ?, ?, 'PENDING', ?, ?, ?)";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$usuarioId, $produtoId, $checkoutId, $preco]);
+            $stmt->execute([$usuarioId, $produtoId, $checkoutId, $preco, $planoNome, $planoMax]);
         }
 
         public function verificarStatusPagamento($produtoId) {
@@ -129,7 +142,15 @@
         public function atualizarStatusPagamento($checkoutId, $status, $transacaoId = null) {
             $sql = "UPDATE tb_pagamentos SET status_pagamento = ?, id_transacao_abacatepay = COALESCE(?, id_transacao_abacatepay), atualizado_em = NOW() WHERE id_transacao_abacatepay = ? OR prod_id_abacatepay = ?";
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$status, $transacaoId, $checkoutId, $checkoutId]);
+            $result = $stmt->execute([$status, $transacaoId, $checkoutId, $checkoutId]);
+
+            if ($status === 'PAID') {
+                $sqlUpdate = "UPDATE tb_pagamentos SET plano_expiracao = DATE_ADD(NOW(), INTERVAL 1 MONTH) WHERE (id_transacao_abacatepay = ? OR prod_id_abacatepay = ?) AND plano_expiracao IS NULL";
+                $stmtUpdate = $this->pdo->prepare($sqlUpdate);
+                $stmtUpdate->execute([$checkoutId, $checkoutId]);
+            }
+
+            return $result;
         }
 
         public function webhookNotificacao() {

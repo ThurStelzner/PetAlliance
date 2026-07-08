@@ -41,7 +41,6 @@ CREATE TABLE tb_pets (
     ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
 -- MATCH
 CREATE TABLE tb_matches (
     id SERIAL PRIMARY KEY, 
@@ -58,9 +57,6 @@ CREATE TABLE tb_matches (
     CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
     CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
-
-=======
->>>>>>> origin/carlos-branch
 -- BLOQUEIOS
 CREATE TABLE tb_bloqueios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -142,9 +138,22 @@ CREATE TABLE tb_pagamentos (
     status_pagamento ENUM('PENDING', 'PAID', 'REFUNDED', 'EXPIRED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
     id_transacao_abacatepay VARCHAR(255) UNIQUE NULL,
     valor DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    plano_nome VARCHAR(30) NULL,
+    plano_max_destaques INT NULL,
+    plano_expiracao DATE NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+);
+
+-- PETS DESTACADOS POR MEMBROS
+CREATE TABLE tb_pets_membros (
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    animal_id BIGINT UNSIGNED NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (usuario_id, animal_id),
+    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
 -- VENDAS
@@ -163,26 +172,4 @@ CREATE TABLE tb_vendas (
     FOREIGN KEY (vendedor_id) REFERENCES tb_usuarios(id),
     FOREIGN KEY (pagamento_id) REFERENCES tb_pagamentos(id)
 );
-<<<<<<< HEAD
 
--- DENÚNCIAS
-CREATE TABLE tb_denuncias (
-     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-     usuario_id BIGINT UNSIGNED  NULL,
-     tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
-     alvo_id BIGINT UNSIGNED NULL,
-     descricao TEXT NOT NULL,
-     resolvido TINYINT(1) NOT NULL DEFAULT 0,
-     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
-)
-
-CREATE TABLE tb_favoritos (
-	id_pet BIGINT UNSIGNED,
-    id_usuario BIGINT UNSIGNED,
-    PRIMARY KEY (id_usuario, id_pet),
-    FOREIGN KEY (id_usuario) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_pet) REFERENCES tb_pets(id) ON DELETE CASCADE
-)
-=======
->>>>>>> origin/carlos-branch

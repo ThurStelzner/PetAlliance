@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
+    require_once __DIR__ . '/../backEnd/controllers/api/MembroController.php';
     require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
 
     session_start();
@@ -87,6 +88,48 @@
             $controllerAnimal->favoritarAnimal($usuarioId, $_GET['idAnimal']);
             exit;
         }
+
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais_destaque') {
+            header('Content-Type: application/json');
+            $controllerMembro = new MembroController();
+            $controllerMembro->jsonAnimaisDestaque();
+            exit;
+        }
+
+        if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'meus_destaques_ids') {
+            header('Content-Type: application/json');
+            $controllerMembro = new MembroController();
+            $destaques = $controllerMembro->listarMeusDestaques($usuarioId);
+            $ids = array_map(function($a) { return (int)$a['id']; }, $destaques);
+            echo json_encode($ids);
+            exit;
+        }
+
+        if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'destacar_animal') {
+            header('Content-Type: application/json');
+            $dados = json_decode(file_get_contents("php://input"), true);
+            $animalId = $dados['animal_id'] ?? null;
+            if (!$animalId) {
+                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                exit;
+            }
+            $controllerMembro = new MembroController();
+            $controllerMembro->destacarAnimal($usuarioId, $animalId);
+            exit;
+        }
+
+        if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'remover_destaque') {
+            header('Content-Type: application/json');
+            $dados = json_decode(file_get_contents("php://input"), true);
+            $animalId = $dados['animal_id'] ?? null;
+            if (!$animalId) {
+                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                exit;
+            }
+            $controllerMembro = new MembroController();
+            $controllerMembro->removerDestaque($usuarioId, $animalId);
+            exit;
+        }
     } catch (Exception $e) {
         header('Content-Type: application/json');
         http_response_code(500);
@@ -122,7 +165,14 @@
         exit;
     }
 
-    require __DIR__ . '/../frontEnd/view/navBar.html';
+    require __DIR__ . '/../frontEnd/view/navBar.html'; ?>
+    <script>
+        window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
+        window.USUARIO_ID = <?= $usuarioId ?>;
+    </script>
+    <?php require __DIR__ . '/../frontEnd/view/destaques.html'; ?>
+    <script src="/frontEnd/utils/destaques.js"></script>
+    <?php
     require __DIR__ . '/../frontEnd/view/home.html';
 
     if (isset($_GET['mensagem'])) {
@@ -139,12 +189,6 @@
             echo 'Ocorreu um erro';
         }
     }
-    ?>
-    <script>
-        window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
-        window.USUARIO_ID = <?= $usuarioId ?>;
-    </script>
-    <?php
     require __DIR__ . '/../frontEnd/view/footer.html';
 ?>
 
