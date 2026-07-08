@@ -37,37 +37,16 @@ CREATE TABLE tb_pets (
     foto_certificado VARCHAR(250) DEFAULT 0,
     venda_preco DECIMAL(10,2) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id)
-    ON DELETE CASCADE
+    CONSTRAINT fk_pets_dono FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
--- MATCH
-CREATE TABLE tb_matches (
-    id SERIAL PRIMARY KEY, 
-    id_usuario1 BIGINT UNSIGNED NOT NULL,  
-    id_animal1 BIGINT UNSIGNED NOT NULL,   
-    id_usuario2 BIGINT UNSIGNED NOT NULL,  
-    id_animal2 BIGINT UNSIGNED NOT NULL,   
-    aceito BOOLEAN DEFAULT FALSE,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    respondido_em TIMESTAMP,
-    CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_animais(id),
-    CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
-    CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
-);
-
-=======
->>>>>>> origin/carlos-branch
 -- BLOQUEIOS
 CREATE TABLE tb_bloqueios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT UNSIGNED NOT NULL,
     bloqueado_id BIGINT UNSIGNED NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (bloqueado_id) REFERENCES tb_usuarios(id)
+    CONSTRAINT fk_bloqueios_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_bloqueios_bloqueado FOREIGN KEY (bloqueado_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
 -- SOLICITAÇÕES DE MATCH
@@ -77,8 +56,8 @@ CREATE TABLE tb_solicitacoes_match (
     remetente_id BIGINT UNSIGNED NOT NULL,
     status ENUM('pendente', 'aceito', 'recusado') DEFAULT 'pendente' NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (pet_id) REFERENCES tb_pets(id) ON DELETE CASCADE,
-    FOREIGN KEY (remetente_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+    CONSTRAINT fk_solicitacoes_pet FOREIGN KEY (pet_id) REFERENCES tb_pets(id) ON DELETE CASCADE,
+    CONSTRAINT fk_solicitacoes_remetente FOREIGN KEY (remetente_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
 -- CHAT (CONVERSA)
@@ -86,7 +65,7 @@ CREATE TABLE tb_conversas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     solicitacao_id BIGINT UNSIGNED NOT NULL,
     ativa BOOLEAN DEFAULT TRUE NOT NULL,
-    FOREIGN KEY (solicitacao_id) REFERENCES tb_solicitacoes_match(id)
+    CONSTRAINT fk_conversas_solicitacao FOREIGN KEY (solicitacao_id) REFERENCES tb_solicitacoes_match(id) ON DELETE CASCADE
 );
 
 -- MENSAGENS
@@ -97,8 +76,8 @@ CREATE TABLE tb_mensagens (
     conteudo VARCHAR(500) NOT NULL,
     lida TINYINT(1) DEFAULT 0,
     data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (conversa_id) REFERENCES tb_conversas(id),
-    FOREIGN KEY (remetente_id) REFERENCES tb_usuarios(id)
+    CONSTRAINT fk_mensagens_conversa FOREIGN KEY (conversa_id) REFERENCES tb_conversas(id) ON DELETE CASCADE,
+    CONSTRAINT fk_mensagens_remetente FOREIGN KEY (remetente_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
 -- FAVORITOS
@@ -106,20 +85,20 @@ CREATE TABLE tb_favoritos (
 	id_pet BIGINT UNSIGNED,
     id_usuario BIGINT UNSIGNED,
     PRIMARY KEY (id_usuario, id_pet),
-    FOREIGN KEY (id_usuario) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_pet) REFERENCES tb_pets(id) ON DELETE CASCADE
+    CONSTRAINT fk_favoritos_usuario FOREIGN KEY (id_usuario) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_favoritos_pet FOREIGN KEY (id_pet) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
 -- DENÚNCIAS
 CREATE TABLE tb_denuncias (
      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-     usuario_id BIGINT UNSIGNED  NULL,
+     usuario_id BIGINT UNSIGNED NULL,
      tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
      alvo_id BIGINT UNSIGNED NULL,
      descricao TEXT NOT NULL,
      resolvido TINYINT(1) NOT NULL DEFAULT 0,
      criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+     CONSTRAINT fk_denuncias_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE SET NULL
  );
 
 -- NOTIFICAÇÕES
@@ -131,58 +110,48 @@ CREATE TABLE tb_notificacoes (
     lida TINYINT(1) DEFAULT 0 NOT NULL,
     link VARCHAR(255) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+    CONSTRAINT fk_notificacoes_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
 
 -- PAGAMENTOS
 CREATE TABLE tb_pagamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
-    usuario_id BIGINT UNSIGNED NOT NULL,
+    usuario_id BIGINT UNSIGNED NULL,
     prod_id_abacatepay varchar(200) NOT NULL,
     status_pagamento ENUM('PENDING', 'PAID', 'REFUNDED', 'EXPIRED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
     id_transacao_abacatepay VARCHAR(255) UNIQUE NULL,
     valor DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
+    CONSTRAINT fk_pagamentos_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE SET NULL
 );
 
 -- VENDAS
 CREATE TABLE tb_vendas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    animal_id BIGINT UNSIGNED NOT NULL,
-    comprador_id BIGINT UNSIGNED NOT NULL,
-    vendedor_id BIGINT UNSIGNED NOT NULL,
+    animal_id BIGINT UNSIGNED NULL,
+    comprador_id BIGINT UNSIGNED NULL,
+    vendedor_id BIGINT UNSIGNED NULL,
     preco DECIMAL(10,2) NOT NULL,
     status ENUM('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
-    pagamento_id BIGINT UNSIGNED,
+    pagamento_id BIGINT UNSIGNED NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (animal_id) REFERENCES tb_pets(id),
-    FOREIGN KEY (comprador_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (vendedor_id) REFERENCES tb_usuarios(id),
-    FOREIGN KEY (pagamento_id) REFERENCES tb_pagamentos(id)
+    CONSTRAINT fk_vendas_animal FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE SET NULL,
+    CONSTRAINT fk_vendas_comprador FOREIGN KEY (comprador_id) REFERENCES tb_usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT fk_vendas_vendedor FOREIGN KEY (vendedor_id) REFERENCES tb_usuarios(id) ON DELETE SET NULL,
+    CONSTRAINT fk_vendas_pagamento FOREIGN KEY (pagamento_id) REFERENCES tb_pagamentos(id) ON DELETE SET NULL
 );
-<<<<<<< HEAD
 
--- DENÚNCIAS
-CREATE TABLE tb_denuncias (
-     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-     usuario_id BIGINT UNSIGNED  NULL,
-     tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
-     alvo_id BIGINT UNSIGNED NULL,
-     descricao TEXT NOT NULL,
-     resolvido TINYINT(1) NOT NULL DEFAULT 0,
-     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id)
-)
-
-CREATE TABLE tb_favoritos (
-	id_pet BIGINT UNSIGNED,
-    id_usuario BIGINT UNSIGNED,
-    PRIMARY KEY (id_usuario, id_pet),
-    FOREIGN KEY (id_usuario) REFERENCES tb_usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_pet) REFERENCES tb_pets(id) ON DELETE CASCADE
-)
-=======
->>>>>>> origin/carlos-branch
+-- VERIFICAÇÃO DE EMAIL E RECUPERAÇÃO DE SENHA
+CREATE TABLE tb_verificacao_email (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    codigo VARCHAR(6) NOT NULL,
+    tipo ENUM('verificacao', 'recuperacao') NOT NULL DEFAULT 'verificacao',
+    expiracao DATETIME NOT NULL,
+    usado BOOLEAN DEFAULT FALSE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_verificacao_email_usuario FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+);

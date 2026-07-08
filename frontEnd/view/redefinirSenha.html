@@ -1,0 +1,16 @@
+
+<h2>Redefinir senha</h2>
+<p>Email: <strong><?= htmlspecialchars($emailOculto ?? '') ?></strong></p>
+
+<div id="mensagem-erro"></div>
+<div id="mensagem-sucesso"></div>
+
+<form id="form-senha">
+    <input type="password" name="senha" id="senha" placeholder="Nova senha" minlength="3" required>
+    <input type="password" name="confirmar_senha" id="confirmar_senha" placeholder="Confirmar senha" minlength="3" required>
+    <button type="submit">Salvar nova senha</button>
+</form>
+
+<a href="/backEnd/usuario/loginUsuario.php">Voltar ao login</a>
+
+<script src="../../frontEnd/utils/redefinirSenha.js"></script>

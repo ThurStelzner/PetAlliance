@@ -2,6 +2,8 @@
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
+    require_once __DIR__ . "/../../backEnd/models/verificacaoDAO.php";
+    require_once __DIR__ . "/../../backEnd/models/EmailService.php";
     require_once __DIR__ . "/../controllers/api/usuarioController.php";
 
 
@@ -26,6 +28,8 @@
             
             $nomeArquivo = "placeholder.webp";
 
+            $controller = new UsuarioController();
+
             if(isset($_POST['cadastrarFoto'])) {
                 if(!isset($_FILES['imagemPerfil']) || $_FILES['imagemPerfil']['error'] === UPLOAD_ERR_NO_FILE) {
                     echo "Selecione uma imagem";
@@ -37,32 +41,53 @@
                     echo 'Tipo de imagem não permitido.';
                     exit();
                 } else {
-                    $dao = new UsuarioDAO();
                     $nomeArquivo = uniqid('prod_') . '.' . $extensao;
                     move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], '../../uploads/usuario/' . $nomeArquivo);
-                    $usuarioCadastrado = $dao->cadastrarUsuario(new Usuario($nomeArquivo, $cpf, $cep,$tipo, $nome, $email, $senha));
+                    $usuarioCadastrado = $controller->criarUsuario(new Usuario($nomeArquivo, $cpf, $cep,$tipo, $nome, $email, $senha));
 
-                    $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
-                    $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
-                    $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
-                    $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
-                    $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
+                    $usuarioId = $usuarioCadastrado->getId();
 
-                    header("Location: /backEnd/home.php");
+                    // Admin (tipo 1) já verificado e logado
+                    if ($tipo == 1) {
+                        $dao = new UsuarioDAO();
+                        $dao->marcarVerificado($usuarioId);
+                        $_SESSION['usuario_id'] = $usuarioId;
+                        $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
+                        $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
+                        $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+                        $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
+                        header("Location: /backEnd/home.php");
+                        exit();
+                    }
+
+                    // Usuário normal: envia verificação e redireciona
+                    $controller->enviarEmailVerificacao($usuarioId);
+                    $_SESSION['usuario_verificacao_id'] = $usuarioId;
+                    header("Location: /backEnd/verificarEmail.php?id=$usuarioId");
                     exit();
                 }
             }
 
-            $controller = new UsuarioController();
             $usuarioCadastrado = $controller->criarUsuario(new Usuario($nomeArquivo, $cpf, $cep,$tipo, $nome, $email, $senha));
+            $usuarioId = $usuarioCadastrado->getId();
 
-            $_SESSION['usuario_id'] = $usuarioCadastrado->getId();
-            $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
-            $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
-            $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
-            $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
+            // Admin (tipo 1) já verificado e logado
+            if ($tipo == 1) {
+                $dao = new UsuarioDAO();
+                $dao->marcarVerificado($usuarioId);
+                $_SESSION['usuario_id'] = $usuarioId;
+                $_SESSION['usuario_nome'] = $usuarioCadastrado->getNome();
+                $_SESSION['usuario_email'] = $usuarioCadastrado->getEmail();
+                $_SESSION['usuario_imagem'] = $usuarioCadastrado->getImagem();
+                $_SESSION['usuario_cpf'] = $usuarioCadastrado->getCpf();
+                header("Location: /backEnd/home.php");
+                exit();
+            }
 
-            header("Location: /backEnd/home.php");
+            // Usuário normal: envia verificação e redireciona
+            $controller->enviarEmailVerificacao($usuarioId);
+            $_SESSION['usuario_verificacao_id'] = $usuarioId;
+            header("Location: /backEnd/verificarEmail.php?id=$usuarioId");
             exit();
         } catch (InvalidArgumentException $e) {
             echo $e->getMessage();

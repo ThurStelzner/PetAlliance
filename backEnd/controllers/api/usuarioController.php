@@ -2,12 +2,16 @@
     require_once __DIR__ . "/../../config/config.php";
     require_once __DIR__ . "/../../models/usuario.php";
     require_once __DIR__ . "/../../models/usuarioDAO.php";
+    require_once __DIR__ . "/../../models/verificacaoDAO.php";
+    require_once __DIR__ . "/../../models/EmailService.php";
 
     class UsuarioController {
         private $dao;
+        private $verificacaoDao;
 
         public function __construct() {
             $this->dao = new UsuarioDAO();
+            $this->verificacaoDao = new VerificacaoDAO();
         }
 
         public function read($cpf) {
@@ -85,5 +89,138 @@
             } catch (Exception $e) {
                 throw $e;
             }
+        }
+
+        public function enviarEmailVerificacao($usuarioId) {
+            $usuario = $this->dao->readPorId($usuarioId);
+            if (!$usuario) {
+                return false;
+            }
+
+            $this->verificacaoDao->limparPorUsuario($usuarioId, 'verificacao');
+
+            $token = bin2hex(random_bytes(32));
+            $codigo = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $expiracao = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+
+            $this->verificacaoDao->salvar($usuarioId, $token, $codigo, $expiracao, 'verificacao');
+
+            $emailService = new EmailService();
+            return $emailService->enviarVerificacao(
+                $usuario->getEmail(),
+                $usuario->getNome(),
+                $token,
+                $codigo
+            );
+        }
+
+        public function verificarToken($token) {
+            $pdo = Conexao::getConexao();
+            $stmt = $pdo->prepare("SELECT * FROM tb_verificacao_email WHERE token = ? ORDER BY criado_em DESC LIMIT 1");
+            $stmt->execute([$token]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$dados) {
+                return ["success" => false, "message" => "Link inválido."];
+            }
+
+            if ($dados['usado']) {
+                return ["success" => false, "message" => "Este link já foi utilizado."];
+            }
+
+            if ($dados['expiracao'] < date('Y-m-d H:i:s')) {
+                return ["success" => false, "message" => "Link expirado. Faça login para receber um novo."];
+            }
+
+            if ($dados['tipo'] === 'verificacao') {
+                $this->dao->marcarVerificado($dados['usuario_id']);
+            }
+
+            $this->verificacaoDao->marcarUsado($dados['id']);
+            $this->verificacaoDao->limparPorUsuario($dados['usuario_id'], $dados['tipo']);
+
+            if ($dados['tipo'] === 'recuperacao') {
+                return ["success" => true, "message" => "Código verificado! Agora crie uma nova senha.", "usuario_id" => $dados['usuario_id'], "tipo" => "recuperacao"];
+            }
+
+            return ["success" => true, "message" => "Email verificado com sucesso!", "usuario_id" => $dados['usuario_id'], "tipo" => "verificacao"];
+        }
+
+        public function verificarCodigo($usuarioId, $codigo, $tipo = 'verificacao') {
+            $dados = $this->verificacaoDao->buscarPorUsuario($usuarioId, $tipo);
+
+            if ($dados && $dados['codigo'] === $codigo) {
+                if ($tipo === 'verificacao') {
+                    $this->dao->marcarVerificado($usuarioId);
+                }
+                $this->verificacaoDao->marcarUsado($dados['id']);
+                $this->verificacaoDao->limparPorUsuario($usuarioId, $tipo);
+
+                if ($tipo === 'recuperacao') {
+                    return ["success" => true, "message" => "Código verificado! Agora crie uma nova senha.", "tipo" => "recuperacao"];
+                }
+
+                return ["success" => true, "message" => "Email verificado com sucesso!", "tipo" => "verificacao"];
+            }
+
+            $ultimo = $this->verificacaoDao->buscarUltimoPorUsuario($usuarioId, $tipo);
+            if (!$ultimo) {
+                return ["success" => false, "message" => "Nenhum código encontrado. Solicite um novo."];
+            }
+
+            if ($ultimo['expiracao'] < date('Y-m-d H:i:s')) {
+                return ["success" => false, "message" => "Código expirado. Solicite um novo."];
+            }
+
+            return ["success" => false, "message" => "Código inválido. Verifique e tente novamente."];
+        }
+
+        public function reenviarVerificacao($usuarioId) {
+            return $this->enviarEmailVerificacao($usuarioId);
+        }
+
+        public function isVerificado($usuarioId) {
+            $usuario = $this->dao->readPorId($usuarioId);
+            if (!$usuario) {
+                return false;
+            }
+            $pdo = Conexao::getConexao();
+            $stmt = $pdo->prepare("SELECT verificado FROM tb_usuarios WHERE id = ?");
+            $stmt->execute([$usuarioId]);
+            return (bool) $stmt->fetchColumn();
+        }
+
+        // === RECUPERAÇÃO DE SENHA ===
+
+        public function enviarRecuperacaoSenha($email) {
+            $usuario = $this->dao->buscarPorEmail($email);
+            if (!$usuario) {
+                return false;
+            }
+
+            $usuarioId = $usuario->getId();
+            $this->verificacaoDao->limparPorUsuario($usuarioId, 'recuperacao');
+
+            $token = bin2hex(random_bytes(32));
+            $codigo = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $expiracao = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+
+            $this->verificacaoDao->salvar($usuarioId, $token, $codigo, $expiracao, 'recuperacao');
+
+            $emailService = new EmailService();
+            return $emailService->enviarRecuperacao(
+                $usuario->getEmail(),
+                $usuario->getNome(),
+                $token,
+                $codigo
+            );
+        }
+
+        public function redefinirSenha($usuarioId, $novaSenha) {
+            if (strlen($novaSenha) < 3) {
+                return ["success" => false, "message" => "A senha deve ter pelo menos 3 caracteres."];
+            }
+            $this->dao->updateSenha($usuarioId, $novaSenha);
+            return ["success" => true, "message" => "Senha redefinida com sucesso!"];
         }
     }
