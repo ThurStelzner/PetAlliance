@@ -101,3 +101,125 @@
 .btn-remove-foto:hover {
     background: #c0392b;
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.index-split {
+    display: flex;
+    height: 100vh;
+}
+
+.index-image {
+    flex: 1;
+    background: url('/frontEnd/assets/images/indexImage.jpg') center / cover no-repeat;
+    min-width: 0;
+}
+
+.index-content {
+    flex: 0 0 35%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4rem 3.5rem 2.5rem;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.index-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.index-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 0.75rem;
+}
+
+.index-sub {
+    font-size: 1.1rem;
+    color: #000;
+    margin-bottom: 0.3rem;
+}
+
+.index-desc {
+    font-size: 1.1rem;
+    color: #000;
+    margin-bottom: 2rem;
+}
+
+.index-outline {
+    display: inline-block;
+    padding: 0.5rem 1.75rem;
+    border: 1px solid #2e7d32;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: #2e7d32;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s;
+    align-self: center;
+}
+
+.index-outline:hover {
+    background: #2e7d32;
+    color: #fff;
+}
+
+.index-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.index-btn-primary {
+    background: #2e7d32;
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.index-btn-primary:hover {
+    background: #1b5e20;
+    color: #fff;
+}
+
+.index-btn-ghost {
+    background: transparent;
+    color: #2e7d32;
+    padding: 0.3rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    border: none;
+}
+
+.index-btn-ghost:hover {
+    opacity: 0.7;
+}
+
+.index-content {
+    position: relative;
+    overflow: hidden;
+} footer {
+    display: none;
+}
