@@ -1,8 +1,8 @@
-<h3>Alterar email</h3>
+<h2>Alterar Email</h2>
 
 <?php if ($sucesso): ?>
     <p style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;">Email alterado com sucesso!</p>
-    <a href="/backEnd/usuario/perfil.php">Voltar ao perfil</a>
+    <p><a href="/backEnd/usuario/perfil.php">Voltar ao perfil</a></p>
 <?php elseif ($erro === 'senha_incorreta'): ?>
     <p style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;">Senha incorreta.</p>
 <?php elseif ($erro === 'email_invalido'): ?>
@@ -18,7 +18,7 @@
 <?php endif; ?>
 
 <?php if ($sucesso): ?>
-    <!-- já mostrou mensagem acima -->
+    <!-- já mostrou mensagem -->
 <?php elseif ($etapa === 'codigo_atual'): ?>
     <h3>Verifique seu email atual</h3>
     <p>Enviamos um código para <strong><?= htmlspecialchars($usuarioAtual->getEmail()) ?></strong></p>
@@ -32,6 +32,7 @@
         <input type="hidden" name="tipo" value="atual">
         <button type="submit">Reenviar código</button>
     </form>
+    <p><a href="/backEnd/usuario/alterarEmail.php">Voltar ao início</a></p>
 <?php elseif ($etapa === 'codigo_novo'): ?>
     <h3>Verifique seu novo email</h3>
     <p>Enviamos um código para <strong><?= htmlspecialchars($_SESSION['novo_email_pendente'] ?? '') ?></strong></p>
@@ -45,33 +46,16 @@
         <input type="hidden" name="tipo" value="novo">
         <button type="submit">Reenviar código</button>
     </form>
+    <p><a href="/backEnd/usuario/alterarEmail.php">Voltar ao início</a></p>
 <?php else: ?>
-    <h3>Informações pessoais</h3>
     <p>Email atual: <strong><?= htmlspecialchars($usuarioAtual->getEmail()) ?></strong></p>
-    <p>Se quiser alterar apenas nome e CEP, use o formulário abaixo e clique em "Salvar".</p>
-    <p>Se quiser alterar o email, digite o novo email + senha e clique em "Solicitar alteração".</p>
-
-    <form method="POST">
-        <input type="hidden" name="route" value="salvar_dados">
-        <label>Nome:</label>
-        <input type="text" name="nome" value="<?= htmlspecialchars($usuarioAtual->getNome()) ?>" required>
-        <label>CEP:</label>
-        <input type="text" name="cep" value="<?= htmlspecialchars($usuarioAtual->getCep()) ?>" maxlength="9" required>
-        <button type="submit">Salvar</button>
-    </form>
-
-    <hr>
-
     <form method="POST">
         <input type="hidden" name="route" value="confirmar_senha">
-        <input type="hidden" name="nome" value="<?= htmlspecialchars($usuarioAtual->getNome()) ?>">
-        <input type="hidden" name="cep" value="<?= htmlspecialchars($usuarioAtual->getCep()) ?>">
         <label>Novo email:</label>
         <input type="email" name="novo_email" placeholder="Novo email" required>
         <label>Senha atual:</label>
         <input type="password" name="senha" placeholder="Sua senha" required>
         <button type="submit">Solicitar alteração</button>
     </form>
+    <p><a href="/backEnd/usuario/configuracoes.php">Voltar às configurações</a></p>
 <?php endif; ?>
-
-<a href="/backEnd/usuario/perfil.php">Voltar</a>

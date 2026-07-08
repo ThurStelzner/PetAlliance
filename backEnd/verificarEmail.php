@@ -14,6 +14,27 @@ $controller = new UsuarioController();
 // GET ?token=xxx - verificação por link
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     $token = $_GET['token'];
+    $tipo = $_GET['tipo'] ?? 'verificacao';
+
+    // Se for alteração de email, tratar separado
+    if ($tipo === 'alteracao_email') {
+        $resultado = $controller->confirmarAlteracaoEmail($token);
+        if ($resultado['success']) {
+            $usuario = $resultado['usuario'];
+            $_SESSION['usuario_id'] = $usuario->getId();
+            $_SESSION['usuario_nome'] = $usuario->getNome();
+            $_SESSION['usuario_cpf'] = $usuario->getCpf();
+            $_SESSION['usuario_email'] = $usuario->getEmail();
+            $_SESSION['usuario_imagem'] = $usuario->getImagem();
+            header("Location: /backEnd/home.php?email_alterado=1");
+            exit();
+        } else {
+            $_SESSION['mensagem_erro'] = $resultado['message'];
+            header("Location: /backEnd/usuario/editarPerfil.php?erro=" . urlencode($resultado['message']));
+            exit();
+        }
+    }
+
     $resultado = $controller->verificarToken($token);
 
     if ($resultado['success']) {

@@ -223,4 +223,37 @@
             $this->dao->updateSenha($usuarioId, $novaSenha);
             return ["success" => true, "message" => "Senha redefinida com sucesso!"];
         }
+
+        // === ALTERAÇÃO DE EMAIL ===
+
+        public function iniciarAlteracaoEmail($usuarioId, $novoEmail) {
+            $usuarioAtual = $this->dao->readPorId($usuarioId);
+            if (!$usuarioAtual) {
+                return ["success" => false, "message" => "Usuário não encontrado."];
+            }
+
+            if ($novoEmail === $usuarioAtual->getEmail()) {
+                return ["success" => false, "message" => "O novo email é igual ao atual."];
+            }
+
+            $token = bin2hex(random_bytes(32));
+            $this->dao->salvarEmailPendente($usuarioId, $novoEmail, $token);
+
+            $emailService = new EmailService();
+            $enviou = $emailService->enviarAlteracaoEmail($novoEmail, $usuarioAtual->getNome(), $token);
+
+            if ($enviou) {
+                return ["success" => true, "message" => "Enviamos um link de confirmação para o novo email.", "token" => $token];
+            }
+
+            return ["success" => false, "message" => "Erro ao enviar email. Tente novamente."];
+        }
+
+        public function confirmarAlteracaoEmail($token) {
+            $usuario = $this->dao->confirmarEmailPendente($token);
+            if (!$usuario) {
+                return ["success" => false, "message" => "Link inválido ou expirado."];
+            }
+            return ["success" => true, "message" => "Email alterado com sucesso!", "usuario" => $usuario];
+        }
     }

@@ -17,42 +17,27 @@
     $cpf = preg_replace('/[^0-9]/', '', $_SESSION['usuario_cpf'] ?? '');
     $usuarioAtual = $usuarioDAO->read($cpf);
 
-    // Limpar etapas se veio de fora do fluxo
-    if (!isset($_POST['route'])) {
-        $etapaSessao = $_SESSION['etapa'] ?? '';
-        if ($etapaSessao && $etapaSessao !== 'dados') {
-            unset($_SESSION['etapa']);
-        }
-    }
-
-    // POST normal (submit de formulário)
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rota = $_POST['route'] ?? '';
 
-        // ETAPA 1: Confirmar senha + enviar código pro email atual
+        // ETAPA 1: confirmar senha + enviar código pro email atual
         if ($rota === 'confirmar_senha') {
             $senha = $_POST['senha'] ?? '';
             $novoEmail = $_POST['novo_email'] ?? '';
-            $nome = $_POST['nome'] ?? '';
-            $cep = $_POST['cep'] ?? '';
-
-            // Salvar nome e CEP na sessão pra aplicar depois
-            $_SESSION['editar_nome'] = $nome;
-            $_SESSION['editar_cep'] = $cep;
 
             $senhaCorreta = password_verify($senha, $usuarioAtual->getSenha()) || ($senha === $usuarioAtual->getSenha());
             if (!$senhaCorreta) {
-                header("Location: /backEnd/usuario/editarPerfil.php?erro=senha_incorreta");
+                header("Location: /backEnd/usuario/alterarEmail.php?erro=senha_incorreta");
                 exit();
             }
 
             if (empty($novoEmail) || !filter_var($novoEmail, FILTER_VALIDATE_EMAIL)) {
-                header("Location: /backEnd/usuario/editarPerfil.php?erro=email_invalido");
+                header("Location: /backEnd/usuario/alterarEmail.php?erro=email_invalido");
                 exit();
             }
 
             if ($novoEmail === $usuarioAtual->getEmail()) {
-                header("Location: /backEnd/usuario/editarPerfil.php?erro=email_igual");
+                header("Location: /backEnd/usuario/alterarEmail.php?erro=email_igual");
                 exit();
             }
 
@@ -69,11 +54,11 @@
             $emailService->enviarVerificacao($usuarioAtual->getEmail(), $usuarioAtual->getNome(), $token, $codigo);
 
             $_SESSION['etapa'] = 'codigo_atual';
-            header("Location: /backEnd/usuario/editarPerfil.php");
+            header("Location: /backEnd/usuario/alterarEmail.php");
             exit();
         }
 
-        // ETAPA 2: Verificar código do email atual
+        // ETAPA 2: verificar código do email atual
         if ($rota === 'verificar_codigo_atual') {
             $codigo = $_POST['codigo'] ?? '';
 
@@ -96,15 +81,15 @@
                 $emailService->enviarVerificacao($novoEmail, $usuarioAtual->getNome(), $token, $codigoNovo);
 
                 $_SESSION['etapa'] = 'codigo_novo';
-                header("Location: /backEnd/usuario/editarPerfil.php");
+                header("Location: /backEnd/usuario/alterarEmail.php");
                 exit();
             } else {
-                header("Location: /backEnd/usuario/editarPerfil.php?erro=codigo_invalido");
+                header("Location: /backEnd/usuario/alterarEmail.php?erro=codigo_invalido");
                 exit();
             }
         }
 
-        // ETAPA 3: Verificar código do novo email e salvar
+        // ETAPA 3: verificar código do novo email e salvar
         if ($rota === 'verificar_codigo_novo') {
             $codigo = $_POST['codigo'] ?? '';
 
@@ -123,26 +108,12 @@
                     unset($_SESSION['etapa']);
                 }
 
-                header("Location: /backEnd/usuario/editarPerfil.php?sucesso=1");
+                header("Location: /backEnd/usuario/alterarEmail.php?sucesso=1");
                 exit();
             } else {
-                header("Location: /backEnd/usuario/editarPerfil.php?erro=codigo_invalido_novo");
+                header("Location: /backEnd/usuario/alterarEmail.php?erro=codigo_invalido_novo");
                 exit();
             }
-        }
-
-        // Salvar nome/CEP sem alterar email
-        if ($rota === 'salvar_dados') {
-            $nome = $_POST['nome'] ?? '';
-            $cep = $_POST['cep'] ?? '';
-
-            $usuarioAtual->setNome($nome);
-            $usuarioAtual->setCep($cep);
-            $usuarioDAO->updateUsuario($usuarioAtual, $cpf);
-            $_SESSION['usuario_nome'] = $nome;
-
-            header("Location: /backEnd/usuario/perfil.php?sucesso=1");
-            exit();
         }
 
         // Reenviar código
@@ -160,8 +131,8 @@
 
             $emailService = new EmailService();
             $emailService->enviarVerificacao($email, $usuarioAtual->getNome(), $token, $codigo);
-            $link = $tipo === 'novo' ? "/backEnd/usuario/editarPerfil.php" : "/backEnd/usuario/editarPerfil.php";
-            header("Location: $link&reenviado=1");
+
+            header("Location: /backEnd/usuario/alterarEmail.php?reenviado=1");
             exit();
         }
     }
@@ -171,4 +142,4 @@
     $sucesso = $_GET['sucesso'] ?? '';
 
     require __DIR__ . "/../../frontEnd/view/navBar.html";
-    require __DIR__ . "/../../frontEnd/view/editarPerfil.html";
+    require __DIR__ . "/../../frontEnd/view/alterarEmail.html";

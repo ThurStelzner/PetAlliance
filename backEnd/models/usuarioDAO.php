@@ -149,6 +149,29 @@
             return $stmt->execute([$id]);
         }
 
+        public function salvarEmailPendente($id, $emailPendente, $token) {
+            $sql = "UPDATE tb_usuarios SET email_pendente = ?, token_email_pendente = ? WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$emailPendente, $token, $id]);
+        }
+
+        public function confirmarEmailPendente($token) {
+            $sql = "SELECT * FROM tb_usuarios WHERE token_email_pendente = ? AND email_pendente IS NOT NULL LIMIT 1";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$token]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$dados) return null;
+
+            $sql = "UPDATE tb_usuarios SET email = email_pendente, email_pendente = NULL, token_email_pendente = NULL WHERE id = ?";
+            $this->pdo->prepare($sql)->execute([$dados['id']]);
+
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email_pendente'],$dados['senha'],);
+            $usuario->setId($dados['id']);
+
+            return $usuario;
+        }
+
         public function updateSenha($id, $senha) {
             $sql = "UPDATE tb_usuarios SET senha = ? WHERE id = ?";
             $stmt = $this->pdo->prepare($sql);
