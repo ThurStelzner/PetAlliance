@@ -1,0 +1,24 @@
+<h2>Alterar Senha</h2>
+
+<?php if (!empty($sucesso)): ?>
+    <p style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;">Senha alterada com sucesso!</p>
+    <p><a href="/backEnd/usuario/configuracoes.php">Voltar às configurações</a></p>
+<?php elseif (!empty($erro)): ?>
+    <p style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;"><?= htmlspecialchars($erro) ?></p>
+<?php endif; ?>
+
+<?php if (empty($sucesso)): ?>
+    <form method="POST">
+        <label>Senha atual:</label>
+        <input type="password" name="senha_atual" required>
+
+        <label>Nova senha:</label>
+        <input type="password" name="nova_senha" minlength="3" required>
+
+        <label>Confirmar nova senha:</label>
+        <input type="password" name="confirmar_senha" minlength="3" required>
+
+        <button type="submit">Salvar nova senha</button>
+    </form>
+    <p><a href="/backEnd/usuario/configuracoes.php">Voltar</a></p>
+<?php endif; ?>

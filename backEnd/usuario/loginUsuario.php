@@ -15,14 +15,14 @@
         $usuario = $usuarioDAO->read($cpf);
 
         if (!$usuario) {
-            echo "CPF não cadastrado!";
+            $_SESSION['erro_login'] = "CPF não cadastrado!";
         } elseif ($cpf !== $usuario->getCpf()) {
-            echo "Cpf inválido!";
+            $_SESSION['erro_login'] = "Cpf inválido!";
         } else {
             $senhaCorreta = password_verify($senha, $usuario->getSenha());
 
             if (!$senhaCorreta) {
-                echo "Senha inválida!";
+                $_SESSION['erro_login'] = "Senha inválida!";
             } else {
                 // Verificar se email foi verificado
                 if (!$controller->isVerificado($usuario->getId())) {
@@ -32,11 +32,13 @@
                     exit();
                 }
 
+                session_regenerate_id(true);
                 $_SESSION['usuario_id'] = $usuario->getId();
                 $_SESSION['usuario_nome'] = $usuario->getNome();
                 $_SESSION['usuario_cpf'] = $usuario->getCpf();
                 $_SESSION['usuario_email'] = $usuario->getEmail();
                 $_SESSION['usuario_imagem'] = $usuario->getImagem();
+                $_SESSION['usuario_tipo'] = $usuario->getTipo();
                 header("Location: /backEnd/home.php?sucesso=1");
                 exit;
             }
@@ -46,5 +48,9 @@
 
     require __DIR__ . "/../../frontEnd/view/login.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
+
+    if (isset($_SESSION['erro_login'])) {
+        unset($_SESSION['erro_login']);
+    }
 
 

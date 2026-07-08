@@ -3,6 +3,7 @@
 session_start();
 
 require_once __DIR__ . "/../../backEnd/config/config.php";
+require_once __DIR__ . "/../../backEnd/config/validacao.php";
 require_once __DIR__ . "/../../backEnd/models/usuario.php";
 require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
 require_once __DIR__ . "/../../backEnd/controllers/api/usuarioController.php";
@@ -30,6 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($senha !== $confirmar) {
         echo json_encode(["success" => false, "message" => "As senhas não conferem."]);
+        exit();
+    }
+
+    $validacao = validarSenhaForte($senha);
+    if ($validacao !== true) {
+        echo json_encode(["success" => false, "message" => $validacao]);
         exit();
     }
 
@@ -63,7 +70,10 @@ if (!$usuario) {
     exit();
 }
 
-$emailOculto = substr($usuario->getEmail(), 0, 3) . '*****' . substr($usuario->getEmail(), strpos($usuario->getEmail(), '@'));
+$posArroba = strpos($usuario->getEmail(), '@');
+$emailOculto = $posArroba !== false
+    ? substr($usuario->getEmail(), 0, 3) . '*****' . substr($usuario->getEmail(), $posArroba)
+    : substr($usuario->getEmail(), 0, 3) . '*****';
 
 require __DIR__ . "/../../frontEnd/view/redefinirSenha.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";

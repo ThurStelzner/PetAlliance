@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . "/../../config/config.php";
+    require_once __DIR__ . "/../../config/validacao.php";
     require_once __DIR__ . "/../../models/usuario.php";
     require_once __DIR__ . "/../../models/usuarioDAO.php";
     require_once __DIR__ . "/../../models/verificacaoDAO.php";
@@ -61,13 +62,17 @@
             $cep = !empty($data['cep']) ? preg_replace('/[^0-9]/', '', $data['cep']) : $usuarioAtual->getCep();
             $nome = !empty($data['nome']) ? trim($data['nome']) : $usuarioAtual->getNome();
             $email = !empty($data['email']) ? trim($data['email']) : $usuarioAtual->getEmail();
+            if (!empty($data['email']) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(["success" => false, "message" => "Email inválido."]);
+                return;
+            }
             $senha = $usuarioAtual->getSenha();
 
             $usuario = new Usuario(
                 $imagem,
                 $cpfNovo,
                 $cep,
-                null,
+                $usuarioAtual->getTipo(),
                 $nome,
                 $email,
                 $senha
@@ -217,10 +222,48 @@
         }
 
         public function redefinirSenha($usuarioId, $novaSenha) {
-            if (strlen($novaSenha) < 3) {
-                return ["success" => false, "message" => "A senha deve ter pelo menos 3 caracteres."];
+            $validacao = validarSenhaForte($novaSenha);
+            if ($validacao !== true) {
+                return ["success" => false, "message" => $validacao];
             }
             $this->dao->updateSenha($usuarioId, $novaSenha);
             return ["success" => true, "message" => "Senha redefinida com sucesso!"];
+        }
+
+        // === ALTERAÇÃO DE EMAIL ===
+
+        public function iniciarAlteracaoEmail($usuarioId, $novoEmail) {
+            $usuarioAtual = $this->dao->readPorId($usuarioId);
+            if (!$usuarioAtual) {
+                return ["success" => false, "message" => "Usuário não encontrado."];
+            }
+
+            if (!filter_var($novoEmail, FILTER_VALIDATE_EMAIL)) {
+                return ["success" => false, "message" => "Email inválido."];
+            }
+
+            if ($novoEmail === $usuarioAtual->getEmail()) {
+                return ["success" => false, "message" => "O novo email é igual ao atual."];
+            }
+
+            $token = bin2hex(random_bytes(32));
+            $this->dao->salvarEmailPendente($usuarioId, $novoEmail, $token);
+
+            $emailService = new EmailService();
+            $enviou = $emailService->enviarAlteracaoEmail($novoEmail, $usuarioAtual->getNome(), $token);
+
+            if ($enviou) {
+                return ["success" => true, "message" => "Enviamos um link de confirmação para o novo email.", "token" => $token];
+            }
+
+            return ["success" => false, "message" => "Erro ao enviar email. Tente novamente."];
+        }
+
+        public function confirmarAlteracaoEmail($token) {
+            $usuario = $this->dao->confirmarEmailPendente($token);
+            if (!$usuario) {
+                return ["success" => false, "message" => "Link inválido ou expirado."];
+            }
+            return ["success" => true, "message" => "Email alterado com sucesso!", "usuario" => $usuario];
         }
     }

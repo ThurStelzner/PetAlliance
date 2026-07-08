@@ -39,8 +39,11 @@
                 }
                 for ($i = 0; $i < $totalFotos; $i++) {
                     if ($_FILES['fotos']['error'][$i] !== UPLOAD_ERR_OK) continue;
+                    if ($_FILES['fotos']['size'][$i] > MAX_FILE_SIZE) {
+                        throw new InvalidArgumentException('Arquivo muito grande: ' . $_FILES['fotos']['name'][$i]);
+                    }
                     $extensao = strtolower(pathinfo($_FILES['fotos']['name'][$i], PATHINFO_EXTENSION));
-                    if (!in_array($extensao, $permitidos, true)) {
+if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoCertificado']['tmp_name'])) {
                         throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['fotos']['name'][$i]);
                     }
                     $nomeArquivo = uniqid('pet_') . '.' . $extensao;
@@ -93,6 +96,9 @@
             }
 
             if (!empty($_FILES['arquivoCertificado']['name'])) {
+                if ($_FILES['arquivoCertificado']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de certificado muito grande.');
+                }
                 $extensao = strtolower(pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
@@ -108,10 +114,13 @@
             }
 
             if (!empty($_FILES['arquivoVacinacao']['name'])) {
+                if ($_FILES['arquivoVacinacao']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de vacinação muito grande.');
+                }
                 $extensao = strtolower(pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
-                if (!in_array($extensao, $permitidos, true)) {
+                if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoVacinacao']['tmp_name'])) {
                     throw new InvalidArgumentException('Tipo de imagem não permitido para a carteira de vacinação.');
                 }
 
@@ -157,6 +166,6 @@
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

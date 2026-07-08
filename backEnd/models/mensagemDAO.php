@@ -39,18 +39,18 @@ class MensagemDAO {
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ? AND m.id < ?
                     ORDER BY m.data_envio DESC
-                    LIMIT $limite";
+                    LIMIT ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId, $antes]);
+            $stmt->execute([$conversaId, $antes, $limite]);
         } else {
             $sql = "SELECT m.*, u.nome AS remetente_nome, u.foto_perfil AS remetente_foto
                     FROM tb_mensagens m
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ?
                     ORDER BY m.data_envio DESC
-                    LIMIT $limite";
+                    LIMIT ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId]);
+            $stmt->execute([$conversaId, $limite]);
         }
         return array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     }

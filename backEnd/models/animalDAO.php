@@ -380,6 +380,7 @@
         }
 
         public function removerFotoByPath($petId, $fotoPath) {
+            $fotoPath = basename($fotoPath);
             $sql = "SELECT id FROM tb_pets_fotos WHERE pet_id = ? AND foto_path = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$petId, $fotoPath]);

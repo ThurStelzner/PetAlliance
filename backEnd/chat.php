@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuarioId = $_SESSION['usuario_id'];
 $solicitacaoId = $_GET['solicitacao_id'] ?? null;
 
-require __DIR__ . '/../frontEnd/view/navBar.html';
+require __DIR__ . '/../frontEnd/view/navBar.php';
 ?>
 <link rel="stylesheet" href="/frontEnd/assets/css/chat.css">
 <main class="main-conteudo">
@@ -34,7 +34,7 @@ require __DIR__ . '/../frontEnd/view/navBar.html';
     </div>
 </main>
 <script>
-    window.USUARIO_ID = <?= $usuarioId ?>;
+    window.USUARIO_ID = <?= (int) $usuarioId ?>;
     window.SOLICITACAO_ID = <?= $solicitacaoId ? json_encode($solicitacaoId) : 'null' ?>;
 </script>
 <script src="/frontEnd/utils/chat.js"></script>

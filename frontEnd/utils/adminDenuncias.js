@@ -1,38 +1,5 @@
-function mostrarSecao(hash) {
-    document.getElementById("denuncias-section").style.display = hash === "#sistema" ? "none" : "";
-    document.getElementById("sistema-section").style.display = hash === "#sistema" ? "" : "none";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE = "/backEnd/admin/admin.php?route=";
-
-    mostrarSecao(window.location.hash || "#denuncias");
-
-    window.addEventListener("hashchange", () => mostrarSecao(window.location.hash));
-
-    async function carregarSistema() {
-        try {
-            const response = await fetch(API_BASE + "sistema", { credentials: "same-origin" });
-            const data = await response.json();
-
-            const container = document.getElementById("sistema-cards");
-            if (!container) return;
-
-            if (!data.sucesso) {
-                container.innerHTML = `<p>Erro: ${data.erro}</p>`;
-                return;
-            }
-
-            const s = data.sistema;
-            container.innerHTML = `
-                <div class="stat-card"><strong>Usuários Cadastrados</strong><span>${s.totalUsuarios}</span></div>
-                <div class="stat-card"><strong>Animais Cadastrados</strong><span>${s.totalAnimais}</span></div>
-                <div class="stat-card"><strong>Denúncias</strong><span>${s.totalDenuncias}</span></div>
-            `;
-        } catch (error) {
-            console.error("Erro ao carregar estatísticas do sistema:", error);
-        }
-    }
+    const API_BASE = "/backEnd/admin/denuncias.php?route=";
 
     async function resolverDenuncia(id, botao, novoStatus) {
         try {
@@ -62,13 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function montarTabelaDenuncias(titulo, denuncias) {
+    function montarTabela(titulo, denuncias) {
         if (!denuncias.length) return "";
         const resolvidoLabels = { 0: "Pendente", 1: "Resolvido" };
 
         let html = `<h4>${titulo} (${denuncias.length})</h4>
             <table class="denuncias-table">
-                <thead><tr><th>ID</th><th>Usuário</th><th>Alvo ID</th><th>Descrição</th><th>Status</th><th>Ações</th></tr></thead>
+                <thead><tr><th>ID</th><th>Usuário</th><th>Tipo</th><th>Alvo ID</th><th>Descrição</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
         `;
 
@@ -77,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
             html += `<tr>
                 <td>${d.id}</td>
                 <td>${d.usuario_nome || "Desconhecido"}</td>
+                <td>${d.tipo_alvo || "-"}</td>
                 <td>${d.alvo_id || "-"}</td>
                 <td>${d.descricao || "-"}</td>
                 <td class="status-cell">${resolvidoLabels[d.resolvido] || "Desconhecido"}</td>
@@ -112,19 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const site = data.denuncias.filter(d => d.tipo_alvo === "site");
-            const usuario = data.denuncias.filter(d => d.tipo_alvo === "usuario");
-            const animal = data.denuncias.filter(d => d.tipo_alvo === "animal");
+            const ordenadas = data.denuncias.sort((a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0));
+            const site = ordenadas.filter(d => d.tipo_alvo === "site" && d.resolvido == 0);
+            const usuario = ordenadas.filter(d => d.tipo_alvo === "usuario" && d.resolvido == 0);
+            const animal = ordenadas.filter(d => d.tipo_alvo === "animal" && d.resolvido == 0);
+            const concluidas = ordenadas.filter(d => d.resolvido == 1);
 
             container.innerHTML =
-                montarTabelaDenuncias("Denúncias de Site", site) +
-                montarTabelaDenuncias("Denúncias de Usuário", usuario) +
-                montarTabelaDenuncias("Denúncias de Animal", animal);
+                montarTabela("Denúncias de Site", site) +
+                montarTabela("Denúncias de Usuário", usuario) +
+                montarTabela("Denúncias de Animal", animal) +
+                (concluidas.length ? montarTabela("Concluídas", concluidas) : "");
         } catch (error) {
             console.error("Erro ao carregar denúncias:", error);
         }
     }
 
-    carregarSistema();
     carregarDenuncias();
 });

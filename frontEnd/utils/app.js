@@ -1,3 +1,8 @@
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
     const container = document.getElementById("animais-container");
@@ -139,13 +144,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             card.classList.add("animal-card");
             card.innerHTML =
                 getCarrosselHtml(animal) +
-                `<h3>${animal.nome || "Sem nome"}</h3>` +
-                `<p>${animal.descricao || "Não informada"}</p>` +
-                `<p>${animal.tipo || "Não informado"}</p>` +
-                `<p>${animal.porte || "Não informado"}</p>` +
-                `<p>${animal.sexo || "Não informado"}</p>` +
-                `<button type="button" class="detalhes-btn" data-animal-id="${animal.id}">Ver Detalhes</button>` +
-                `<button type="button" class="favoritar-btn" data-animal-id="${animal.id}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>` +
+                `<h3>${escapeHtml(animal.nome || "Sem nome")}</h3>` +
+                `<p>${escapeHtml(animal.descricao || "Não informada")}</p>` +
+                `<p>${escapeHtml(animal.tipo || "Não informado")}</p>` +
+                `<p>${escapeHtml(animal.porte || "Não informado")}</p>` +
+                `<p>${escapeHtml(animal.sexo || "Não informado")}</p>` +
+                `<button type="button" class="detalhes-btn" data-animal-id="${escapeHtml(animal.id)}">Ver Detalhes</button>` +
+                `<button type="button" class="favoritar-btn" data-animal-id="${escapeHtml(animal.id)}">${animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar"}</button>` +
                 (window.EH_ADMIN ? `<button type="button" class="excluir-btn" data-animal-id="${animal.id}">Excluir</button>` : "");
             container.appendChild(card);
             carregarCarrosselEventos(card);
@@ -182,46 +187,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const animais = Array.isArray(data) ? data : data.animais || [];
 
             renderizarAnimais(animais);
-            if (animais.length === 0) {
-                container.innerHTML = "<p>Você ainda não tem nenhum animal favoritado.</p>";
-                return;
-            }
-
-            container.innerHTML = "";
-
-            animais.forEach(animal => {
-                const card = document.createElement("article");
-                card.classList.add("animal-card");
-                    var matchHtml = "";
-                    if (animal.dono_id != window.USUARIO_ID) {
-                        if (matchStatusMap[animal.id]) {
-                            if (matchStatusMap[animal.id].status === 'aceito') {
-                                matchHtml = '<a href="/backEnd/chat.php?solicitacao_id=' + matchStatusMap[animal.id].solicitacao_id + '" class="btn-chat-home">Iniciar Chat</a>';
-                            } else if (matchStatusMap[animal.id].status === 'pendente') {
-                                matchHtml = '<button type="button" class="match-btn" disabled>Pendente</button>';
-                            } else {
-                                matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
-                            }
-                        } else {
-                            matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
-                        }
-                    }
-
-                    var adminBtn = window.EH_ADMIN ? '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '">Excluir</button>' : "";
-
-                    card.innerHTML =
-                    getCarrosselHtml(animal) +
-                    '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
-                    '<p>' + (animal.descricao || "Não informada") + '</p>' +
-                    '<p>' + (animal.tipo || "Não informado") + '</p>' +
-                    '<p>' + (animal.porte || "Não informado") + '</p>' +
-                    '<p>' + (animal.sexo || "Não informado") + '</p>' +
-                    '<button type="button" class="detalhes-btn" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
-                    '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '">' + (animal.favoritado===true ? "Remover dos Favoritos" : "Favoritar") + '</button>' +
-                    adminBtn +
-                    matchHtml;
-                container.appendChild(card);
-                carregarCarrosselEventos(card);
             });
         } catch (error) {
             console.error("Erro ao carregar animais:", error);
@@ -356,7 +321,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
-            const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
+const fotosJson = encodeURIComponent(JSON.stringify(fotos));
             const imgsHtml = fotos.map(f =>
                 `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
             ).join('');
