@@ -29,7 +29,7 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 | RF01 | Login na plataforma | CT01-01 | Login com credenciais válidas | Pendente | — | — |
 | RF01.1 | Validar CPF válido | CT01-02 | Login com CPF inválido | Pendente | — | — |
 | RF01.2 | Validar se o email existe | CT01-03 | Login com email inexistente | Pendente | — | — |
-| RF01.3 | Senha com mínimo 8 caracteres | CT01-04 | Login com senha < 8 caracteres | Pendente | — | — |
+| RF01.3 | Senha com mínimo 8 caracteres *(não implementado)* | CT01-04 | Login — senha sem validação de mínimo | Pendente | — | — |
 | RF01.4 | Recuperação de senha por email | CT01-05 | Recuperar senha via email | Pendente | — | — |
 
 ### RF02 — Cadastro de Usuário
@@ -39,7 +39,7 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 | RF02 | Cadastrar novo usuário | CT02-01 | Cadastro com dados válidos | Pendente | — | — |
 | RF02.1 | CPF único (não duplicado) | CT02-02 | Cadastro com CPF já existente | Pendente | — | — |
 | RF02.2 | Email único | CT02-03 | Cadastro com email já existente | Pendente | — | — |
-| RF02.3 | Senha: Maiúscula, Minúscula, Número | CT02-04 | Cadastro com senha sem requisitos | Pendente | — | — |
+| RF02.3 | Senha: Maiúscula, Minúscula, Número *(não implementado)* | CT02-04 | Cadastro — senha sem validação | Pendente | — | — |
 | RF02.5 | Envio de email de confirmação | CT02-05 | Receber email de verificação | Pendente | — | — |
 
 ### RF03 — Cadastro de Pet
@@ -184,3 +184,4 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
 | 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removidos CTs de RF01.5 (bloqueio) e RF02.4 (CAPTCHA); atualizado RF03.1 para 10 fotos |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | RF01.3 e RF02.3 marcados como não implementados; CT01-04 e CT02-04 atualizados |

@@ -35,7 +35,7 @@ Cada User Story segue o formato:
 - [ ] CA01-01: Login realizado com sucesso ao informar CPF/email + senha válidos e clicar em "Entrar"
 - [ ] CA01-02: Sistema exibe mensagem de erro ao informar CPF/email inexistente
 - [ ] CA01-03: Sistema exibe mensagem de erro ao informar senha incorreta
-- [ ] CA01-04: Sistema exibe mensagem de erro ao informar senha com menos de 8 caracteres
+- [ ] CA01-04: Sistema aceita senha sem validação de tamanho mínimo no login (minlength="3" no HTML)
 - [ ] CA01-05: Usuário consegue solicitar recuperação de senha informando o email cadastrado
 - [ ] CA01-06: Usuário recebe email com código/link para redefinir a senha
 - [ ] CA01-07: Usuário consegue redefinir a senha com sucesso usando o link/código recebido
@@ -56,7 +56,7 @@ Cada User Story segue o formato:
 - [ ] CA02-01: Cadastro concluído com sucesso ao preencher todos os campos obrigatórios válidos
 - [ ] CA02-02: Sistema rejeita cadastro com CPF já existente no banco
 - [ ] CA02-03: Sistema rejeita cadastro com email já existente no banco
-- [ ] CA02-04: Sistema rejeita senha que não contenha ao menos 1 letra maiúscula, 1 minúscula e 1 número
+- [ ] CA02-04: Sistema aceita senha sem validação de complexidade (qualquer string é aceita)
 - [ ] CA02-05: Sistema envia email de verificação após cadastro bem-sucedido
 - [ ] CA02-06: Conta fica com status "não verificado" até que o email seja confirmado
 
@@ -191,3 +191,4 @@ Cada User Story segue o formato:
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
 | 1.1 | 08/07/2026 | Arthur Iantas Stelzner | US01: removido CA de bloqueio (RF01.5 removido). US02: removido CA de CAPTCHA (RF02.4 removido). US03: atualizado limite para 10 fotos |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | US01 CA01-04: alterado para refletir que não há validação de 8 caracteres. US02 CA02-04: alterado para refletir que não há validação de senha forte |

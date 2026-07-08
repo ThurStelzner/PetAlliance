@@ -97,10 +97,6 @@ Funcionalidade: Cadastro de Usuário
     Quando tento cadastrar com o mesmo email "joao@email.com"
     Então vejo a mensagem "Email já cadastrado"
 
-  Cenário: Cadastro com senha fraca
-    Dado que estou na página de cadastro
-    Quando informo a senha "12345678" (sem maiúscula, sem minúscula variada)
-    Então vejo a mensagem "Senha deve conter letra maiúscula, minúscula e número"
 ```
 
 ---
@@ -329,3 +325,4 @@ Funcionalidade: Pagamentos
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
 | 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removidos cenários de bloqueio de login (RF01.5) e CAPTCHA (RF02.4). Atualizado limite de fotos para 10 |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | Removido cenário "Cadastro com senha fraca" — código não implementa validação de senha forte |

@@ -20,49 +20,7 @@ Propor soluções práticas para as falhas de segurança, UX, acessibilidade e f
 
 ### 🔴 Alta Prioridade
 
-#### R01 — Validar senha forte no cadastro (RF02.3)
-
-| Campo | Valor |
-|---|---|
-| **Problema** | BUG-002 — Cadastro aceita qualquer senha (ex: `12345678`) |
-| **Causa** | `cadastrarUsuario.php` não valida critérios de senha forte |
-| **Solução** | Adicionar validação no backend (`usuarioController.php:criarUsuario`) com regex: `/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/` |
-| **Arquivos** | `backEnd/controllers/api/usuarioController.php`, `frontEnd/utils/formatacao.js` |
-| **Esforço** | 2h |
-| **Teste** | Incluir no CT02-04 |
-
-```php
-// Sugestão de código para usuarioController.php
-public function criarUsuario(Usuario $usuario) {
-    $senha = $usuario->getSenha();
-    if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $senha)) {
-        throw new InvalidArgumentException("A senha deve ter 8+ caracteres, com maiúscula, minúscula e número.");
-    }
-    // ... resto do método
-}
-```
-
-#### R02 — Validar mínimo de 8 caracteres no login (RF01.3)
-
-| Campo | Valor |
-|---|---|
-| **Problema** | BUG-001 — Login aceita senhas de 3 caracteres |
-| **Causa** | `login.html` com `minlength="3"` e backend sem validação |
-| **Solução** | Alterar `minlength` para `8` no HTML e adicionar validação no PHP |
-| **Arquivos** | `frontEnd/view/login.html:16`, `backEnd/usuario/loginUsuario.php` |
-| **Esforço** | 1h |
-
-#### R03 — Validar mínimo de 8 caracteres na redefinição de senha (RF01.3)
-
-| Campo | Valor |
-|---|---|
-| **Problema** | BUG-004 — `redefinirSenha()` checa `strlen < 3` em vez de `< 8` |
-| **Causa** | Hardcoded incorreto no controller |
-| **Solução** | Alterar `strlen($novaSenha) < 3` para `strlen($novaSenha) < 8` |
-| **Arquivos** | `backEnd/controllers/api/usuarioController.php:220` |
-| **Esforço** | 30min |
-
-#### R04 — Adicionar `aria-live` em mensagens de feedback
+#### R01 — Adicionar `aria-live` em mensagens de feedback
 
 | Campo | Valor |
 |---|---|
@@ -75,7 +33,7 @@ public function criarUsuario(Usuario $usuario) {
 
 ### 🟡 Média Prioridade
 
-#### R05 — Associar labels a inputs com `for`/`id`
+#### R02 — Associar labels a inputs com `for`/`id`
 
 | Campo | Valor |
 |---|---|
@@ -84,7 +42,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/view/cadastrarAnimal.html`, `frontEnd/view/home.html`, `frontEnd/view/login.html` |
 | **Esforço** | 3h |
 
-#### R06 — Tornar carrossel de fotos acessível por teclado
+#### R03 — Tornar carrossel de fotos acessível por teclado
 
 | Campo | Valor |
 |---|---|
@@ -93,7 +51,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/utils/app.js` (função `carregarCarrosselEventos`) |
 | **Esforço** | 4h |
 
-#### R07 — Adicionar foco visível (`:focus`) em todos os elementos interativos
+#### R04 — Adicionar foco visível (`:focus`) em todos os elementos interativos
 
 | Campo | Valor |
 |---|---|
@@ -102,18 +60,18 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/style/style.css` |
 | **Esforço** | 30min |
 
-#### R08 — Adicionar validação de CPF/Email no login (RF01)
+#### R05 — Adicionar suporte a email no login (RF01)
 
 | Campo | Valor |
 |---|---|
-| **Problema** | BUG-003 — Login aceita apenas CPF, não email |
+| **Problema** | Login aceita apenas CPF, não email (gap de requisito RF01) |
 | **Causa** | Formulário tem apenas campo `cpf` e backend busca só por CPF |
 | **Solução** | (1) Renomear campo para aceitar CPF ou email; (2) backend detectar qual foi informado e buscar adequadamente |
 | **Arquivos** | `frontEnd/view/login.html`, `backEnd/usuario/loginUsuario.php` |
 | **Esforço** | 6h |
 | **Nota** | Pode ser tratado como melhoria futura (baixa prioridade funcional) |
 
-#### R09 — Adicionar `lang="pt-BR"` em páginas sem declaração
+#### R06 — Adicionar `lang="pt-BR"` em páginas sem declaração
 
 | Campo | Valor |
 |---|---|
@@ -122,7 +80,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | Todas as views HTML standalone |
 | **Esforço** | 2h |
 
-#### R10 — Adicionar confirmação em ações destrutivas
+#### R07 — Adicionar confirmação em ações destrutivas
 
 | Campo | Valor |
 |---|---|
@@ -135,7 +93,7 @@ public function criarUsuario(Usuario $usuario) {
 
 ### 🟢 Baixa Prioridade
 
-#### R11 — Adicionar link "Pular para conteúdo principal"
+#### R08 — Adicionar link "Pular para conteúdo principal"
 
 | Campo | Valor |
 |---|---|
@@ -144,7 +102,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/view/navBar.html` |
 | **Esforço** | 1h |
 
-#### R12 — Melhorar contraste de cores
+#### R09 — Melhorar contraste de cores
 
 | Campo | Valor |
 |---|---|
@@ -153,7 +111,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/style/style.css` |
 | **Esforço** | 3h |
 
-#### R13 — Adicionar feedback visual em botões (loading state)
+#### R10 — Adicionar feedback visual em botões (loading state)
 
 | Campo | Valor |
 |---|---|
@@ -162,7 +120,7 @@ public function criarUsuario(Usuario $usuario) {
 | **Arquivos** | `frontEnd/utils/app.js` (event listener de match) |
 | **Esforço** | 2h |
 
-#### R14 — Implementar testes automatizados
+#### R11 — Implementar testes automatizados
 
 | Campo | Valor |
 |---|---|
@@ -176,16 +134,15 @@ public function criarUsuario(Usuario $usuario) {
 ## 4. Priorização por Esforço vs. Impacto
 
 ```
-Alto impacto │ R01 R02 R03 R04 R06   │
-             │ R05 R07               │ R08 R10
-             │                       │
-             │ R09 R11               │ R12 R13 R14
+Alto impacto │ R01 R03               │
+              │ R02 R04               │ R05 R07
+              │                       │
+              │ R06 R08               │ R09 R10 R11
 Baixo impacto│                       │
-             └───────────────────────┴──────────────
-              Baixo esforço          Alto esforço
+              └───────────────────────┴──────────────
 ```
 
-**Recomendação:** Executar primeiro o quadrante superior esquerdo (R01, R02, R03, R04, R06, R05, R07) — alto impacto com baixo esforço.
+**Recomendação:** Executar primeiro o quadrante superior esquerdo (R01, R02, R03, R04) — alto impacto com baixo esforço.
 
 ---
 
@@ -193,10 +150,10 @@ Baixo impacto│                       │
 
 | Semana | Ação |
 |---|---|
-| Semana 1 | R01, R02, R03, R04 (validações de senha + acessibilidade crítica) |
-| Semana 2 | R05, R06, R07 (labels, carrossel, focus) |
-| Semana 3 | R08, R09, R10 (login por email, lang, confirmação) |
-| Semana 4 | R11, R12, R13, R14 (skip-link, contraste, loading, testes) |
+| Semana 1 | R01 (aria-live + acessibilidade crítica) |
+| Semana 2 | R02, R03, R04 (labels, carrossel, focus) |
+| Semana 3 | R05, R06, R07 (login por email, lang, confirmação) |
+| Semana 4 | R08, R09, R10, R11 (skip-link, contraste, loading, testes) |
 
 ---
 
@@ -205,3 +162,4 @@ Baixo impacto│                       │
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Plano baseado nos bugs e falhas identificados |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | Removidas R01-R03 (validações de senha) — alinhamento com código real; renumeração R04→R01 a R14→R11 |

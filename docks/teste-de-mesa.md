@@ -62,22 +62,23 @@ Registrar manualmente a execução lógica de variáveis e regras de negócio pa
 
 ---
 
-## 3. TM02 — Validação de Senha (Critérios Fortes)
+## 3. TM02 — Validação de Senha (Comportamento Real)
 
-**Onde se aplica:** Cadastro de Usuário (RF02.3)
+**Onde se aplica:** Cadastro de Usuário (`backEnd/usuario/cadastrarUsuario.php`) e Redefinição (`backEnd/controllers/api/usuarioController.php`)
 
-**Regra:** Senha deve conter ao menos 1 letra **maiúscula**, 1 **minúscula** e 1 **número**. Mínimo 8 caracteres.
+**Regra:** O código atual **não implementa** validação de senha forte (maiúscula + minúscula + número). O cadastro aceita qualquer senha. A única validação existente está na redefinição de senha: mínimo 3 caracteres.
 
 ### Tabela de Teste
 
-| Cenário | Senha | ≥ 8 chars | Maiúscula | Minúscula | Número | Resultado |
-|---|---|---|---|---|---|---|
-| Válida | `Senha123` | ✅ (8) | ✅ S | ✅ e,n,h,a | ✅ 1,2,3 | **VÁLIDA** ✅ |
-| Só números | `12345678` | ✅ | ❌ | ❌ | ✅ | **INVÁLIDA** ❌ |
-| Só minúsculas | `senhafraca` | ✅ | ❌ | ✅ | ❌ | **INVÁLIDA** ❌ |
-| Curta + forte | `Ab1` | ❌ (3) | ✅ | ✅ | ✅ | **INVÁLIDA** ❌ |
-| Maiúscula+faltando número | `SenhaFraca` | ✅ | ✅ | ✅ | ❌ | **INVÁLIDA** ❌ |
-| Válida complexa | `MinhaSenha1` | ✅ | ✅ M | ✅ i,n,h,a,e,n,h,a | ✅ 1 | **VÁLIDA** ✅ |
+| Cenário | Senha | Comportamento do Código | Resultado |
+|---|---|---|---|
+| Cadastro — senha simples | `123` | Cadastro aceita sem validação | ✅ ACEITA |
+| Cadastro — sem maiúscula | `abcdef1` | Cadastro aceita (sem validação) | ✅ ACEITA |
+| Cadastro — sem número | `Abcdefgh` | Cadastro aceita (sem validação) | ✅ ACEITA |
+| Cadastro — só números | `12345678` | Cadastro aceita (sem validação) | ✅ ACEITA |
+| Cadastro — vazia | `""` | Pode falhar no banco (campo NOT NULL) | ⚠️ ERRO BD |
+| Redefinir — ≥ 3 chars | `Abc` | `strlen >= 3` → aprovado | ✅ ACEITA |
+| Redefinir — < 3 chars | `Ab` | `strlen < 3` → rejeitado | ❌ "mínimo 3 caracteres" |
 
 ---
 
@@ -175,7 +176,7 @@ ValorLiquidoVendedor = ValorVenda - Taxa
 | TM | Algoritmo | Cenários Testados | Resultado |
 |---|---|---|---|
 | TM01 | Validação de CPF | 2 (válido + inválido) | ✅ |
-| TM02 | Validação de Senha | 6 cenários | ✅ |
+| TM02 | Validação de Senha (comportamento real) | 7 cenários | ✅ |
 | TM03 | Fluxo de Match | 5 cenários + máquina de estados | ✅ |
 | TM04 | Taxas e Planos | 4 planos + 5 cenários de destaque + 4 transações | ✅ |
 
@@ -187,3 +188,4 @@ ValorLiquidoVendedor = ValorVenda - Taxa
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
 | 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removido TM03 (bloqueio de login) conforme RF01.5 removido dos requisitos. Renumerado TM04 → TM03 |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | TM02 revisado: código não implementa validação de senha forte. Novo TM02 documenta comportamento real |

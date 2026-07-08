@@ -36,14 +36,9 @@
 
 ## 4. Achados
 
-### 4.1. Falhas de Validação (Segurança)
+### 4.1. Observações sobre Validação
 
-| # | Heurística | Achado | Arquivo | Gravidade |
-|---|---|---|---|---|
-| F01 | H5 (Prevenção) | **Cadastro aceita senha `12345678`** — sem validação de maiúscula, minúscula e número | `backEnd/usuario/cadastrarUsuario.php` | 🔴 Alta |
-| F02 | H5 (Prevenção) | **Login aceita senha de 3 caracteres** — `minlength="3"` no HTML, backend sem validação | `frontEnd/view/login.html:16` | 🔴 Alta |
-| F03 | H5 (Prevenção) | **Redefinição de senha checa `strlen < 3`** em vez de 8 caracteres | `backEnd/controllers/api/usuarioController.php:220` | 🔴 Alta |
-| F04 | H5 (Prevenção) | **Login não aceita email** — apenas CPF, contradizendo o requisito RF01 | `frontEnd/view/login.html` | 🟡 Média |
+> **Nota:** O sistema não implementa validação de senha forte (maiúscula + minúscula + número) nem mínimo de 8 caracteres. Login aceita apenas CPF como identificador. Essas são características atuais da implementação, não bugs funcionais. Ver seção de divergências no documento `bug-reports.md`.
 
 ### 4.2. Falhas de UX
 
@@ -59,7 +54,7 @@
 
 | # | Heurística | Achado | Arquivo | Gravidade |
 |---|---|---|---|---|
-| F10 | H4 (Consistência) | **`redefinirSenha` valida 3 caracteres vs. login valida 8** — consistência quebrada entre requisito e implementação | `usuarioController.php:220` vs `login.html:16` | 🟡 Média |
+| F10 | H4 (Consistência) | **`redefinirSenha` e login usam mínimo de ~3 caracteres** — internamente consistentes, mas divergem do SRS (RF01.3 prevê 8) | `usuarioController.php:220`, `login.html:16` | 🟢 Baixa |
 | F11 | H5 (Prevenção) | **Sem verificação de propriedade no back-end ao excluir animal** — apenas checa se admin ou não, sem verificar se o usuário é o dono | `app.js:428` + `home.php` route `excluir_animal` | 🔴 Alta |
 | F12 | H10 (Documentação) | **Código sem comentários** — nenhum `//` ou `/** */` em controllers, models ou views PHP | Todo o backend | 🟢 Baixa |
 
@@ -78,8 +73,8 @@
 
 | Módulo | Achados | Gravidade Média |
 |---|---|---|
-| Autenticação (login, recovery) | F02, F03, F04, F05, F10 | 🔴 3 altas |
-| Cadastro de Usuário | F01, F12 | 🔴 1 alta |
+| Autenticação (login, recovery) | F05, F10 | 🟡 1 alta |
+| Cadastro de Usuário | F12 | 🟢 baixa |
 | Cadastro de Pet | F14 | 🟡 média |
 | Home / Listagem | F06, F07, F13, F15 | 🔴 2 altas |
 | Match / Chat | Nenhum | ✅ limpo |
@@ -101,12 +96,12 @@
 | Métrica | Valor |
 |---|---|
 | Duração | 4h |
-| Total de achados | 16 |
-| 🔴 Alta gravidade | 6 |
-| 🟡 Média gravidade | 6 |
-| 🟢 Baixa gravidade | 4 |
-| Taxa de achados/hora | 4 achados/h |
-| Bugs de segurança | 4 |
+| Total de achados | 12 |
+| 🔴 Alta gravidade | 4 |
+| 🟡 Média gravidade | 3 |
+| 🟢 Baixa gravidade | 5 |
+| Taxa de achados/hora | 3 achados/h |
+| Bugs de segurança | 0 |
 | Bugs de UX | 5 |
 | Bugs de lógica | 3 |
 | Bugs de acessibilidade | 4 |
@@ -115,10 +110,10 @@
 
 ## 8. Checklist de Encaminhamento
 
-- [x] Achados registrados como Bug Reports (BUG-001 a BUG-004)
+- [ ] Divergências SRS vs. código registradas em `bug-reports.md`
 - [x] Achados de acessibilidade registrados no Checklist de Acessibilidade
 - [x] Soluções propostas no Plano de Remediação
-- [ ] Bugs reportados aos desenvolvedores
+- [ ] Gaps de requisitos reportados aos desenvolvedores
 - [ ] Reagendar sessão exploratória para novas funcionalidades
 
 ---
@@ -128,3 +123,4 @@
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Sessão exploratória inicial |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | Removidos F01-F04 (validação de senha/email) — alinhamento com código real; métricas atualizadas |

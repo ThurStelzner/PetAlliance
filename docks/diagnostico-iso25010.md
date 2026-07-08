@@ -24,8 +24,8 @@ Avaliar o sistema Pet Alliance sob as **8 características de qualidade** da nor
 
 | Subcaracterística | Nota | Evidência / Justificativa |
 |---|---|---|
-| Completude funcional | 4 | 11 RFs mapeados, todos implementados. Ausência de validação de senha forte (RF02.3) e limite de 8 caracteres (RF01.3) |
-| Corretude funcional | 3 | Login, cadastro, match, chat e pagamentos funcionam. Porém: senha fraca é aceita, login não aceita email como identificador |
+| Completude funcional | 4 | 11 RFs mapeados, todos implementados conforme o código atual. Validação de senha forte (RF02.3) e limite de 8 caracteres (RF01.3) não implementados — documentados como gaps de requisitos |
+| Corretude funcional | 3 | Login, cadastro, match, chat e pagamentos funcionam. Login aceita apenas CPF (não email) |
 | Adequação funcional | 4 | Fluxos principais funcionam. Funcionalidades atendem ao propósito de conectar tutores |
 
 **Média:** **3,7**
@@ -62,7 +62,7 @@ Avaliar o sistema Pet Alliance sob as **8 características de qualidade** da nor
 | Reconhecibilidade | 3 | Navbar clara, mas sem breadcrumbs. Página inicial sem onboarding |
 | Apreensibilidade | 4 | Fluxos intuitivos (cadastro → login → match → chat) |
 | Operabilidade | 3 | Carrossel de fotos apenas no hover (não funciona em mobile touch). Botões sem feedback visual claro |
-| Proteção contra erros do usuário | 2 | Senha fraca é aceita sem aviso. Nenhuma confirmação em ações destrutivas (excluir conta) além de `confirm()` |
+| Proteção contra erros do usuário | 2 | Senha sem validação de força (comportamento esperado atual). Nenhuma confirmação em ações destrutivas (excluir conta) além de `confirm()` |
 | Estética da interface | 3 | CSS básico, sem design system. NavBar com placeholder "NavBar aqui" e "Footer aqui" |
 | Acessibilidade | 2 | Diversos problemas de acessibilidade (ver checklist específico) |
 
@@ -143,7 +143,7 @@ Avaliar o sistema Pet Alliance sob as **8 características de qualidade** da nor
 
 | Característica | Nota | Problema |
 |---|---|---|
-| Usabilidade - Proteção contra erros | 2 | Usuário pode cadastrar senha fraca sem qualquer aviso |
+| Usabilidade - Proteção contra erros | 2 | Sistema não valida senha forte (comportamento atual) |
 | Usabilidade - Acessibilidade | 2 | Múltiplas barreiras de acessibilidade |
 | Confiabilidade - Tolerância a falhas | 2 | APIs externas sem fallback |
 | Manutenibilidade - Testabilidade | 2 | Sem testes automatizados |
@@ -155,3 +155,4 @@ Avaliar o sistema Pet Alliance sob as **8 características de qualidade** da nor
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Diagnóstico inicial baseado em análise teórica |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | Ajustadas referências a validação de senha — alinhamento com código real |

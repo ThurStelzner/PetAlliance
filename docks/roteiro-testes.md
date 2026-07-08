@@ -58,7 +58,7 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 |---|---|---|
 | CPF duplicado | Cadastrar com CPF já existente | [✔] "CPF já cadastrado" |
 | Email duplicado | Cadastrar com email já existente | [✔] "Email já cadastrado" |
-| Senha fraca | Senha sem maiúscula | [✔] "Deve conter maiúscula, minúscula e número" |
+| Senha sem validação | Qualquer senha é aceita | [✔] Cadastro concluído sem validação de complexidade |
 
 ---
 
@@ -189,3 +189,4 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 |---|---|---|---|
 | 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
 | 1.1 | 08/07/2026 | Arthur Iantas Stelzner | RT01: removido bloqueio de login. RT02: removido CAPTCHA. RT03: atualizado limite de 11+ fotos |
+| 1.2 | 08/07/2026 | Arthur Iantas Stelzner | RT02: variação "Senha fraca" alterada — código não valida senha forte |
