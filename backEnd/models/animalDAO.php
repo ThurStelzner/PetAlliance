@@ -117,7 +117,7 @@
             }
         }
 
-        public function read($id) {
+        public function read($id, $usuarioId = null) {
             $sql = "SELECT * FROM tb_pets WHERE id = ?";
 
             $stmt = $this->pdo->prepare($sql);
@@ -126,6 +126,13 @@
 
             if (!$dados) {
                 return null;
+            }
+
+            $favoritado = false;
+            if ($usuarioId) {
+                $stmtFav = $this->pdo->prepare("SELECT 1 FROM tb_favoritos WHERE id_usuario = ? AND id_pet = ?");
+                $stmtFav->execute([$usuarioId, $id]);
+                $favoritado = (bool)$stmtFav->fetchColumn();
             }
 
             $fotos = $this->carregarFotos($dados['id']);
@@ -145,7 +152,7 @@
                 $dados['foto_certificado'],
                 $dados['foto_vacinas'],
                 $dados['id'] ?? null,
-                false,
+                $favoritado,
                 $fotos
             );
 

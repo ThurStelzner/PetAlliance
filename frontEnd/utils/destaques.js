@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const donoId = animal.dono_id;
             const isOwner = donoId == window.USUARIO_ID;
 
+            var favoritarBtnText = animal.favoritado ? 'Remover dos Favoritos' : 'Favoritar';
+            var favoritarHtml = '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '">' + favoritarBtnText + '</button>';
+
             let matchHtml = '';
             if (!isOwner) {
                 const matchInfo = matchStatusMap[animal.id];
@@ -107,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 '<p><strong>Cor:</strong> ' + (animal.cor || 'Nao informada') + '</p>' +
                 '<div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">' +
                     matchHtml +
+                    favoritarHtml +
                     '<button type="button" onclick="window.location.href=\'/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=' + animal.id + '\'">Reportar</button>' +
                 '</div>' +
             '</div>';
@@ -151,6 +155,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", async (event) => {
         const target = event.target;
+
+        const favBtn = target instanceof Element ? target.closest("#animais-modal .favoritar-btn") : null;
+        if (favBtn) {
+            const animalId = favBtn.dataset.animalId;
+            if (animalId) {
+                const estaFavoritado = favBtn.textContent.trim() === "Remover dos Favoritos";
+                favBtn.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
+                try {
+                    await fetch("/backEnd/home.php?route=favoritar_animal&idAnimal=" + animalId);
+                } catch (error) {
+                    console.error("Erro ao favoritar:", error);
+                }
+            }
+            return;
+        }
+
         const matchBtn = target instanceof Element ? target.closest("#animais-modal .match-btn") : null;
         if (!matchBtn || matchBtn.disabled) return;
 

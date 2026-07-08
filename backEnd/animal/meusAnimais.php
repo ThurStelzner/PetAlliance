@@ -30,7 +30,7 @@
     if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'detalhes_animal' && isset($_GET['id'])) {
         header('Content-Type: application/json');
         $controllerAnimal = new AnimalController();
-        $controllerAnimal->read($_GET['id']);
+        $controllerAnimal->read($_GET['id'], $donoId);
         exit;
     }
 

@@ -10,8 +10,8 @@
             $this->dao = new AnimalDAO();
         }
 
-        public function read($id) {
-            $animal = $this->dao->read($id);
+        public function read($id, $usuarioId = null) {
+            $animal = $this->dao->read($id, $usuarioId);
             echo json_encode($animal);
         }
 
