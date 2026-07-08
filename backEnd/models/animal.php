@@ -212,8 +212,8 @@ class Animal implements JsonSerializable {
     }
 
     public function setPeso($peso) {
-        if (!is_numeric($peso) || $peso < 0) {
-            throw new Exception("Peso deve ser um número maior que zero.");
+        if (!is_numeric($peso) || $peso <= 0 || $peso > 500) {
+            throw new Exception("Peso deve ser entre 0.001 kg (1 grama) e 500 kg.");
         }
     
         $this->peso = $peso;

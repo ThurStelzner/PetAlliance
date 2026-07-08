@@ -108,8 +108,8 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
                 }
             }
 
-            if (!is_numeric($peso) || $peso <= 0) {
-                throw new InvalidArgumentException('Peso deve ser um número maior que zero.');
+            if (!is_numeric($peso) || $peso <= 0 || $peso > 500) {
+                throw new InvalidArgumentException('Peso deve ser entre 0.001 kg (1 grama) e 500 kg.');
             }
 
             $fotoCertificado = null;
