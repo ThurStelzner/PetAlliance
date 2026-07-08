@@ -1,0 +1,16 @@
+
+<h2>Recuperar senha</h2>
+<p>Digite seu CPF ou email para receber o link de recuperação.</p>
+
+<div id="mensagem-erro"></div>
+<div id="mensagem-sucesso"></div>
+
+<form id="form-recuperar">
+    <input type="text" name="cpf" id="cpf" placeholder="CPF ou email" value="<?= htmlspecialchars($cpfSalvo ?? '') ?>" required>
+    <button type="submit" id="btn-enviar">Enviar</button>
+</form>
+
+<a href="/backEnd/usuario/loginUsuario.php">Voltar ao login</a>
+
+<script src="../../frontEnd/utils/formatacao.js"></script>
+<script src="../../frontEnd/utils/esqueceuSenha.js"></script>

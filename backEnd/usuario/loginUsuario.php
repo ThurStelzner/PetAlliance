@@ -2,8 +2,10 @@
     session_start();
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
+    require_once __DIR__ . "/../../backEnd/controllers/api/usuarioController.php";
 
     $usuarioDAO = new UsuarioDAO();
+    $controller = new UsuarioController();
 
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         $cpf = preg_replace('/[^0-9]/', '', trim($_POST['cpf']));
@@ -22,6 +24,14 @@
             if (!$senhaCorreta) {
                 echo "Senha inválida!";
             } else {
+                // Verificar se email foi verificado
+                if (!$controller->isVerificado($usuario->getId())) {
+                    $_SESSION['usuario_verificacao_id'] = $usuario->getId();
+                    $controller->enviarEmailVerificacao($usuario->getId());
+                    header("Location: /backEnd/verificarEmail.php?id=" . $usuario->getId());
+                    exit();
+                }
+
                 $_SESSION['usuario_id'] = $usuario->getId();
                 $_SESSION['usuario_nome'] = $usuario->getNome();
                 $_SESSION['usuario_cpf'] = $usuario->getCpf();

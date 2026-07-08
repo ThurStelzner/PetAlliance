@@ -129,4 +129,42 @@
         
             return $usuario;
         }
+
+        public function readPorId($id) {
+            $sql = "SELECT * FROM tb_usuarios WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$id]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$dados) return null;
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email'],$dados['senha'],);
+            $usuario->setId($dados['id']);
+
+            return $usuario;
+        }
+
+        public function marcarVerificado($id) {
+            $sql = "UPDATE tb_usuarios SET verificado = TRUE WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$id]);
+        }
+
+        public function updateSenha($id, $senha) {
+            $sql = "UPDATE tb_usuarios SET senha = ? WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$this->prepararSenha($senha), $id]);
+        }
+
+        public function buscarPorEmail($email) {
+            $sql = "SELECT * FROM tb_usuarios WHERE email = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$email]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$dados) return null;
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email'],$dados['senha'],);
+            $usuario->setId($dados['id']);
+
+            return $usuario;
+        }
     }

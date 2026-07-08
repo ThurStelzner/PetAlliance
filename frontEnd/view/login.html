@@ -1,3 +1,13 @@
+<?php if (isset($_GET['verificado'])): ?>
+    <div style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;margin-bottom:15px;">
+        Email verificado com sucesso! Faça o login.
+    </div>
+<?php elseif (isset($_GET['erro'])): ?>
+    <div style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;margin-bottom:15px;">
+        <?= htmlspecialchars($_GET['erro']) ?>
+    </div>
+<?php endif; ?>
+
 <form method="POST">
     <h1>Login de usuário</h1>
     <label for="cpf" >Cpf:</label>
@@ -5,6 +15,12 @@
     <label for="senha">Senha:</label>
     <input type="password" name="senha" id="senha" maxlength="50" minlength="3" placeholder="Sua Senha aqui" required>
     <button type="submit">Login</button>
+    <div style="margin-top:15px;">
+        <a href="/backEnd/usuario/esqueceuSenha.php" style="color:#666;text-decoration:none;font-size:14px;">Esqueceu a senha?</a>
+    </div>
+    <div style="margin-top:10px;">
+        <a href="/index.php" style="color:#999;text-decoration:none;font-size:13px;">Voltar</a>
+    </div>
 </form>
 
 <script src="../../frontEnd/utils/loginSalvos.js"></script>
