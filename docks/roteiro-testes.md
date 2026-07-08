@@ -36,7 +36,7 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 | Passo | Ação (Falha) | Resultado Esperado |
 |---|---|---|
 | 1 | Informar CPF inválido + senha qualquer | [✔] Mensagem "Usuário não encontrado" |
-| 2 | Informar CPF válido + senha errada x5 | [✔] Conta bloqueada após 5 tentativas |
+| 2 | Informar CPF válido + senha errada | [✔] Mensagem "Senha incorreta" |
 
 ---
 
@@ -50,17 +50,15 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 | Passo | Ação | Resultado Esperado |
 |---|---|---|
 | 1 | Preencher nome, username, email, CPF, CEP, senha, confirmar senha | Campos preenchidos |
-| 2 | Resolver CAPTCHA | Check verde |
-| 3 | Clicar em "Cadastrar" | [✔] Mensagem de sucesso |
-| 4 | Verificar email informado | [✔] Email de verificação recebido |
-| 5 | Clicar no link do email | [✔] Conta verificada |
+| 2 | Clicar em "Cadastrar" | [✔] Mensagem de sucesso |
+| 3 | Verificar email informado | [✔] Email de verificação recebido |
+| 4 | Clicar no link do email | [✔] Conta verificada |
 
 | Variações | Ação | Resultado Esperado |
 |---|---|---|
 | CPF duplicado | Cadastrar com CPF já existente | [✔] "CPF já cadastrado" |
 | Email duplicado | Cadastrar com email já existente | [✔] "Email já cadastrado" |
 | Senha fraca | Senha sem maiúscula | [✔] "Deve conter maiúscula, minúscula e número" |
-| Sem CAPTCHA | Não marcar CAPTCHA | [✔] "Confirme o CAPTCHA" |
 
 ---
 
@@ -82,7 +80,7 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 | Variações | Ação | Resultado Esperado |
 |---|---|---|
 | Sem foto | Pular upload | [✔] "Foto é obrigatória" |
-| 6+ fotos | Tentar upload de 6 arquivos | [✔] Apenas 5 aceitos |
+| 11+ fotos | Tentar upload de 11 arquivos | [✔] Apenas 10 aceitos |
 | Editar pet alheio | URL manual com id de outro usuário | [✔] "Você não tem permissão" |
 
 ---
@@ -189,4 +187,5 @@ Roteiro passo a passo para execução manual dos testes funcionais do Pet Allian
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | RT01: removido bloqueio de login. RT02: removido CAPTCHA. RT03: atualizado limite de 11+ fotos |

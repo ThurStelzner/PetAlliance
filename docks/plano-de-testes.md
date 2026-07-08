@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | **Projeto** | Pet Alliance |
-| **Versão** | 1.0 |
+| **Versão** | 1.1 |
 | **Data** | 08/07/2026 |
-| **Responsável** | Equipe de Qualidade |
+| **Responsável** | Arthur Iantas Stelzner |
 | **Aprovador** | — |
 | **Tipo de Teste** | Funcional (End-to-End / Manual) |
 | **Ambiente** | Desenvolvimento |
@@ -26,10 +26,10 @@ O objetivo é validar que todos os requisitos funcionais atendem ao especificado
 
 ### 3.1. Dentro do Escopo (Será Testado)
 
-- Autenticação (login, recuperação de senha, bloqueio por tentativas)
-- Cadastro de usuários com validação de CPF, email único e CAPTCHA
+- Autenticação (login, recuperação de senha)
+- Cadastro de usuários com validação de CPF, email único e senha forte
 - Verificação de email (código e link)
-- Cadastro, edição, listagem e exclusão de animais (pets)
+- Cadastro, edição, listagem e exclusão de animais (pets) — limite de **10 fotos**
 - Match entre animais (solicitação, aceite, recusa)
 - Chat entre usuários com match ativo
 - Venda de filhotes (anúncio com preço)

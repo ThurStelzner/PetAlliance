@@ -81,33 +81,7 @@ Registrar manualmente a execução lógica de variáveis e regras de negócio pa
 
 ---
 
-## 4. TM03 — Bloqueio de Login por Tentativas
-
-**Onde se aplica:** RF01.5 — `backEnd/controllers/api/usuarioController.php`
-
-**Regra:** Após 5 tentativas de login com senha incorreta, a conta é bloqueada (`tb_usuarios.bloqueado = TRUE`).
-
-### Tabela de Teste
-
-| Tentativa | Ação | `tentativas_login` (antes) | Senha correta? | Resultado | `tentativas_login` (depois) | `bloqueado` |
-|---|---|---|---|---|---|---|
-| 1 | Login "joao" + senha "Errada1" | 0 | ❌ | "Senha incorreta" | 1 | FALSE |
-| 2 | Login "joao" + senha "Errada2" | 1 | ❌ | "Senha incorreta" | 2 | FALSE |
-| 3 | Login "joao" + senha "Errada3" | 2 | ❌ | "Senha incorreta" | 3 | FALSE |
-| 4 | Login "joao" + senha "Errada4" | 3 | ❌ | "Senha incorreta" | 4 | FALSE |
-| 5 | Login "joao" + senha "Errada5" | 4 | ❌ | "Senha incorreta" | 5 | **TRUE** ✅ |
-| 6 | Login "joao" + senha "Correta1" | 5 | ✅ | **"Conta bloqueada"** | 5 | TRUE (bloqueado) |
-
-### Fluxo de desbloqueio
-
-| Ação | Resultado Esperado |
-|---|---|
-| Admin desbloqueia manualmente (BD: `UPDATE tb_usuarios SET bloqueado = 0, tentativas_login = 0 WHERE id = X`) | Conta liberada |
-| Usuário tenta login com credenciais corretas **após desbloqueio** | Login OK ✅ |
-
----
-
-## 5. TM04 — Fluxo de Match
+## 4. TM03 — Fluxo de Match
 
 **Onde se aplica:** RF05 — `backEnd/controllers/api/solicitacaoMatchController.php`
 
@@ -151,7 +125,7 @@ Registrar manualmente a execução lógica de variáveis e regras de negócio pa
 
 ---
 
-## 6. TM05 — Cálculo de Taxas e Planos
+## 5. TM04 — Cálculo de Taxas e Planos
 
 **Onde se aplica:** RF08 — `backEnd/config/planos.php` e lógica de destaque
 
@@ -196,20 +170,20 @@ ValorLiquidoVendedor = ValorVenda - Taxa
 
 ---
 
-## 7. Resumo dos Testes de Mesa
+## 6. Resumo dos Testes de Mesa
 
 | TM | Algoritmo | Cenários Testados | Resultado |
 |---|---|---|---|
 | TM01 | Validação de CPF | 2 (válido + inválido) | ✅ |
 | TM02 | Validação de Senha | 6 cenários | ✅ |
-| TM03 | Bloqueio de Login | 6 tentativas + desbloqueio | ✅ |
-| TM04 | Fluxo de Match | 5 cenários + máquina de estados | ✅ |
-| TM05 | Taxas e Planos | 4 planos + 5 cenários de destaque + 4 transações | ✅ |
+| TM03 | Fluxo de Match | 5 cenários + máquina de estados | ✅ |
+| TM04 | Taxas e Planos | 4 planos + 5 cenários de destaque + 4 transações | ✅ |
 
 ---
 
-## 8. Histórico de Revisões
+## 7. Histórico de Revisões
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removido TM03 (bloqueio de login) conforme RF01.5 removido dos requisitos. Renumerado TM04 → TM03 |

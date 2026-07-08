@@ -31,7 +31,6 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 | RF01.2 | Validar se o email existe | CT01-03 | Login com email inexistente | Pendente | — | — |
 | RF01.3 | Senha com mínimo 8 caracteres | CT01-04 | Login com senha < 8 caracteres | Pendente | — | — |
 | RF01.4 | Recuperação de senha por email | CT01-05 | Recuperar senha via email | Pendente | — | — |
-| RF01.5 | Bloqueio após 5 tentativas | CT01-06 | Bloqueio por tentativas excessivas | Pendente | — | — |
 
 ### RF02 — Cadastro de Usuário
 
@@ -41,15 +40,14 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 | RF02.1 | CPF único (não duplicado) | CT02-02 | Cadastro com CPF já existente | Pendente | — | — |
 | RF02.2 | Email único | CT02-03 | Cadastro com email já existente | Pendente | — | — |
 | RF02.3 | Senha: Maiúscula, Minúscula, Número | CT02-04 | Cadastro com senha sem requisitos | Pendente | — | — |
-| RF02.4 | Validação de CAPTCHA | CT02-05 | Cadastro sem CAPTCHA | Pendente | — | — |
-| RF02.5 | Envio de email de confirmação | CT02-06 | Receber email de verificação | Pendente | — | — |
+| RF02.5 | Envio de email de confirmação | CT02-05 | Receber email de verificação | Pendente | — | — |
 
 ### RF03 — Cadastro de Pet
 
 | ID | Descrição | CT | CT - Nome | CT - Status | Defeito ID | Defeito - Status |
 |---|---|---|---|---|---|---|
 | RF03 | Registrar animal | CT03-01 | Cadastro de pet com dados válidos | Pendente | — | — |
-| RF03.1 | Limite de até 5 fotos | CT03-02 | Upload com mais de 5 fotos | Pendente | — | — |
+| RF03.1 | Limite de até 10 fotos | CT03-02 | Upload com mais de 10 fotos | Pendente | — | — |
 | RF03.2 | Foto é obrigatória | CT03-03 | Cadastro sem foto | Pendente | — | — |
 | RF03.3 | Carteira de vacinação obrigatória | CT03-04 | Cadastro sem vacinação | Pendente | — | — |
 | RF03.4 | Certificado de raça (opcional) | CT03-05 | Cadastro com certificado opcional | Pendente | — | — |
@@ -157,13 +155,13 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 
 | Métrica | Valor |
 |---|---|
-| Total de Requisitos Funcionais (RF) | 11 principais + 30 subitens |
-| Total de Requisitos Não Funcionais (RNF) | 6 |
-| Total de Casos de Teste (CT) mapeados | 50 |
+| Total de RF mapeados no SRS | 11 principais + 28 subitens |
+| Total de RNF | 6 |
+| Total de Casos de Teste (CT) mapeados | 48 |
 | Cobertura de RF com ao menos 1 CT | 100% (11/11) |
 | Cobertura de RNF com ao menos 1 CT | 100% (6/6) |
-| CT executados | 0 / 50 (0%) |
-| CT aprovados | 0 / 50 (0%) |
+| CT executados | 0 / 48 (0%) |
+| CT aprovados | 0 / 48 (0%) |
 | Defeitos abertos | 0 |
 
 ---
@@ -178,3 +176,11 @@ Conectar cada requisito funcional (RF) e não funcional (RNF) do sistema **Pet A
 3. **Defeitos:** ao marcar um CT como `Failed`, abrir um registro de defeito (ID único) e vincular nesta matriz
 4. **Ao final do ciclo:** preencher os indicadores de cobertura
 
+---
+
+## 7. Histórico de Revisões
+
+| Versão | Data | Autor | Alteração |
+|---|---|---|---|
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removidos CTs de RF01.5 (bloqueio) e RF02.4 (CAPTCHA); atualizado RF03.1 para 10 fotos |

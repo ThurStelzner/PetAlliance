@@ -31,7 +31,6 @@ Este documento lista de forma explícita **o que NÃO será testado** no ciclo a
 |---|---|
 | **API AbacatePay — fluxos completos** | Testaremos apenas os fluxos felizes (checkout criado, webhook recebido). Fluxos de erro, reembolso e expiração serão simulados |
 | **PHPMailer — entrega real** | Testaremos o envio da requisição, não a entrega efetiva no provedor de email |
-| **CAPTCHA (reCAPTCHA)** | Validação visual apenas; a API do Google não será testada exaustivamente |
 
 ### 2.4. Funcionalidades Não Implementadas
 
@@ -73,3 +72,11 @@ Este documento lista de forma explícita **o que NÃO será testado** no ciclo a
 2. Caso o cliente deseje incluir algum item deste documento no escopo, deve ser feita uma **solicitação formal de mudança**, com reavaliação de prazo e custo.
 3. Este documento deve ser revisado a cada novo ciclo de testes.
 
+---
+
+## 4. Histórico de Revisões
+
+| Versão | Data | Autor | Alteração |
+|---|---|---|---|
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removida referência a CAPTCHA (requisito excluído) |

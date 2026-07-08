@@ -127,3 +127,12 @@ flowchart TD
     K -- Não --> M[Correções necessárias]
     M --> C
 ```
+
+---
+
+## 6. Histórico de Revisões
+
+| Versão | Data | Autor | Alteração |
+|---|---|---|---|
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removida referência a bloqueio de login (RF01.5 removido dos requisitos) |

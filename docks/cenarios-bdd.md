@@ -53,12 +53,6 @@ Funcionalidade: Autenticação de Usuário
     E clico em "Entrar"
     Então vejo a mensagem "Senha incorreta"
 
-  Cenário: Bloqueio após 5 tentativas incorretas
-    Dado que existe um usuário cadastrado com CPF "12345678901"
-    Quando eu tento fazer login com senha incorreta 5 vezes consecutivas
-    Então a conta é bloqueada
-    E vejo a mensagem "Conta bloqueada por excesso de tentativas"
-
   Cenário: Recuperação de senha por email
     Dado que existe um usuário com email "usuario@email.com"
     Quando eu clico em "Esqueci minha senha"
@@ -89,7 +83,6 @@ Funcionalidade: Cadastro de Usuário
     Dado que estou na página de cadastro
     Quando preencho nome "João", username "joao", email "joao@email.com",
       CPF "52998224725", CEP "01001000", senha "MinhaSenha1" e confirmação "MinhaSenha1"
-    E resolvo o CAPTCHA
     E clico em "Cadastrar"
     Então minha conta é criada com sucesso
     E recebo um email de verificação
@@ -108,13 +101,6 @@ Funcionalidade: Cadastro de Usuário
     Dado que estou na página de cadastro
     Quando informo a senha "12345678" (sem maiúscula, sem minúscula variada)
     Então vejo a mensagem "Senha deve conter letra maiúscula, minúscula e número"
-
-  Cenário: Cadastro sem CAPTCHA
-    Dado que estou na página de cadastro
-    Quando preencho todos os campos corretamente
-    E não resolvo o CAPTCHA
-    E clico em "Cadastrar"
-    Então vejo a mensagem "Confirme o CAPTCHA"
 ```
 
 ---
@@ -146,11 +132,11 @@ Funcionalidade: Cadastro de Pet
     E clico em "Cadastrar"
     Então vejo a mensagem "Foto é obrigatória"
 
-  Cenário: Upload de mais de 5 fotos
+  Cenário: Upload de mais de 10 fotos
     Dado que estou logado como usuário "joao"
-    Quando tento fazer upload de 6 fotos
-    Então o sistema aceita apenas as 5 primeiras
-    E exibe a mensagem "Limite máximo de 5 fotos"
+    Quando tento fazer upload de 11 fotos
+    Então o sistema aceita apenas as 10 primeiras
+    E exibe a mensagem "Limite máximo de 10 fotos"
 
   Cenário: Editar pet por outro usuário
     Dado que existe um pet "Rex" pertencente ao usuário "joao"
@@ -341,4 +327,5 @@ Funcionalidade: Pagamentos
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
-| 1.0 | 08/07/2026 | Equipe de Qualidade | Criação inicial |
+| 1.0 | 08/07/2026 | Arthur Iantas Stelzner | Criação inicial |
+| 1.1 | 08/07/2026 | Arthur Iantas Stelzner | Removidos cenários de bloqueio de login (RF01.5) e CAPTCHA (RF02.4). Atualizado limite de fotos para 10 |
