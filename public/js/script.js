@@ -28,7 +28,7 @@
   // --- API Helper ---
   async function apiCall(controller, action, params = {}) {
     const query = new URLSearchParams({ controller, action, ...params }).toString();
-    const response = await fetch(`./api.php?${query}`);
+    const response = await fetch(`api.php?${query}`);
     const data = await response.json();
     if (data.erro) throw new Error(data.erro);
     return data;
@@ -46,7 +46,7 @@
       options.headers = { 'Content-Type': 'application/json' };
       options.body = JSON.stringify(data);
     }
-    const response = await fetch(`./api.php?${query}`, options);
+    const response = await fetch(`api.php?${query}`, options);
     const resData = await response.json();
     if (resData.erro) throw new Error(resData.erro);
     return resData;
@@ -101,11 +101,6 @@
 
   function validateCPF(cpf) {
     const value = cpf.replace(/\D/g, '');
-    return value.length === 11;
-  }
-
-  function validatePhone(phone) {
-    const value = phone.replace(/\D/g, '');
     return value.length === 11;
   }
 
@@ -229,11 +224,45 @@
   // --- State ---
   let state = {
     page: 'home',
-    favorites: JSON.parse(localStorage.getItem('pa:favs') || '[]'),
-    user: JSON.parse(localStorage.getItem('pa:user') || 'null'),
+    favorites: [],
+    user: null,
     pets: [], 
     selectedPlan: null,
   };
+  
+  // Initialize localStorage-dependent state safely
+  try {
+    state.favorites = JSON.parse(localStorage.getItem('pa:favs') || '[]');
+    state.user = JSON.parse(localStorage.getItem('pa:user') || 'null');
+  } catch (e) {
+    console.warn('localStorage not available, using defaults');
+  }
+
+  // Export to window for HTML onclick handlers
+  window.navigateTo = navigateTo;
+  window.logout = logout;
+  window.openTermsModal = openTermsModal;
+  window.closeTermsModal = closeTermsModal;
+  window.openPrivacyModal = openPrivacyModal;
+  window.closePrivacyModal = closePrivacyModal;
+  window.acceptTerms = acceptTerms;
+  window.handleTermsModalScroll = handleTermsModalScroll;
+  window.handleRegAvatar = handleRegAvatar;
+  window.handleLogin = handleLogin;
+  window.handleRegister = handleRegister;
+  window.toggleTheme = toggleTheme;
+  window.openCheckout = openCheckout;
+  window.openPetModal = openPetModal;
+  window.closeModal = closeModal;
+  window.openRegisterAnimalModal = openRegisterAnimalModal;
+  window.handleProfileAvatar = handleProfileAvatar;
+  window.toggleProfileEdit = toggleProfileEdit;
+  window.saveProfile = saveProfile;
+  window.scrollToSection = scrollToSection;
+  window.toggleMenu = toggleMenu;
+  window.openMatches = () => navigateTo('matches');
+  window.selectPaymentMethod = selectPaymentMethod;
+  window.finalizePayment = finalizePayment;
 
   // --- Navigation ---
   function navigateTo(page) {
@@ -275,7 +304,7 @@
     div.className = 'card';
     div.innerHTML = `
       <div class="pet-card-media">
-        <img src="uploads/animais/${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
+        <img src="uploads/animais/${pet.photo || 'placeholder.webp'}" alt="${pet.name}" class="w-full h-full object-cover">
       </div>
       <div class="p-4">
         <div class="flex items-start justify-between gap-3 pet-card-content">
@@ -466,21 +495,18 @@
             </div>
           </div>
           <div class="payment-method-item" onclick="selectPaymentMethod(this, 'debit')">
-            <div class="payment-method-icon">📱</div>
+            <div class="payment-method-icon">💳</div>
             <div class="payment-method-info">
-              <span class="payment-method-name">Cartão de Débito</span>
-              <span class="payment-method-desc">Débito online</span>
+              <span class="payment-method-name">Débito</span>
+              <span class="payment-method-desc">Pagamento instantâneo</span>
             </div>
           </div>
         </div>
-
-        <button id="payment-submit-btn" class="payment-submit-btn" disabled onclick="finalizePayment()">
-          <span>&rsaquo;</span> Selecione a forma de pagamento
-        </button>
+        <div class="payment-actions">
+          <button onclick="processPayment()" class="btn-primary full-width">Confirmar Pagamento</button>
+        </div>
       </div>
     `;
-
-    qs('#modal-container').classList.remove('hidden');
   }
 
   function selectPaymentMethod(element, method) {
@@ -561,7 +587,7 @@
       <div class="pet-modal">
         <div class="pet-modal-header">
           <div class="pet-modal-media">
-            <img src="uploads/animais/${pet.photo}" alt="${pet.name}" class="w-full h-full object-cover">
+        <img src="uploads/animais/${pet.photo || 'placeholder.webp'}" alt="${pet.name}" class="w-full h-full object-cover">
           </div>
           <div class="pet-modal-info">
             <h3 class="pet-modal-title">${pet.name}</h3>
@@ -612,6 +638,7 @@
     
     try {
       const res = await apiPost('usuario', 'login', { cpf, senha: pass });
+      if (!res.success) throw new Error(res.message || 'CPF ou senha inválidos.');
       state.user = res.usuario;
       localStorage.setItem('pa:user', JSON.stringify(state.user));
       qs('#login-error').classList.add('hidden');
@@ -629,13 +656,12 @@
     const name = qs('#reg-name').value.trim();
     const email = qs('#reg-email').value.trim();
     const cpf = qs('#reg-cpf').value.trim();
-    const phone = qs('#reg-phone').value.trim();
     const cep = qs('#reg-cep').value.trim();
     const password = qs('#reg-password').value.trim();
     const termsCheck = qs('#reg-terms-check').checked;
     
     // Validações básicas no front
-    if (!name || !email || !cpf || !phone || !cep || !password) { 
+    if (!name || !email || !cpf || !cep || !password) { 
       showErrorAlert('Por favor, preencha todos os campos obrigatórios.');
       return; 
     }
@@ -645,7 +671,8 @@
     }
     
     try {
-      const res = await apiPost('usuario', 'registerFromRequest', { nome: name, email, cpf, phone, cep, senha: password });
+      const res = await apiPost('usuario', 'registerFromRequest', { nome: name, email, cpf, cep, senha: password });
+      if (!res.success) throw new Error(res.message || 'Erro ao cadastrar.');
       alert('✅ Cadastro realizado com sucesso!');
       navigateTo('login');
     } catch (e) {
@@ -671,8 +698,8 @@
       // Atualiza avatar na NavBar
       const navAvatar = qs('#nav-profile-avatar');
       if (navAvatar) {
-        const imgUrl = state.user.avatar || 'assets/img/default-avatar.png';
-        navAvatar.innerHTML = `<img src="${imgUrl}" alt="Profile">`;
+        const imgName = state.user.imagem || 'placeholder.webp';
+        navAvatar.innerHTML = `<img src="uploads/usuario/${imgName}?_=${Date.now()}" alt="Profile" class="avatar-img">`;
       }
     } else {
       qs('#auth-btn').classList.remove('hidden'); qs('#auth-btn-mobile')?.classList?.remove('hidden');
@@ -702,7 +729,7 @@
   async function updateProfileUI() {
     if (!state.user) return;
     try {
-      const user = await apiCall('usuario', 'read', { cpf: state.user.cpf });
+      const user = await apiCall('usuario', 'read', { cpf: state.user.cpf, _: Date.now() });
       state.user = user;
       
       qs('#profile-name').textContent = user.nome || 'Usuário';
@@ -710,14 +737,20 @@
       
       qs('#profile-name-detail').textContent = user.nome || '-';
       qs('#profile-email-detail').textContent = user.email || '-';
-      qs('#profile-cpf').textContent = user.cpf || '-';
-      qs('#profile-cep').textContent = user.cep || '-';
-      qs('#profile-phone').textContent = user.phone || '-';
-      
-      const avatarContainer = qs('#profile-avatar-container');
-      if (avatarContainer && user.imagem) {
-        avatarContainer.innerHTML = `<img src="uploads/${user.imagem}" class="avatar-img">`;
-      }
+       qs('#profile-cpf').textContent = user.cpf || '-';
+       qs('#profile-cep').textContent = user.cep || '-';
+       
+        const avatarContainer = qs('#profile-avatar-container');
+        const imgName = user.imagem || 'placeholder.webp';
+        if (avatarContainer) {
+          const imgHtml = `<img src="uploads/usuario/${imgName}?_=${Date.now()}" class="avatar-img">`;
+          avatarContainer.innerHTML = imgHtml;
+
+          const navAvatar = qs('#nav-profile-avatar');
+          if (navAvatar) {
+            navAvatar.innerHTML = imgHtml;
+          }
+        }
     } catch (e) {
       console.error('Erro ao atualizar perfil:', e);
     }
@@ -727,9 +760,12 @@
     const details = qs('#profile-details');
     const form = qs('#profile-edit-form');
     const btn = qs('#profile-edit-btn');
+    const avatarBtn = qs('#edit-avatar-btn');
+    const avatarInput = qs('#avatar-input');
 
     const isEditing = form.classList.toggle('hidden');
     details.classList.toggle('hidden');
+    if (avatarBtn) avatarBtn.classList.toggle('hidden', isEditing);
 
     if (!isEditing) {
       // Entering edit mode
@@ -738,33 +774,37 @@
       qs('#edit-email').value = state.user?.email || '';
       qs('#edit-cpf').value = state.user?.cpf || '';
       qs('#edit-cep').value = state.user?.cep || '';
-      qs('#edit-phone').value = state.user?.phone || '';
       qs('#edit-password').value = '';
+      if (avatarInput) avatarInput.addEventListener('change', handleProfileAvatar);
     } else {
       // Returning to view mode
       btn.textContent = 'Editar';
+      if (avatarInput) avatarInput.removeEventListener('change', handleProfileAvatar);
     }
   }
 
   async function saveProfile() {
     if (!state.user) return;
+
+    const fd = new FormData();
+    fd.append('nome', qs('#edit-name').value.trim());
+    fd.append('email', qs('#edit-email').value.trim());
+    fd.append('cpf', qs('#edit-cpf').value.trim());
+    fd.append('cep', qs('#edit-cep').value.trim());
+    fd.append('senha', qs('#edit-password').value.trim());
+    if (_pendingAvatarFile) {
+      fd.append('foto_perfil', _pendingAvatarFile);
+    }
     
-    const data = {
-      nome: qs('#edit-name').value.trim(),
-      email: qs('#edit-email').value.trim(),
-      cpf: qs('#edit-cpf').value.trim(),
-      cep: qs('#edit-cep').value.trim(),
-      phone: qs('#edit-phone').value.trim(),
-      senha: qs('#edit-password').value.trim()
-    };
-    
-    if (!data.nome || !data.email || !data.cpf || !data.cep || !data.phone) {
+    if (!fd.get('nome') || !fd.get('email') || !fd.get('cpf') || !fd.get('cep')) {
       alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
     
     try {
-      await apiPost('usuario', 'updateUsuarioFromRequest', data);
+      const res = await apiPost('usuario', 'updateUsuarioFromRequest', fd);
+      if (!res.success) throw new Error(res.message || 'Erro ao salvar.');
+      _pendingAvatarFile = null;
       await updateProfileUI();
       toggleProfileEdit();
       alert('Perfil atualizado com sucesso!');
@@ -773,27 +813,6 @@
     }
   }
 
-
-  // Export to window for HTML onclick handlers
-  window.navigateTo = navigateTo;
-  window.logout = logout;
-  window.openTermsModal = openTermsModal;
-  window.closeTermsModal = closeTermsModal;
-  window.openPrivacyModal = openPrivacyModal;
-  window.acceptTerms = acceptTerms;
-  window.handleTermsModalScroll = handleTermsModalScroll;
-  window.handleRegAvatar = handleRegAvatar;
-  window.handleLogin = handleLogin;
-  window.handleRegister = handleRegister;
-  window.toggleTheme = toggleTheme;
-  window.openCheckout = openCheckout;
-  window.openPetModal = openPetModal;
-  window.closeModal = closeModal;
-  window.openRegisterAnimalModal = openRegisterAnimalModal;
-  window.handleProfileAvatar = handleProfileAvatar;
-  window.toggleProfileEdit = toggleProfileEdit;
-  window.saveProfile = saveProfile;
-  window.scrollToSection = scrollToSection;
 
   function handleRegAvatar(event) {
     const file = event.target.files[0];
@@ -813,24 +832,20 @@
     reader.readAsDataURL(file);
   }
 
+  let _pendingAvatarFile = null;
+
   function handleProfileAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
+    _pendingAvatarFile = file;
     const reader = new FileReader();
     reader.onload = (e) => {
       const container = qs('#profile-avatar-container');
       container.innerHTML = '<img src="' + e.target.result + '" class="avatar-img">';
       
-      // Atualiza avatar na NavBar
       const navAvatar = qs('#nav-profile-avatar');
       if (navAvatar) {
         navAvatar.innerHTML = '<img src="' + e.target.result + '" class="avatar-img">';
-      }
-      
-      // Atualiza estado e localStorage
-      if (state.user) {
-        state.user.avatar = e.target.result;
-        localStorage.setItem('pa:user', JSON.stringify(state.user));
       }
     };
     reader.readAsDataURL(file);
@@ -971,13 +986,12 @@
           </div>
           <div class="modal-footer">
             <button type="button" onclick="closeModal()" class="btn-secondary flex-1">Cancelar</button>
-            <button id="reg-submit-btn" type="submit" class="btn-primary flex-1" disabled>Cadastrar</button>
+            <button id="reg-submit-btn" type="submit" class="btn-primary flex-1">Cadastrar</button>
           </div>
         </form>
       </div>
     `;
     container.classList.remove('hidden');
-    qs('#reg-form-scroll').addEventListener('scroll', handleRegisterAnimalScroll);
   }
 
 
@@ -1001,12 +1015,13 @@
   function toggleMenu() {
     const m = qs('#mobile-menu');
     const icon = qs('#menu-icon');
-
     if (m) {
-      const isHidden = m.classList.toggle('hidden');
+      const isHidden = m.style.display === 'none' || m.classList.contains('hidden');
+      m.style.display = isHidden ? 'grid' : 'none';
+      m.classList.remove('hidden');
       if (icon) {
-        icon.classList.toggle('lucide-menu', isHidden);
-        icon.classList.toggle('lucide-x', !isHidden);
+        icon.classList.toggle('lucide-menu', !isHidden);
+        icon.classList.toggle('lucide-x', isHidden);
       }
     }
   }
@@ -1014,7 +1029,10 @@
   function closeMenu() {
     const m = qs('#mobile-menu');
     const icon = qs('#menu-icon');
-    if (m) m.classList.add('hidden');
+    if (m) {
+      m.style.display = 'none';
+      m.classList.add('hidden');
+    }
     if (icon) {
       icon.classList.add('lucide-menu');
       icon.classList.remove('lucide-x');
@@ -1033,47 +1051,32 @@
 
   // --- Init ---
   function init() {
-    // wire buttons
-    qsa('[onclick^="navigateTo("]') .forEach?.(() => {}); // noop to avoid lint
-    window.navigateTo = navigateTo; // allow inline handlers in HTML to call navigateTo
-    window.openMatches = () => navigateTo('matches');
-    window.openCheckout = openCheckout;
-    window.selectPaymentMethod = selectPaymentMethod;
-    window.finalizePayment = finalizePayment;
-    window.toggleMenu = toggleMenu;
-    window.logout = logout;
-    window.handleLogin = handleLogin;
-    window.handleRegister = handleRegister;
-    window.closeModal = closeModal;
+    console.log('PetAlliance JS initialized');
     
     setupMobileMenuListeners();
     
     // Theme init
-    applyTheme(localStorage.getItem('pa:theme') || 'light');
+    try {
+        applyTheme(localStorage.getItem('pa:theme') || 'light');
+    } catch (e) {
+        applyTheme('light');
+    }
     qs('#theme-toggle')?.addEventListener('click', toggleTheme);
     
-    // Expor funções de máscaras e validações
+    // Expor funções de máscaras e validações (não exportadas no topo)
     window.maskCPF = maskCPF;
     window.maskPhone = maskPhone;
     window.maskCEP = maskCEP;
     window.validateEmail = validateEmail;
     window.validateCPF = validateCPF;
-    window.validatePhone = validatePhone;
     window.validateCEP = validateCEP;
     window.showErrorAlert = showErrorAlert;
-    window.handleRegAvatar = handleRegAvatar;
-    window.handleProfileAvatar = handleProfileAvatar;
-    // Funções de termos de uso
-    window.openTermsModal = openTermsModal;
-    window.openPrivacyModal = openPrivacyModal;
-    window.closeTermsModal = closeTermsModal;
-    window.closePrivacyModal = closePrivacyModal;
-    window.acceptTerms = acceptTerms;
-    window.handleTermsModalScroll = handleTermsModalScroll;
     // attach file handlers where used
+    qs('#hamburger-btn')?.addEventListener('click', toggleMenu);
     qs('#auth-btn')?.addEventListener('click', () => navigateTo('login'));
     qs('#auth-btn-mobile')?.addEventListener('click', () => navigateTo('login'));
     qs('#logout-btn')?.addEventListener('click', logout);
+
 
     // Adicionar listener para scroll do modal de termos
     const termsContentDiv = qs('#terms-content-text');
@@ -1088,7 +1091,6 @@
     qsa('.nav-link').forEach(b => b.addEventListener('click', () => navigateTo(b.dataset.page)));
     qsa('.mobile-nav-link').forEach(b => b.addEventListener('click', () => { navigateTo(b.dataset.page); closeMenu(); }));
 
-    renderHomeGrid();
     renderFavoritesGrid();
     updateFavBadges();
     updateAuthUI();

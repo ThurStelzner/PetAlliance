@@ -445,10 +445,13 @@ body.dark-theme .settings-nav-link:hover {
   align-items: center;
   gap: 1.5rem;
   color: white;
+  flex-wrap: wrap;
 }
 
 .profile-avatar-wrapper {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -489,6 +492,24 @@ body.dark-theme .settings-nav-link:hover {
 
 .profile-edit-btn:hover {
   background: var(--color-muted);
+}
+
+.profile-avatar-edit-btn {
+  display: block;
+  margin: 0.5rem auto 0;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-avatar-edit-btn:hover {
+  background: var(--color-primary-hover, #2563eb);
 }
 
 .profile-details-grid {

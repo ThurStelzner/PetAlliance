@@ -291,16 +291,20 @@
         }
 
 
-        public function readByDonoId($donoId) {
-            $sql = "SELECT * FROM tb_pets WHERE dono_id = ? ORDER BY nome";
+        public function readByDonoId($cpfOrId) {
+            $sql = "SELECT p.*, u.nome AS dono_nome
+                    FROM tb_pets p
+                    INNER JOIN tb_usuarios u ON p.dono_id = u.id
+                    WHERE u.cpf = ? OR p.dono_id = ?
+                    ORDER BY p.nome";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$donoId]);
+            $stmt->execute([$cpfOrId, $cpfOrId]);
             $animais = [];
         
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
               $animal = new Animal(
                 $dados['dono_id'],
-                $dados['foto_pet'],
+                $dados['foto_pet'] ?? null,
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -312,11 +316,13 @@
                 $dados['descricao'],
                 $dados['vacinado'],
                 $dados['certificado_raca'],
-                $dados['foto_certificado'],
-                $dados['foto_vacinas']
+                $dados['foto_certificado'] ?? null,
+                $dados['foto_vacinas'] ?? null,
+                $dados['id'] ?? null,
+                $dados['favoritado'] ?? 0,
+                $dados['dono_nome'] ?? 'Desconhecido'
               );
-              $animal->setId($dados['id']);
-              $animais[] = $animal; // adiciona ao array
+              $animais[] = $animal;
             }
             
             return $animais;
@@ -367,7 +373,7 @@
         public function delete($id) {
             $pdo = Conexao::getConexao();
         
-            $arquivo = __DIR__ . "/../../public/uploads/animais/";
+            $arquivo = __DIR__ . "/../../../public/uploads/animais/";
         
             $sql = "SELECT * FROM tb_pets WHERE id = ?";
             $stmt = $pdo->prepare($sql);

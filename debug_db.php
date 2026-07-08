@@ -1,0 +1,1 @@
+<?php require "app/Controllers/config/config.php"; $pdo = Conexao::getConexao(); $stmt = $pdo->query("SELECT count(*) as total FROM tb_pets"); echo "Total animals: " . $stmt->fetch(PDO::FETCH_ASSOC)["total"] . PHP_EOL; ?>

@@ -40,7 +40,7 @@
                 $fotoPet = uniqid('pet_') . '.' . $extensao;
                 move_uploaded_file(
                     $_FILES['arquivoFotoPet']['tmp_name'],
-                    __DIR__ . '/../../uploads/animais/' . $fotoPet
+                    __DIR__ . '/../../../public/uploads/animais/' . $fotoPet
                 );
             }
             $nome = trim($_POST['nome'] ?? '');
@@ -82,7 +82,7 @@
             $fotoCertificado = null;
             $fotoVacinacao = null;
 
-            $diretorioUploads = __DIR__ . '/../../uploads/animais/';
+            $diretorioUploads = __DIR__ . '/../../../public/uploads/animais/';
             if (!is_dir($diretorioUploads)) {
                 mkdir($diretorioUploads, 0755, true);
             }

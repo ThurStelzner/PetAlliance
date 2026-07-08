@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
+    const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/app/Controllers/home.php?route=animais";
     const container = document.getElementById("animais-container");
     const buscaInput = document.getElementById("busca-input");
     let matchStatusMap = {};
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         Object.keys(filtros).forEach(chave => {
             params.set(chave, filtros[chave].join(","));
         });
-        return "/backEnd/home.php?" + params.toString();
+        return "/app/Controllers/home.php?" + params.toString();
     }
 
     function executarBusca() {
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function carregarMatchStatus() {
         try {
-            const response = await fetch("/backEnd/match.php?route=minhas_solicitacoes", { credentials: "same-origin" });
+            const response = await fetch("/app/Controllers/match.php?route=minhas_solicitacoes", { credentials: "same-origin" });
             const data = await response.json();
             if (data.sucesso && data.solicitacoes) {
                 data.solicitacoes.forEach(s => {
@@ -203,11 +203,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (animalId) {
                 const estaFavoritado = button.textContent.trim() === "Remover dos Favoritos";
                 button.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
-                try {
-                    fetch(`/backEnd/home.php?route=favoritar_animal&idAnimal=${animalId}`);
-                } catch (error) {
-                    console.error("Erro ao buscar dados do animal:", error);
-                }
+        try {
+            const response = await fetch(`/app/Controllers/home.php?route=favoritar_animal&idAnimal=${animalId}`);
+        } catch (error) {
+            console.error("Erro ao buscar dados do animal:", error);
+        }
             }
             return;
         }
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!confirm("Enviar solicitação de match para este animal?")) return;
 
         try {
-            const response = await fetch("/backEnd/match.php?route=enviar", {
+            const response = await fetch("/app/Controllers/match.php?route=enviar", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ pet_id: animalId, remetente_id: window.USUARIO_ID }),
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function carregarDetalhesAnimal(animalId) {
         try {
-            const response = await fetch(`/backEnd/home.php?route=detalhes_animal&id=${animalId}`, { credentials: 'same-origin' });
+            const response = await fetch(`/app/Controllers/home.php?route=detalhes_animal&id=${animalId}`, { credentials: 'same-origin' });
             if (!response.ok) {
                 throw new Error(`Erro ao buscar detalhes do animal: ${response.status}`);
             }
@@ -352,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     
         try {
-            const response = await fetch(`/backEnd/home.php?route=excluir_animal&id=${id}`, {
+            const response = await fetch(`/app/Controllers/home.php?route=excluir_animal&id=${id}`, {
                 method: "DELETE",
                 credentials: "same-origin"
             });

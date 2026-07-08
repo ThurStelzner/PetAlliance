@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -97,9 +99,6 @@ try {
             $cpf = $params['cpf'] ?? null;
             $senha = $params['senha'] ?? null;
             $controller->$action($cpf, $senha);
-            break;
-        case 'criarCheckout':
-            $controller->$action();
             break;
         default:
             // Generic call for other actions

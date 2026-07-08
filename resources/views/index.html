@@ -34,7 +34,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="21" y1="12" y2="12"/></svg>
                     <span>Sair</span>
                 </button>
-                <button onclick="toggleMenu()" class="navbar-hamburger site-navbar-hamburger">
+                <button id="hamburger-btn" class="navbar-hamburger site-navbar-hamburger">
                     <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
             </div>
@@ -125,10 +125,8 @@
                         <div id="profile-avatar-container" class="profile-avatar">
                             <div class="w-full h-full flex items-center justify-center bg-primary/10"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                         </div>
-                        <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="profile-avatar-edit-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                        </button>
-                        <input id="avatar-input" type="file" accept="image/*" class="hidden" onchange="handleProfileAvatar(event)">
+                        <button id="edit-avatar-btn" onclick="document.getElementById('avatar-input').click()" class="profile-avatar-edit-btn">Alterar Foto</button>
+                        <input id="avatar-input" type="file" accept="image/*" class="hidden">
                     </div>
                     <div class="profile-info">
                         <h2 id="profile-name" class="font-display text-2xl font-bold text-foreground truncate">Carregando...</h2>
@@ -151,10 +149,6 @@
                             <p id="profile-cpf" class="text-sm font-semibold text-foreground">-</p>
                         </div>
                         <div class="profile-detail-item">
-                            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Telefone:</p>
-                            <p id="profile-phone" class="text-sm font-semibold text-foreground">-</p>
-                        </div>
-                        <div class="profile-detail-item">
                             <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">CEP:</p>
                             <p id="profile-cep" class="text-sm font-semibold text-foreground">-</p>
                         </div>
@@ -175,10 +169,6 @@
                         <div class="form-group">
                             <label class="form-label">CEP</label>
                             <input id="edit-cep" type="text" oninput="maskCEP(event)" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Telefone</label>
-                            <input id="edit-phone" type="text" oninput="maskPhone(event)" class="form-input">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Senha</label>
@@ -317,10 +307,6 @@
                         <div class="form-group">
                             <label class="form-label">CPF</label>
                             <input id="reg-cpf" type="text" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(event)" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Telefone</label>
-                            <input id="reg-phone" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(event)" class="form-input">
                         </div>
                         <div class="form-group">
                             <label class="form-label">CEP</label>
@@ -475,6 +461,6 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script src="js/script.js?v=1"></script>
 </body>
 </html>

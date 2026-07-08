@@ -9,21 +9,21 @@
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
     $metodo = $_SERVER['REQUEST_METHOD'];
-    $usuarioId = $_SESSION['usuario_id'];
+    $usuarioId = $_SESSION['usuario_id'] ?? null;
 
-    if(!$_SESSION['usuario_id']) {
+    // Permitir acesso público a listagens de animais e busca
+    $route = $_GET['route'] ?? '';
+    if ($metodo === 'GET' && ($route === 'animais' || $route === 'buscar_animais' || $route === 'detalhes_animal')) {
+        // Continuar para o processamento das rotas abaixo sem redirecionar para login
+    } elseif (!$usuarioId) {
         header('Location: /index.php');
         exit();
     }
 
     $usuarioDAO = new UsuarioDAO();
 
-    if (!isset($_SESSION['usuario_cpf'])) {
-        die("Usuário não está logado.");
-    }
-
-    $cpf = $_SESSION['usuario_cpf'];
-    $usuario = $usuarioDAO->read($cpf);
+    $cpf = $_SESSION['usuario_cpf'] ?? null;
+    $usuario = $cpf ? $usuarioDAO->read($cpf) : null;
 
     $ehAdmin = $usuario && $usuario->getTipo() == 1;
 

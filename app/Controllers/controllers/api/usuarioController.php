@@ -39,8 +39,11 @@
             }
         }
 
-        public function updateUsuarioFromRequest($cpf, $data) {
-            $usuarioAtual = $this->dao->read($cpf);
+    public function updateUsuarioFromRequest($cpf, $data) {
+        // LOG: Verificar se a requisição de update chegou
+        error_log("UPDATE_PERFIL: CPF=$cpf, Imagem em FILES=" . (isset($_FILES['foto_perfil']) ? 'SIM' : 'NAO'));
+
+        $usuarioAtual = $this->dao->read($cpf);
 
             if (!$usuarioAtual) {
                 echo json_encode(["success" => false, "message" => "Usuário não encontrado."]);
@@ -65,13 +68,28 @@
                 }
 
                 $novaImagem = uniqid('user_') . '.' . $extensao;
-                $caminhoDestino = __DIR__ . '/../../../public/uploads/usuario/' . $novaImagem;
+                // Força o caminho absoluto para evitar problemas de resolução relativa no Windows
+                $uploadDir = 'C:\\Users\\Alexandre\\Documents\\PetAlliance\\public\\uploads\\usuario';
+                
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                $caminhoDestino = $uploadDir . DIRECTORY_SEPARATOR . $novaImagem;
 
                 if (move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $caminhoDestino)) {
+                    $success = true;
+                } elseif (copy($_FILES['foto_perfil']['tmp_name'], $caminhoDestino)) {
+                    @unlink($_FILES['foto_perfil']['tmp_name']);
+                    $success = true;
+                } else {
+                    $success = false;
+                }
+
+                if ($success) {
                     // Delete old photo if not placeholder
                     $fotoAntiga = $usuarioAtual->getImagem();
-                    if ($fotoAntiga !== 'placeholder.webp' && file_exists(__DIR__ . '/../../../public/uploads/usuario/' . $fotoAntiga)) {
-                        @unlink(__DIR__ . '/../../../public/uploads/usuario/' . $fotoAntiga);
+                    if ($fotoAntiga !== 'placeholder.webp' && file_exists($uploadDir . DIRECTORY_SEPARATOR . $fotoAntiga)) {
+                        @unlink($uploadDir . DIRECTORY_SEPARATOR . $fotoAntiga);
                     }
                     $imagem = $novaImagem;
                 } else {
@@ -136,8 +154,7 @@
             ]);
         }
 
-        public function registerFromRequest($data) {
-
+public function registerFromRequest($data) {
             try {
                 $imagem = 'placeholder.webp';
                 $cpf = preg_replace('/[^0-9]/', '', $data['cpf']);
