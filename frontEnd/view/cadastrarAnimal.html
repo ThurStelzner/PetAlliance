@@ -1,6 +1,10 @@
 <form method="POST" enctype="multipart/form-data">
     <h1>Cadastro de Animal</h1>
 
+    <?php if (!empty($erro)): ?>
+        <p style="color:red;font-weight:bold;padding:0.5rem;border:1px solid red;border-radius:4px;margin-bottom:1rem;"><?= htmlspecialchars($erro) ?></p>
+    <?php endif; ?>
+
     <label>Fotos do animal (máximo 10):</label>
     <div id="fotos-container">
         <div class="foto-input-group">
