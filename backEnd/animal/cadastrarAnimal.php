@@ -28,20 +28,25 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
-            $fotoPet = 'placeholder.webp';
-            if (!empty($_FILES['arquivoFotoPet']['name'])) {
-                $extensao = strtolower(pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION));
-                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            $fotosPaths = [];
+            $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+            $diretorioUploads = __DIR__ . '/../../uploads/animais/';
 
-                if (!in_array($extensao, $permitidos, true)) {
-                    throw new InvalidArgumentException('Tipo de imagem não permitido para a foto do pet.');
+            if (!empty($_FILES['fotos']['name'][0])) {
+                $totalFotos = count($_FILES['fotos']['name']);
+                if ($totalFotos > 10) {
+                    throw new InvalidArgumentException('Máximo de 10 fotos permitidas.');
                 }
-
-                $fotoPet = uniqid('pet_') . '.' . $extensao;
-                move_uploaded_file(
-                    $_FILES['arquivoFotoPet']['tmp_name'],
-                    __DIR__ . '/../../uploads/animais/' . $fotoPet
-                );
+                for ($i = 0; $i < $totalFotos; $i++) {
+                    if ($_FILES['fotos']['error'][$i] !== UPLOAD_ERR_OK) continue;
+                    $extensao = strtolower(pathinfo($_FILES['fotos']['name'][$i], PATHINFO_EXTENSION));
+                    if (!in_array($extensao, $permitidos, true)) {
+                        throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['fotos']['name'][$i]);
+                    }
+                    $nomeArquivo = uniqid('pet_') . '.' . $extensao;
+                    move_uploaded_file($_FILES['fotos']['tmp_name'][$i], $diretorioUploads . $nomeArquivo);
+                    $fotosPaths[] = $nomeArquivo;
+                }
             }
             $nome = trim($_POST['nome'] ?? '');
             $raca = trim($_POST['raca'] ?? '');
@@ -119,7 +124,6 @@
 
             $animal = new Animal(
                 $donoId,
-                $fotoPet,
                 $nome,
                 $raca,
                 $cor,
@@ -132,7 +136,10 @@
                 $vacinado,
                 $certificado,
                 $fotoCertificado,
-                $fotoVacinacao
+                $fotoVacinacao,
+                null,
+                false,
+                $fotosPaths
             );
 
             $controller->criarAnimal($animal);

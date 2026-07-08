@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const animal = Array.isArray(data) ? data[0] : data;
             if (!animal) return;
 
-            const foto = (animal.foto_pet || 'placeholder.webp').toString().trim() || 'placeholder.webp';
+            const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
             const donoId = animal.dono_id;
             const isOwner = donoId == window.USUARIO_ID;
 
@@ -79,9 +79,21 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.style.overflow = 'hidden';
             modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);z-index:9999;';
 
+            var galeriaHtml = '<div class="modal-gallery" data-fotos=\'' + JSON.stringify(fotos).replace(/</g, '\\u003C') + '\' data-index="0">' +
+                '<div class="gallery-track">' +
+                    fotos.map(function(f) {
+                        return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
+                    }).join('') +
+                '</div>';
+            if (fotos.length > 1) {
+                galeriaHtml += '<button type="button" class="gallery-prev">&#10094;</button>' +
+                               '<button type="button" class="gallery-next">&#10095;</button>';
+            }
+            galeriaHtml += '</div>';
+
             modal.innerHTML = '<div class="modal-content">' +
                 '<button type="button" class="modal-close" onclick="this.closest(\'#animais-modal\').style.display=\'none\';document.body.style.overflow=\'auto\';">x</button>' +
-                '<img src="/uploads/animais/' + foto + '" alt="Foto de ' + (animal.nome || 'Animal') + '" style="max-width:10rem;height:10rem;object-fit:cover;" class="modal-animal-image" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">' +
+                galeriaHtml +
                 '<h3>' + (animal.nome || 'Sem nome') + '</h3>' +
                 '<p><strong>Data de Nascimento:</strong> ' + (animal.data_nascimento || 'Nao informada') + '</p>' +
                 '<p><strong>Descricao:</strong> ' + (animal.descricao || 'Nao informada') + '</p>' +
@@ -105,6 +117,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.body.style.overflow = 'auto';
                 }
             };
+
+            setTimeout(function() {
+                var galeria = modal.querySelector('.modal-gallery');
+                if (!galeria) return;
+                var track = galeria.querySelector('.gallery-track');
+                if (!track) return;
+                var imgs = track.querySelectorAll('img');
+                if (imgs.length <= 1) return;
+                var prevBtn = galeria.querySelector('.gallery-prev');
+                var nextBtn = galeria.querySelector('.gallery-next');
+                var idx = 0;
+                function atualizarGaleria() {
+                    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                }
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function() {
+                        idx = (idx + 1) % imgs.length;
+                        atualizarGaleria();
+                    });
+                }
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function() {
+                        idx = (idx - 1 + imgs.length) % imgs.length;
+                        atualizarGaleria();
+                    });
+                }
+            }, 0);
         } catch (e) {
             console.error(e);
         }

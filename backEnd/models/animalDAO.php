@@ -10,13 +10,19 @@
             $this->pdo = Conexao::getConexao();
         }
 
+        public function carregarFotos($petId) {
+            $sql = "SELECT foto_path FROM tb_pets_fotos WHERE pet_id = ? ORDER BY ordem ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$petId]);
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+
         public function cadastrarAnimal(Animal $animal) {
             try {
-                $sql = "INSERT INTO tb_pets (dono_id, foto_pet, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca, foto_certificado, foto_vacinas) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                $sql = "INSERT INTO tb_pets (dono_id, nome, raca, cor, sexo, tipo, porte, data_nascimento, peso, descricao, vacinado, certificado_raca, foto_certificado, foto_vacinas) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([
                     $animal->getDonoid(),
-                    $animal->getFotoPet(),
                     $animal->getNome(),
                     $animal->getRaca(),
                     $animal->getCor(),
@@ -31,7 +37,17 @@
                     $animal->getFotoCertificado(),
                     $animal->getFotoVacinas()
                 ]);
-                $animal->setId($this->pdo->lastInsertId());
+                $petId = $this->pdo->lastInsertId();
+                $animal->setId($petId);
+
+                $fotos = $animal->getFotos();
+                if (!empty($fotos)) {
+                    $stmtFoto = $this->pdo->prepare("INSERT INTO tb_pets_fotos (pet_id, foto_path, ordem) VALUES (?, ?, ?)");
+                    foreach ($fotos as $i => $path) {
+                        $stmtFoto->execute([$petId, $path, $i]);
+                    }
+                }
+
                 return $animal;
             } catch (PDOException $e) {
                 if($e->errorInfo[1] == 1062) {
@@ -73,9 +89,9 @@
                 $animais = [];
 
                 while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $fotos = $this->carregarFotos($dados['id']);
                     $animal = new Animal(
                         $dados['dono_id'],
-                        $dados['foto_pet'],
                         $dados['nome'],
                         $dados['raca'],
                         $dados['cor'],
@@ -90,9 +106,9 @@
                         $dados['foto_certificado'],
                         $dados['foto_vacinas'],
                         $dados['id'] ?? null,
-                        $dados['favoritado'] ?? 1
+                        $dados['favoritado'] ?? 1,
+                        $fotos
                     );
-                    $animal->setId($dados['id']);
                     $animais[] = $animal;
                 }
                 return $animais;
@@ -112,9 +128,9 @@
                 return null;
             }
 
+            $fotos = $this->carregarFotos($dados['id']);
             $animal = new Animal(
                 $dados['dono_id'],
-                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -127,9 +143,11 @@
                 $dados['vacinado'],
                 $dados['certificado_raca'],
                 $dados['foto_certificado'],
-                $dados['foto_vacinas']
+                $dados['foto_vacinas'],
+                $dados['id'] ?? null,
+                false,
+                $fotos
             );
-            $animal->setId($dados['id']);
 
             return $animal;
         }
@@ -223,9 +241,9 @@
             $animais = [];
 
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $fotos = $this->carregarFotos($dados['id']);
               $animal = new Animal(
                 $dados['dono_id'],
-                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -240,7 +258,8 @@
                 $dados['foto_certificado'],
                 $dados['foto_vacinas'],
                 $dados['id'] ?? null,
-                $dados['favoritado'] ?? 0
+                $dados['favoritado'] ?? 0,
+                $fotos
               );
               $animais[] = $animal;
             }
@@ -263,9 +282,9 @@
             $animais = [];
         
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $fotos = $this->carregarFotos($dados['id']);
               $animal = new Animal(
                 $dados['dono_id'],
-                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -280,9 +299,10 @@
                 $dados['foto_certificado'],
                 $dados['foto_vacinas'],
                 $dados['id'] ?? null,
-                $dados['favoritado'] ?? 0
+                $dados['favoritado'] ?? 0,
+                $fotos
               );
-              $animais[] = $animal; // adiciona ao array
+              $animais[] = $animal;
             }
             
             return $animais;
@@ -295,9 +315,9 @@
             $animais = [];
         
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              $fotos = $this->carregarFotos($dados['id']);
               $animal = new Animal(
                 $dados['dono_id'],
-                $dados['foto_pet'],
                 $dados['nome'],
                 $dados['raca'],
                 $dados['cor'],
@@ -310,39 +330,129 @@
                 $dados['vacinado'],
                 $dados['certificado_raca'],
                 $dados['foto_certificado'],
-                $dados['foto_vacinas']
+                $dados['foto_vacinas'],
+                $dados['id'] ?? null,
+                false,
+                $fotos
               );
               $animal->setId($dados['id']);
-              $animais[] = $animal; // adiciona ao array
+              $animais[] = $animal;
             }
             
             return $animais;
         }
+
+        public function adicionarFoto($petId, $fotoPath) {
+            $sqlMax = "SELECT COALESCE(MAX(ordem), -1) + 1 FROM tb_pets_fotos WHERE pet_id = ?";
+            $stmt = $this->pdo->prepare($sqlMax);
+            $stmt->execute([$petId]);
+            $ordem = (int)$stmt->fetchColumn();
+
+            $sql = "INSERT INTO tb_pets_fotos (pet_id, foto_path, ordem) VALUES (?, ?, ?)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$petId, $fotoPath, $ordem]);
+        }
+
+        public function removerFoto($fotoId) {
+            $sql = "SELECT foto_path, pet_id FROM tb_pets_fotos WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$fotoId]);
+            $foto = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$foto) return null;
+
+            $arquivo = __DIR__ . "/../../uploads/animais/" . $foto['foto_path'];
+            if (file_exists($arquivo)) {
+                unlink($arquivo);
+            }
+
+            $sqlDel = "DELETE FROM tb_pets_fotos WHERE id = ?";
+            $stmt = $this->pdo->prepare($sqlDel);
+            $stmt->execute([$fotoId]);
+
+            return $foto['pet_id'];
+        }
+
+        public function removerFotoByPath($petId, $fotoPath) {
+            $sql = "SELECT id FROM tb_pets_fotos WHERE pet_id = ? AND foto_path = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$petId, $fotoPath]);
+            $foto = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$foto) return false;
+
+            $arquivo = __DIR__ . "/../../uploads/animais/" . $fotoPath;
+            if (file_exists($arquivo)) {
+                unlink($arquivo);
+            }
+
+            $stmtDel = $this->pdo->prepare("DELETE FROM tb_pets_fotos WHERE id = ?");
+            $stmtDel->execute([$foto['id']]);
+            return true;
+        }
+
+        public function atualizarAnimal(Animal $animal) {
+            $sql = "UPDATE tb_pets SET nome=?, raca=?, cor=?, sexo=?, tipo=?, porte=?, data_nascimento=?, peso=?, descricao=?, vacinado=?, certificado_raca=?, foto_certificado=?, foto_vacinas=? WHERE id=? AND dono_id=?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                $animal->getNome(),
+                $animal->getRaca(),
+                $animal->getCor(),
+                $animal->getSexo(),
+                $animal->getTipo(),
+                $animal->getPorte(),
+                $animal->getDataNascimento(),
+                $animal->getPeso(),
+                $animal->getDescricao(),
+                $animal->getVacinado(),
+                $animal->getCertificado(),
+                $animal->getFotoCertificado(),
+                $animal->getFotoVacinas(),
+                $animal->getId(),
+                $animal->getDonoId()
+            ]);
+        }
+
         public function delete($id) {
             $pdo = Conexao::getConexao();
-        
+
             $arquivo = __DIR__ . "/../../uploads/animais/";
-        
+
+            $sqlFotos = "SELECT foto_path FROM tb_pets_fotos WHERE pet_id = ?";
+            $stmtFotos = $pdo->prepare($sqlFotos);
+            $stmtFotos->execute([$id]);
+            while ($foto = $stmtFotos->fetch(PDO::FETCH_ASSOC)) {
+                if (
+                    !empty($foto['foto_path']) &&
+                    $foto['foto_path'] !== 'placeholder.webp' &&
+                    file_exists($arquivo . $foto['foto_path'])
+                ) {
+                    unlink($arquivo . $foto['foto_path']);
+                }
+            }
+
             $sql = "SELECT * FROM tb_pets WHERE id = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$id]);
             $animal = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
             if ($animal) {
-        
                 if (
-                    !empty($animal['foto_pet']) &&
-                    $animal['foto_pet'] !== 'placeholder.webp' &&
-                    file_exists($arquivo . $animal['foto_pet'])
+                    !empty($animal['foto_certificado']) &&
+                    $animal['foto_certificado'] !== 'placeholder.webp' &&
+                    file_exists($arquivo . $animal['foto_certificado'])
                 ) {
-                    unlink($arquivo . $animal['foto_pet']);
+                    unlink($arquivo . $animal['foto_certificado']);
                 }
-        
+                if (
+                    !empty($animal['foto_vacinas']) &&
+                    $animal['foto_vacinas'] !== 'placeholder.webp' &&
+                    file_exists($arquivo . $animal['foto_vacinas'])
+                ) {
+                    unlink($arquivo . $animal['foto_vacinas']);
+                }
+
                 $sql = "DELETE FROM tb_pets WHERE id = ?";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$id]);
             }
         }
-
-
     }

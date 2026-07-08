@@ -2,7 +2,6 @@
 
 class Animal implements JsonSerializable {
     private $dono_id;
-    private $foto_pet;
     private $nome;
     private $raca;
     private $cor;
@@ -19,11 +18,11 @@ class Animal implements JsonSerializable {
 
     private $id;
     private $favoritado;
+    private $fotos = [];
 
-    public function __construct($dono_id,$foto_pet,$nome,$raca,$cor,$sexo,$tipo,$porte,$data_nascimento,$peso,$descricao,$vacinado,$certificado,$foto_certificado,$foto_vacina, $id = null,$favoritado = false
+    public function __construct($dono_id, $nome, $raca, $cor, $sexo, $tipo, $porte, $data_nascimento, $peso, $descricao, $vacinado, $certificado, $foto_certificado, $foto_vacina, $id = null, $favoritado = false, $fotos = []
     ) {
         $this->dono_id = $dono_id;
-        $this->foto_pet = $foto_pet;
         $this->nome = $nome;
         $this->raca = $raca;
         $this->cor = $cor;
@@ -39,6 +38,7 @@ class Animal implements JsonSerializable {
         $this->foto_vacina = $foto_vacina;
         $this->id = $id;
         $this->favoritado = (bool) $favoritado;
+        $this->fotos = $fotos;
     }
 
 
@@ -50,12 +50,24 @@ class Animal implements JsonSerializable {
         return $this->dono_id;
     }
 
+    public function getFotos() {
+        return $this->fotos;
+    }
+
+    public function setFotos($fotos) {
+        $this->fotos = $fotos;
+    }
+
     public function getFotoPet() {
-        return $this->foto_pet;
+        return $this->fotos[0] ?? 'placeholder.webp';
     }
 
     public function getNome() {
         return $this->nome;
+    }
+
+    public function setNome($nome) {
+        $this->nome = $nome;
     }
 
     public function getRaca() {
@@ -136,21 +148,6 @@ class Animal implements JsonSerializable {
         }
     
         $this->dono_id = (int) $donoid;
-    }
-    
-    public function setFotoPet($foto_pet){
-        $this->foto_pet = $foto_pet;
-        if (!empty($_FILES['arquivoFotoPet']['name'])) {
-                $extensao  = pathinfo($_FILES['arquivoFotoPet']['name'], PATHINFO_EXTENSION);
-                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-            
-                if (!in_array(strtolower($extensao), $permitidos)) {
-                    $erro = 'Tipo de imagem não permitido.';
-                } else {
-                    $this->foto_pet = uniqid('pet_') . '.' . $extensao;
-                    move_uploaded_file($_FILES['arquivoFotoPet']['tmp_name'], '../../uploads/animais/' . $this->foto_pet);
-                }
-            }
     }
     
     public function setRaca($raca) {
@@ -274,7 +271,7 @@ class Animal implements JsonSerializable {
         return [
             'id' => $this->id,
             'dono_id' => $this->dono_id,
-            'foto_pet' => $this->foto_pet,
+            'foto_pet' => $this->fotos[0] ?? 'placeholder.webp',
             'nome' => $this->nome,
             'raca' => $this->raca,
             'cor' => $this->cor,
@@ -289,6 +286,7 @@ class Animal implements JsonSerializable {
             'foto_certificado' => $this->foto_certificado,
             'foto_vacina' => $this->foto_vacina,
             'favoritado' => $this->favoritado,
+            'fotos' => $this->fotos,
         ];
     }
 }

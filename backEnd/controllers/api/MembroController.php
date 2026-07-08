@@ -20,7 +20,9 @@
         }
 
         public function listarDestaques() {
-            $sql = "SELECT a.*, u.nome as dono_nome, u.foto_perfil as dono_foto
+            $sql = "SELECT a.*, 
+                           (SELECT pf.foto_path FROM tb_pets_fotos pf WHERE pf.pet_id = a.id ORDER BY pf.ordem ASC LIMIT 1) as foto_pet,
+                           u.nome as dono_nome, u.foto_perfil as dono_foto
                     FROM tb_pets_membros pm
                     JOIN tb_pets a ON a.id = pm.animal_id
                     JOIN tb_usuarios u ON u.id = pm.usuario_id

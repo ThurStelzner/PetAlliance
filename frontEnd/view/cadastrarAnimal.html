@@ -1,11 +1,16 @@
 <form method="POST" enctype="multipart/form-data">
     <h1>Cadastro de Animal</h1>
 
-    <label for="foto_pet">Foto do animal:</label>
-    <!-- Preview da Foto do Pet -->
-    <img src="/uploads/usuario/placeholder.webp" id="preview-pet" width="150" alt="Preview Pet">
-    <br>
-    <input type="file" name="arquivoFotoPet" id="foto_pet" required>
+    <label>Fotos do animal (máximo 10):</label>
+    <div id="fotos-container">
+        <div class="foto-input-group">
+            <img src="/uploads/usuario/placeholder.webp" class="preview-foto" width="150" alt="Preview">
+            <br>
+            <input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp" required>
+        </div>
+    </div>
+    <button type="button" id="btn-add-foto" style="margin-top:0.5rem;">Adicionar mais fotos</button>
+    <p id="foto-counter" style="font-size:0.85rem;color:#666;margin-top:0.25rem;">1 de 10 fotos</p>
 
     <label for="nome">Nome do animal:</label>
     <input type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
@@ -86,20 +91,56 @@
 </form>
 
 <script>
-    // Script para Preview Dinâmico da Foto do Pet
-    const inputPet = document.getElementById('foto_pet');
-    const previewPet = document.getElementById('preview-pet');
+    const maxFotos = 10;
+    const container = document.getElementById('fotos-container');
+    const btnAdd = document.getElementById('btn-add-foto');
+    const counter = document.getElementById('foto-counter');
 
-    inputPet.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewPet.src = e.target.result;
+    function updateCounter() {
+        const total = container.querySelectorAll('.foto-input-group').length;
+        counter.textContent = total + ' de ' + maxFotos + ' fotos';
+        btnAdd.style.display = total >= maxFotos ? 'none' : 'inline-block';
+    }
+
+    container.addEventListener('change', function(e) {
+        if (e.target.classList.contains('input-foto')) {
+            const group = e.target.closest('.foto-input-group');
+            const preview = group.querySelector('.preview-foto');
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    preview.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
             }
-            reader.readAsDataURL(file);
         }
     });
+
+    btnAdd.addEventListener('click', function() {
+        const total = container.querySelectorAll('.foto-input-group').length;
+        if (total >= maxFotos) return;
+
+        const group = document.createElement('div');
+        group.className = 'foto-input-group';
+        group.innerHTML =
+            '<img src="/uploads/usuario/placeholder.webp" class="preview-foto" width="150" alt="Preview"><br>' +
+            '<input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp">' +
+            '<button type="button" class="btn-remove-foto" style="margin-left:0.5rem;">Remover</button>';
+        container.appendChild(group);
+        updateCounter();
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('btn-remove-foto')) {
+            const group = e.target.closest('.foto-input-group');
+            if (container.querySelectorAll('.foto-input-group').length <= 1) return;
+            group.remove();
+            updateCounter();
+        }
+    });
+
+    updateCounter();
 </script>
 
 <script src="../../frontEnd/utils/animalSalvos.js"></script>

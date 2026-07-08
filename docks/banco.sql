@@ -21,7 +21,6 @@ CREATE TABLE tb_usuarios (
 CREATE TABLE tb_pets (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     dono_id BIGINT UNSIGNED NOT NULL,
-    foto_pet VARCHAR(250) DEFAULT"placeholder.webp",
     nome VARCHAR(50) NOT NULL,
     raca VARCHAR(50),
     cor VARCHAR(30),
@@ -38,6 +37,16 @@ CREATE TABLE tb_pets (
     venda_preco DECIMAL(10,2) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
     CONSTRAINT fk_pets_dono FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
+);
+
+-- FOTOS DOS PETS
+CREATE TABLE tb_pets_fotos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    pet_id BIGINT UNSIGNED NOT NULL,
+    foto_path VARCHAR(250) NOT NULL,
+    ordem INT DEFAULT 0,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_fotos_pet FOREIGN KEY (pet_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
 -- MATCH
