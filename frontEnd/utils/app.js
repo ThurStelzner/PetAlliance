@@ -187,7 +187,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const animais = Array.isArray(data) ? data : data.animais || [];
 
             renderizarAnimais(animais);
-            });
         } catch (error) {
             console.error("Erro ao carregar animais:", error);
             container.innerHTML = "<p>Não foi possível carregar os animais.</p>";
