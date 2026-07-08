@@ -87,6 +87,31 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
                 throw new InvalidArgumentException('Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.');
             }
 
+            if (mb_strlen($nome) > 50) {
+                throw new InvalidArgumentException('Nome deve ter no máximo 50 caracteres.');
+            }
+
+            if (mb_strlen($descricao) > 2000) {
+                throw new InvalidArgumentException('Descrição deve ter no máximo 2000 caracteres.');
+            }
+
+            if ($dt_nascimento !== '') {
+                $dataNasc = DateTime::createFromFormat('Y-m-d', $dt_nascimento);
+                if (!$dataNasc || $dataNasc->format('Y-m-d') !== $dt_nascimento) {
+                    throw new InvalidArgumentException('Data de nascimento inválida.');
+                }
+                if ($dataNasc > new DateTime()) {
+                    throw new InvalidArgumentException('A data de nascimento não pode ser futura.');
+                }
+                if ($dt_nascimento < '2000-01-01') {
+                    throw new InvalidArgumentException('A data mínima permitida é 01/01/2000.');
+                }
+            }
+
+            if (!is_numeric($peso) || $peso <= 0) {
+                throw new InvalidArgumentException('Peso deve ser um número maior que zero.');
+            }
+
             $fotoCertificado = null;
             $fotoVacinacao = null;
 
