@@ -1,17 +1,17 @@
 <div class="page-container" style="max-width:480px">
-  <div class="page-hero" style="padding:2rem 1.5rem">
-    <h1 class="page-hero-title" style="font-size:1.4rem">Recuperar senha</h1>
-    <p class="page-hero-sub" style="font-size:0.82rem">Digite seu CPF ou email para receber o link de recuperacao</p>
+  <div class="page-hero">
+    <h1 class="page-hero-title">Recuperar senha</h1>
+    <p class="page-hero-sub">Digite seu CPF ou email para receber o link de recuperacao</p>
   </div>
 
   <div id="mensagem-erro"></div>
   <div id="mensagem-sucesso"></div>
 
   <div class="page-card page-card-border">
-    <form id="form-recuperar">
-      <label for="cpf" style="display:block;font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:0.4rem">CPF ou Email</label>
-      <input type="text" name="cpf" id="cpf" placeholder="Seu CPF ou email" value="<?= htmlspecialchars($cpfSalvo ?? '') ?>" required style="width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;box-sizing:border-box">
-      <button type="submit" id="btn-enviar" class="btn btn-primary" style="width:100%;margin-top:0.75rem">Enviar</button>
+    <form id="form-recuperar" class="form-recuperar">
+      <label for="cpf">CPF ou Email</label>
+      <input type="text" name="cpf" id="cpf" placeholder="Seu CPF ou email" value="<?= htmlspecialchars($cpfSalvo ?? '') ?>" required>
+      <button type="submit" id="btn-enviar" class="btn btn-primary">Enviar</button>
     </form>
   </div>
 

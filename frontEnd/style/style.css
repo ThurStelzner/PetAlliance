@@ -411,6 +411,12 @@ html, body {
   color: var(--primary);
 }
 
+.dialog-menu-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.06);
+  margin: 0.4rem 0.9rem;
+}
+
 .badge-notificacoes {
   display: inline-block;
   background: var(--danger);

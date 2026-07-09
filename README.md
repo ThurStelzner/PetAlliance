@@ -1,74 +1,104 @@
-#  Pet Alliance
+# PetAlliance
 
-> Encontre o parceiro ideal para o seu animal. Venda filhotes de raça com segurança.
+Plataforma de match genetico que conecta criadores de animais de raca para cruzamento seletivo.
 
----
+## Sobre
 
-##  Sobre o Projeto
+O **PetAlliance** conecta donos de animais interessados em cruzamento seletivo, facilitando o encontro de parceiros da mesma raca. Criadores cadastram seus animais com informacoes geneticas, fotos e disponibilidade, e a plataforma faz o match entre interessados.
 
-O **Pet Alliance** é uma plataforma que conecta tutores de animais de raça — cavalos, cães, gatos e outros pets — para fins de **acasalamento** e **venda de filhotes**. Nosso objetivo é facilitar encontros entre animais compatíveis, garantindo transações seguras entre criadores e compradores.
+## Funcionalidades
 
-A plataforma retém uma pequena porcentagem sobre cada transação realizada, garantindo a sustentabilidade do serviço.
+- Cadastro de animais com fotos e dados geneticos
+- Match entre criadores da mesma raca
+- Chat para combinacao de cruzamento
+- Planos de assinatura com beneficios (Iniciante, Basico, Profissional, Premium)
+- Badge de membro verificado e destaque de animais
+- LGPD compliance com aceite de termos e politica de privacidade
 
----
+## Tecnologias
 
-##  Funcionalidades
+- **Frontend:** HTML5 + CSS3 + JavaScript (Vanilla)
+- **Backend:** PHP 8.3+ com PDO
+- **Banco de Dados:** MySQL 5.7+
+- **Pagamentos:** AbacatePay (API REST)
+- **Autenticacao:** Sessions PHP
+- **Estilizacao:** CSS puro com variaveis customizadas (paleta verde)
+- **Hospedagem:** Servidor Apache com modulo mod_rewrite
 
--  **Busca de parceiros** — encontre o match ideal para o seu animal por raça, porte, localização e características
-- **Suporte a cavalos e pets de raça** — cães, gatos, cavalos e outras espécies
--  **Venda de filhotes** — anuncie e venda filhotes de raça com segurança
--  **Pagamentos integrados** — transações protegidas com retenção de porcentagem pela plataforma
--  **Perfil do animal** — cadastro detalhado com fotos, pedigree e histórico
--  **Busca por localização** — filtre parceiros e anúncios por região
+## Ferramentas
 
----
+- **VS Code** — editor principal
+- **Git & GitHub** — versionamento
+- **XAMPP** — ambiente de desenvolvimento local
+- **Postman / Insomnia** — testes de API
+- **phpMyAdmin** — gerenciamento do banco
+- **WebP** — formato de imagens
 
-##  Como Rodar o Projeto
+## Como Rodar
 
-### Pré-requisitos
+### Pre-requisitos
 
 - XAMPP / WAMP / LAMP instalado
 - PHP >= 8.3
 - MySQL >= 5.7
-- Navegador moderno
+- Git
+- Navegador moderno (Chrome, Firefox, Edge)
 
-### Instalação
+### Instalacao
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/pet-alliance.git
+# Clone o repositorio
+git clone https://github.com/ThurStelzner/PetAlliance.git
 
-# Entre na pasta do projeto
-cd pet-alliance
+# Entre na pasta
+cd PetAlliance
 ```
 
-1. Mova a pasta para o diretório do seu servidor local (`htdocs` no XAMPP ou `www` no WAMP)
-2. Configure a conexão com o banco em `config/database.php` com as credenciais fornecidas pela equipe:
-3. Acesse no navegador: `http://localhost/pet-alliance`
+1. Mova a pasta para o diretorio do servidor local (ex: `C:\xampp\htdocs\PetAlliance`)
+2. Inicie o Apache e o MySQL no XAMPP
+3. Acesse `http://localhost/phpmyadmin` e crie o banco de dados
+4. Importe o script SQL (disponivel com a equipe)
+5. Configure as credenciais do banco em `backEnd/config/config.php`:
 
->  **O banco de dados é privado e interno da equipe.** As credenciais de acesso não são distribuídas publicamente. Entre em contato com um membro do time para obter acesso.
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'petalliance');
+```
 
-##  Modelo de Negócio
+6. Configure a URL base e credenciais do AbacatePay no mesmo arquivo
+7. Acesse no navegador: `http://localhost/PetAlliance`
 
-| Transação | Taxa da Plataforma |
-|---|---|
-| Venda de filhote | % sobre o valor anunciado |
-| Intermediação de acasalamento | % sobre o valor combinado |
+> O banco de dados e privado da equipe. Solicite o dump SQL a um membro do time.
 
-> Os valores exatos das taxas são configurados no painel administrativo.
+### Estrutura de Diretorios
 
----
+```
+PetAlliance/
+├── backEnd/
+│   ├── config/         # Configuracoes do banco e pagamento
+│   ├── controllers/    # Logica da API
+│   ├── models/         # Classes e DAOs
+│   ├── usuario/        # Paginas PHP de usuario
+│   ├── views/          # Navbar e componentes
+│   └── home.php        # Pagina inicial logada
+├── frontEnd/
+│   ├── assets/         # Imagens e logos
+│   ├── style/          # CSS (style.css, estilos.css, chat.css)
+│   ├── utils/          # JavaScript (appUsuario, chat, formatacao)
+│   └── view/           # Fragmentos HTML
+├── uploads/            # Fotos de usuarios e animais
+└── index.php           # Landing page
+```
 
-## Tecnologias
+## Planos
 
-- **Frontend:** HTML5 + CSS3 + JavaScript
-- **Backend:** PHP
-- **Banco de Dados:** MySQL
-- **Autenticação:** Sessions PHP / JWT
-- **Pagamentos:** Stripe / Mercado Pago
+| Plano | Preco | Beneficios |
+|---|---|---|
+| Iniciante | R$ 7,50/mes | Badge de membro, 5 destaques |
+| Basico | R$ 15/mes | Badge, perfil verificado, 10 destaques |
+| Profissional | R$ 30/mes | Badge, verificado, 20 destaques, suporte |
+| Premium | R$ 45/mes | Badge, verificado, 30 destaques, suporte VIP |
 
----
-
----
-
-<p align="center">Feito com  pelo time Pet Alliance</p>
+Cadastro e matches sao gratuitos e ilimitados para todos.

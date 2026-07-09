@@ -57,6 +57,11 @@
             <li><a href="/backEnd/match.php">Notificações</a></li>
             <li><a href="/backEnd/usuario/perfil.php">Perfil</a></li>
             <li><a href="/backEnd/usuario/configuracoes.php">Configurações</a></li>
+<?php if (($_SESSION['usuario_tipo'] ?? 0) == 1): ?>
+            <li class="dialog-menu-divider"></li>
+            <li><a href="/backEnd/admin/denuncias.php">Ver Denúncias</a></li>
+            <li><a href="/backEnd/admin/estatisticas.php">Estatísticas</a></li>
+<?php endif; ?>
         </ul>
     </dialog>
 

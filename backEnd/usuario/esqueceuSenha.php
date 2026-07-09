@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Senha - PetAlliance</title>
-  <link rel="stylesheet" href="/frontEnd/style/style.css">
-  <link rel="stylesheet" href="/frontEnd/style/estilos.css">
-</head>
-<body style="background:var(--bg);margin:0;min-height:100vh;display:flex;align-items:center">
 <?php
-
 session_start();
 
 require_once __DIR__ . "/../../backEnd/config/config.php";
@@ -40,8 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } else {
         $cpf = preg_replace('/[^0-9]/', '', $input);
-        if (strlen($cpf) !== 11 || !$usuarioDAO->validaCPF($cpf)) {
-            echo json_encode(["success" => false, "message" => "CPF inválido."]);
+        if (strlen($cpf) !== 11) {
+            echo json_encode(["success" => false, "message" => "CPF deve ter 11 dígitos (recebido: '$input' -> '$cpf', len=" . strlen($cpf) . ")."]);
+            exit();
+        }
+        if (!$usuarioDAO->validaCPF($cpf)) {
+            echo json_encode(["success" => false, "message" => "CPF com dígitos verificadores inválidos."]);
             exit();
         }
         $usuario = $usuarioDAO->read($cpf);
@@ -63,7 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $cpfSalvo = $_SESSION['cpf_digitado'] ?? '';
-
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar Senha - PetAlliance</title>
+  <link rel="stylesheet" href="/frontEnd/style/style.css">
+  <link rel="stylesheet" href="/frontEnd/style/estilos.css">
+</head>
+<body style="background:var(--bg);margin:0;min-height:100vh">
+<?php
 require __DIR__ . "/../../frontEnd/view/esqueceuSenha.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";
 ?>

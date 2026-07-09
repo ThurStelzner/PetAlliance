@@ -107,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.25rem 0;">Ver Detalhes</button>' +
                             '<button type="button" class="' + classeBotao + ' btn btn-primary" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">' + textoBotao + '</button>' +
                             '<button type="button" class="editar-btn btn btn-outline" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">Editar</button>' +
+                            '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">Excluir</button>' +
                         '</div>' +
                     '</div>';
                 container.appendChild(card);
@@ -135,6 +136,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (animalId) {
                 window.location.href = '/backEnd/animal/editarAnimal.php?id=' + animalId;
             }
+            return;
+        }
+
+        const excluirBtn = target.closest(".excluir-btn");
+        if (excluirBtn) {
+            const animalId = excluirBtn.dataset.animalId;
+            const nome = excluirBtn.dataset.nome || "Animal";
+            if (!confirm("Tem certeza que deseja excluir " + nome + " permanentemente?")) return;
+            fetch('/backEnd/animal/meusAnimais.php?route=deletar&id=' + animalId, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    alert(data.mensagem || "Animal excluido.");
+                    carregarMeusAnimais();
+                } else {
+                    alert(data.mensagem || "Erro ao excluir animal.");
+                }
+            })
+            .catch(() => alert("Erro de conexao ao excluir."));
             return;
         }
 

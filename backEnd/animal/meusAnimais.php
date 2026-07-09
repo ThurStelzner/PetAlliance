@@ -33,6 +33,21 @@
         exit;
     }
 
+    if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'deletar' && isset($_GET['id'])) {
+        header('Content-Type: application/json');
+        $animalId = $_GET['id'];
+        $animalDao = new AnimalDAO();
+        $animal = $animalDao->read($animalId);
+        if (!$animal || $animal->getDonoid() != $donoId) {
+            http_response_code(403);
+            echo json_encode(["sucesso" => false, "mensagem" => "Você não tem permissão para excluir este animal."]);
+            exit;
+        }
+        $controllerAnimal = new AnimalController();
+        $controllerAnimal->deletarAnimal($animalId);
+        exit;
+    }
+
     require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
