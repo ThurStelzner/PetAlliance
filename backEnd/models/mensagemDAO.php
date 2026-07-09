@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . "/../../backEnd/config/config.php";
-require_once __DIR__ . "/../../backEnd/models/mensagem.php";
+require_once __DIR__ . "/../config/config.php";
+require_once __DIR__ . "/mensagem.php";
 
 class MensagemDAO {
     private $pdo;
@@ -39,18 +39,18 @@ class MensagemDAO {
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ? AND m.id < ?
                     ORDER BY m.data_envio DESC
-                    LIMIT ?";
+                    LIMIT $limite";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId, $antes, $limite]);
+            $stmt->execute([$conversaId, $antes]);
         } else {
             $sql = "SELECT m.*, u.nome AS remetente_nome, u.foto_perfil AS remetente_foto
                     FROM tb_mensagens m
                     INNER JOIN tb_usuarios u ON m.remetente_id = u.id
                     WHERE m.conversa_id = ?
                     ORDER BY m.data_envio DESC
-                    LIMIT ?";
+                    LIMIT $limite";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$conversaId, $limite]);
+            $stmt->execute([$conversaId]);
         }
         return array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
