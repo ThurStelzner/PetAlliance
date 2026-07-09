@@ -749,12 +749,92 @@ html, body {
   transition: background 0.2s;
 }
 
+.fav-header {
+  max-width: 1200px;
+  margin: 1.5rem auto 0;
+  padding: 0 1rem;
+}
+
 .foto-input-group { margin-bottom: 0.5rem; }
 .foto-input-group .preview-foto { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.25rem; }
 .btn-remove-foto { background: #e74c3c; color: #fff; border: none; border-radius: 4px; padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.8rem; }
 .btn-remove-foto:hover { background: #c0392b; }
 
-footer { display: none; }
+/* --- PERFIL --- */
+.usuario-card {
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.usuario-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-bg);
+  margin-bottom: 1rem;
+}
+.usuario-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--text);
+}
+.usuario-info {
+  text-align: left;
+  margin-bottom: 1.25rem;
+}
+.usuario-info p {
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.usuario-info p strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  display: inline-block;
+  min-width: 70px;
+}
+.usuario-actions {
+  text-align: center;
+}
+
+/* --- FOOTER --- */
+footer {
+  display: block;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  z-index: 100;
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-brand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-link:hover {
+  color: var(--primary);
+}
 
 @media (max-width: 600px) {
   .animal-modal-body {
@@ -765,6 +845,235 @@ footer { display: none; }
     width: 100%;
     height: 200px;
   }
+}
+
+/* --- NOTIFICAÇÕES --- */
+.notif-section {
+  margin-bottom: 2rem;
+}
+.notif-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--primary-bg);
+}
+.notif-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 0.75rem 0;
+}
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.notif-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
+.notif-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.notif-card-nao-lida {
+  border-left: 3px solid var(--primary);
+}
+.notif-card-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.notif-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.notif-card-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.notif-card-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notif-card-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.notif-card-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+.notif-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.notif-card-solicitacao {
+  align-items: flex-start;
+}
+.notif-card-avatar {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--primary-bg);
+}
+.notif-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.notif-avatar-mini {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+.notif-status-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.notif-btn {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+.notif-btn:hover {
+  opacity: 0.85;
+}
+.notif-btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+.notif-btn-outline:hover {
+  background: var(--primary-bg);
+  border-color: var(--primary);
+}
+.notif-btn-sm {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.6rem;
+}
+.btn-match-aceitar {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-match-aceitar:hover { opacity: 0.85; }
+.btn-match-recusar {
+  background: transparent;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  border-radius: var(--radius);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-match-recusar:hover {
+  background: #fce4e4;
+}
+.btn-aceitar {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-aceitar:hover { opacity: 0.85; }
+.btn-recusar {
+  background: transparent;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  border-radius: var(--radius);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-recusar:hover { background: #fce4e4; }
+.btn-chat {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+.btn-chat:hover { opacity: 0.85; }
+.btn-marcar-lida {
+  display: inline-block;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-marcar-lida:hover { background: var(--primary-bg); border-color: var(--primary); }
+.match-recusado {
+  font-size: 0.75rem;
+  color: #d32f2f;
+  font-weight: 600;
 }
 
 /* === TOAST MESSAGES === */

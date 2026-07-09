@@ -14,9 +14,39 @@ class NotificacaoController {
     public function listar($usuarioId) {
         header('Content-Type: application/json');
         try {
-            $notificacoes = $this->dao->listarPorUsuario($usuarioId);
+            $todas = $this->dao->listarPorUsuario($usuarioId);
             $naoLidas = $this->dao->naoLidas($usuarioId);
-            echo json_encode(['sucesso' => true, 'notificacoes' => $notificacoes, 'naoLidas' => $naoLidas]);
+
+            $matchAceitos = [];
+            $matchRecusados = [];
+            $matchRecebidas = [];
+            $outras = [];
+
+            foreach ($todas as $n) {
+                switch ($n['tipo']) {
+                    case 'match_aceito':
+                        $matchAceitos[] = $n;
+                        break;
+                    case 'match_recusado':
+                        $matchRecusados[] = $n;
+                        break;
+                    case 'solicitacao_match':
+                        $matchRecebidas[] = $n;
+                        break;
+                    default:
+                        $outras[] = $n;
+                        break;
+                }
+            }
+
+            echo json_encode([
+                'sucesso' => true,
+                'naoLidas' => $naoLidas,
+                'matchAceitos' => $matchAceitos,
+                'matchRecusados' => $matchRecusados,
+                'matchRecebidas' => $matchRecebidas,
+                'outras' => $outras
+            ]);
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
         }

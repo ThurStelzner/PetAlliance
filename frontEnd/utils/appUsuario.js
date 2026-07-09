@@ -60,14 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     src="/uploads/usuario/${fotoUsuario}" 
                     alt="Foto de ${usuario.nome || 'Usuário'}" 
                     class="usuario-image"
-                    style="max-width: 200px; height: 200px; object-fit: cover;" 
                     onerror="this.onerror=null;this.src='/uploads/usuario/placeholder.webp'"
                 >
-                <h3>Nome: ${usuario.nome || "Sem nome"}</h3>
+                <h3>${usuario.nome || "Sem nome"}</h3>
                 <div class="usuario-info">
                     <p><strong>CPF:</strong> ${cpfFormatado}</p>
                     <p><strong>Email:</strong> ${usuario.email || "Não informado"}</p>
                     <p><strong>CEP:</strong> ${cepFormatado}</p>
+                </div>
+                <div class="usuario-actions">
+                    <a href="/backEnd/usuario/alterarEmail.php" class="btn btn-primary" style="width:100%;display:block;">Alterar Email</a>
                 </div>
             </article>
         `;

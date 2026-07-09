@@ -1,24 +1,29 @@
-<h2>Alterar Senha</h2>
+<div style="max-width:400px;margin:2rem auto;padding:0 1rem;">
+  <div class="card" style="max-width:100%;padding:2rem 1.5rem;">
+    <a href="/backEnd/usuario/configuracoes.php" class="btn-back">&larr;</a>
+    <h1 class="form-title">Alterar Senha</h1>
 
-<?php if (!empty($sucesso)): ?>
-    <p style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;">Senha alterada com sucesso!</p>
-    <p><a href="/backEnd/usuario/configuracoes.php">Voltar às configurações</a></p>
-<?php elseif (!empty($erro)): ?>
-    <p style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;"><?= htmlspecialchars($erro) ?></p>
-<?php endif; ?>
+    <?php if (!empty($sucesso)): ?>
+      <div class="form-msg form-msg-success">Senha alterada com sucesso!</div>
+      <a href="/backEnd/usuario/configuracoes.php" class="btn btn-primary" style="display:block;width:100%;">Voltar &agrave;s configura&ccedil;&otilde;es</a>
+    <?php else: ?>
+      <?php if (!empty($erro)): ?>
+        <div class="form-msg form-msg-error"><?= htmlspecialchars($erro) ?></div>
+      <?php endif; ?>
 
-<?php if (empty($sucesso)): ?>
-    <form method="POST">
-        <label>Senha atual:</label>
-        <input type="password" name="senha_atual" required>
+      <form method="POST">
+        <label class="form-label" for="senha_atual">Senha atual:</label>
+        <input class="form-input" type="password" name="senha_atual" id="senha_atual" placeholder="Sua senha atual" required>
 
-        <label>Nova senha:</label>
-        <input type="password" name="nova_senha" minlength="3" required>
+        <label class="form-label" for="nova_senha">Nova senha:</label>
+        <input class="form-input" type="password" name="nova_senha" id="nova_senha" placeholder="Nova senha" minlength="3" required>
 
-        <label>Confirmar nova senha:</label>
-        <input type="password" name="confirmar_senha" minlength="3" required>
+        <label class="form-label" for="confirmar_senha">Confirmar nova senha:</label>
+        <input class="form-input" type="password" name="confirmar_senha" id="confirmar_senha" placeholder="Repita a nova senha" minlength="3" required>
 
-        <button type="submit">Salvar nova senha</button>
-    </form>
-    <p><a href="/backEnd/usuario/configuracoes.php">Voltar</a></p>
-<?php endif; ?>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Salvar nova senha</button>
+      </form>
+
+      <?php endif; ?>
+  </div>
+</div>
