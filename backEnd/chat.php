@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuarioId = $_SESSION['usuario_id'];
 $solicitacaoId = $_GET['solicitacao_id'] ?? null;
 
-require __DIR__ . '/../frontEnd/view/navBar.php';
+require __DIR__ . '/views/navBar.php';
 ?>
 <link rel="stylesheet" href="/frontEnd/assets/css/chat.css">
 <main class="main-conteudo">

@@ -39,6 +39,6 @@ if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'resolver'
     exit;
 }
 
-require __DIR__ . "/../../frontEnd/view/navBar.php";
+require __DIR__ . "/../views/navBar.php";
 require __DIR__ . "/../../frontEnd/view/adminDenuncias.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";

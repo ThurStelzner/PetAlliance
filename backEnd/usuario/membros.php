@@ -8,6 +8,6 @@
         exit();
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/membros.php";
+    require __DIR__ . "/../views/navBar.php";
+    require __DIR__ . "/../views/membros.php";
     require __DIR__ . "/../../frontEnd/view/footer.html";

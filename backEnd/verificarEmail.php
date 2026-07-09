@@ -131,6 +131,6 @@ if ($controller->isVerificado($usuarioId)) {
 }
 
 ?>
-<?php require __DIR__ . "/../frontEnd/view/navBar.php"; ?>
+<?php require __DIR__ . "/views/navBar.php"; ?>
     <?php require __DIR__ . "/../frontEnd/view/verificarEmail.html"; ?>
     <?php require __DIR__ . "/../frontEnd/view/footer.html"; ?>

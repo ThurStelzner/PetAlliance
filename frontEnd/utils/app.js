@@ -131,6 +131,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    function mostrarModalConfirmacao(mensagem) {
+        return new Promise(resolve => {
+            const overlay = document.createElement("div");
+            overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:10000";
+            const caixa = document.createElement("div");
+            caixa.style.cssText = "background:#fff;padding:2rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);text-align:center;max-width:400px;font-family:inherit";
+            caixa.innerHTML = `<p style="margin:0 0 1.5rem;font-size:1.1rem">${escapeHtml(mensagem)}</p><button id="modal-confirm-sim" style="margin-right:0.5rem;padding:0.5rem 1.5rem;border:none;border-radius:6px;background:#28a745;color:#fff;cursor:pointer;font-size:1rem">Sim</button><button id="modal-confirm-nao" style="padding:0.5rem 1.5rem;border:none;border-radius:6px;background:#6c757d;color:#fff;cursor:pointer;font-size:1rem">Nao</button>`;
+            overlay.appendChild(caixa);
+            document.body.appendChild(overlay);
+            document.getElementById("modal-confirm-sim").onclick = () => { overlay.remove(); resolve(true); };
+            document.getElementById("modal-confirm-nao").onclick = () => { overlay.remove(); resolve(false); };
+            overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(false); } };
+        });
+    }
+
     function renderizarAnimais(animais) {
         if (animais.length === 0) {
             container.innerHTML = "<p>Nenhum animal encontrado.</p>";
@@ -147,8 +162,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (animal.dono_id != window.USUARIO_ID) {
                 if (matchData && matchData.status === 'pendente') {
                     matchBtnHtml = `<button type="button" class="match-btn" data-animal-id="${animal.id}" disabled>Pendente</button>`;
-                } else                 if (matchData && matchData.status === 'aceito') {
-                    matchBtnHtml = `<a href="/backEnd/chat.php?solicitacao_id=${matchData.solicitacao_id}" class="match-btn">Iniciar Chat</a>`;
+                } else if (matchData && matchData.status === 'aceito') {
+                    matchBtnHtml = `<a href="/backEnd/chat.php?solicitacao_id=${matchData.solicitacao_id}" class="chat-link">Iniciar Chat</a>`;
                 } else {
                     matchBtnHtml = `<button type="button" class="match-btn" data-animal-id="${animal.id}">Dar Match</button>`;
                 }
@@ -223,10 +238,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const matchBtn = target instanceof Element ? target.closest(".match-btn") : null;
-        if (!matchBtn) return;
+        if (!matchBtn || matchBtn.disabled || matchBtn.tagName === 'A') return;
 
         const animalId = matchBtn.dataset.animalId;
-        if (!confirm("Enviar solicitação de match para este animal?")) return;
+        if (!await mostrarModalConfirmacao("Enviar solicitação de match para este animal?")) return;
 
         try {
             const response = await fetch("/backEnd/match.php?route=enviar", {

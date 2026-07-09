@@ -141,5 +141,5 @@
     $erro = $_GET['erro'] ?? '';
     $sucesso = $_GET['sucesso'] ?? '';
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/alterarEmail.html";

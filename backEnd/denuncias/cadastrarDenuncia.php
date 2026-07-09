@@ -11,7 +11,7 @@ if(!$_SESSION['usuario_id']) {
     exit();
 }
 
-require __DIR__ . "/../../frontEnd/view/navBar.php";
+require __DIR__ . "/../views/navBar.php";
 require __DIR__ . "/../../frontEnd/view/cadastrarDenuncia.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";
 

@@ -230,6 +230,9 @@
                 $params = array_merge($params, $certificados);
             }
 
+            $condicoes[] = 'p.dono_id != ?';
+            $params[] = $usuarioId;
+
             $where = count($condicoes) > 0 ? 'WHERE ' . implode(' AND ', $condicoes) : '';
 
             $sql = "SELECT p.*,
@@ -283,9 +286,10 @@
                             AND f.id_usuario = ?
                     ) AS favoritado
                 FROM tb_pets p
+                WHERE p.dono_id != ?
                 ORDER BY p.nome;";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$usuarioId]);
+            $stmt->execute([$usuarioId, $usuarioId]);
             $animais = [];
         
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {

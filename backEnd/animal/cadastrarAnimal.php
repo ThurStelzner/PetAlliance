@@ -191,6 +191,6 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";
