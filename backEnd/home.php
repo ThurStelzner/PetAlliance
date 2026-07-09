@@ -60,14 +60,16 @@
                     $filtros[$f] = $_GET[$f];
                 }
             }
-            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros);
+            $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros, $pagina);
             exit;
         }
 
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
             header('Content-Type: application/json');
             $controllerAnimal = new AnimalController();
-            $controllerAnimal->listarAnimais($usuarioId);
+            $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $controllerAnimal->listarAnimais($usuarioId, $pagina);
             exit;
         }
 
@@ -155,13 +157,16 @@
     if ($flashMessage){
         $jsonMsg = json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
         echo '<script>window.flashMessage = ' . $jsonMsg . ';</script>';
-        echo '<div id="flash-message" class="flash-' . ($flashMessage['tipo'] ?? 'info') . '" style="padding:1rem;margin:1rem;border-radius:8px;text-align:center;font-weight:bold;';
-        if (($flashMessage['tipo'] ?? '') === 'sucesso') {
-            echo 'background:#d4edda;color:#155724;border:1px solid #c3e6cb;';
-        } else {
-            echo 'background:#fff3cd;color:#856404;border:1px solid #ffeeba;';
-        }
-        echo '">' . htmlspecialchars($flashMessage['mensagem'] ?? '') . '</div>';
+        echo '<script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var msg = ' . $jsonMsg . ';
+                var toast = document.createElement("div");
+                toast.className = "toast-message toast-" + (msg.tipo || "info");
+                toast.textContent = msg.mensagem || "";
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.remove(); }, 4000);
+            });
+        </script>';
     }
     try {
         if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
@@ -189,16 +194,40 @@
 
     if (isset($_GET['mensagem'])) {
         if ($_GET['mensagem'] === 'animal_cadastrado') {
-            echo 'Animal cadastrado com sucesso';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-sucesso";
+                    toast.textContent = "Animal cadastrado com sucesso";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         } else {
              echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
         }
     }
     if (isset($_GET['erro'])) {
         if ($_GET['erro'] === 'acesso_negado') {
-            echo 'Você não pode entrar aqui';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-erro";
+                    toast.textContent = "Você não pode entrar aqui";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         } else {
-            echo 'Ocorreu um erro';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-erro";
+                    toast.textContent = "Ocorreu um erro";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         }
     }
     require __DIR__ . '/../frontEnd/view/footer.html';

@@ -159,7 +159,9 @@
             return $animal;
         }
 
-        public function search($termo, $usuarioId, $filtros = []) {
+        public function search($termo, $usuarioId, $filtros = [], $pagina = 1) {
+            $limite = 24;
+            $offset = ($pagina - 1) * $limite;
             $condicoes = [];
             $params = [$usuarioId];
 
@@ -234,6 +236,13 @@
             $params[] = $usuarioId;
 
             $where = count($condicoes) > 0 ? 'WHERE ' . implode(' AND ', $condicoes) : '';
+            $whereParams = array_slice($params, 1);
+
+            $countSql = "SELECT COUNT(*) FROM tb_pets p $where";
+            $countStmt = $this->pdo->prepare($countSql);
+            $countStmt->execute($whereParams);
+            $totalAnimais = (int)$countStmt->fetchColumn();
+            $totalPaginas = max(1, (int)ceil($totalAnimais / $limite));
 
             $sql = "SELECT p.*,
                     EXISTS (
@@ -244,7 +253,8 @@
                     ) AS favoritado
                 FROM tb_pets p
                 $where
-                ORDER BY p.nome";
+                ORDER BY p.nome
+                LIMIT $limite OFFSET $offset";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
@@ -274,10 +284,23 @@
               $animais[] = $animal;
             }
 
-            return $animais;
+            return [
+                'animais' => $animais,
+                'totalPaginas' => $totalPaginas,
+                'paginaAtual' => $pagina
+            ];
         }
 
-        public function readAll($usuarioId) {
+        public function readAll($usuarioId, $pagina = 1) {
+            $limite = 24;
+            $offset = ($pagina - 1) * $limite;
+
+            $countSql = "SELECT COUNT(*) FROM tb_pets WHERE dono_id != ?";
+            $countStmt = $this->pdo->prepare($countSql);
+            $countStmt->execute([$usuarioId]);
+            $totalAnimais = (int)$countStmt->fetchColumn();
+            $totalPaginas = max(1, (int)ceil($totalAnimais / $limite));
+
             $sql = "SELECT p.*, 
                     EXISTS (
                         SELECT 1
@@ -287,11 +310,12 @@
                     ) AS favoritado
                 FROM tb_pets p
                 WHERE p.dono_id != ?
-                ORDER BY p.nome;";
+                ORDER BY p.nome
+                LIMIT $limite OFFSET $offset";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$usuarioId, $usuarioId]);
             $animais = [];
-        
+
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
               $fotos = $this->carregarFotos($dados['id']);
               $animal = new Animal(
@@ -315,8 +339,12 @@
               );
               $animais[] = $animal;
             }
-            
-            return $animais;
+
+            return [
+                'animais' => $animais,
+                'totalPaginas' => $totalPaginas,
+                'paginaAtual' => $pagina
+            ];
           }
 
         public function readByDonoId($donoId) {

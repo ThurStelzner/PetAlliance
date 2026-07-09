@@ -15,14 +15,17 @@
         $usuario = $usuarioDAO->read($cpf);
 
         if (!$usuario) {
-            $_SESSION['erro_login'] = "CPF não cadastrado!";
+            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF não cadastrado!");
+            exit();
         } elseif ($cpf !== $usuario->getCpf()) {
-            $_SESSION['erro_login'] = "Cpf inválido!";
+            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF inválido!");
+            exit();
         } else {
             $senhaCorreta = password_verify($senha, $usuario->getSenha());
 
             if (!$senhaCorreta) {
-                $_SESSION['erro_login'] = "Senha inválida!";
+                header("Location: /backEnd/usuario/loginUsuario.php?erro=Senha incorreta!");
+                exit();
             } else {
                 // Verificar se email foi verificado
                 if (!$controller->isVerificado($usuario->getId())) {
@@ -47,7 +50,6 @@
     }
 
     require __DIR__ . "/../../frontEnd/view/login.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
 
     if (isset($_SESSION['erro_login'])) {
         unset($_SESSION['erro_login']);

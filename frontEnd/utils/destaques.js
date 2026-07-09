@@ -29,16 +29,17 @@ async function carregarDestaques() {
                 container.innerHTML = '<div style="min-width:100%;text-align:center;color:#999;padding:1rem;">Nenhum animal em destaque no momento.</div>';
                 return;
             }
-            container.innerHTML = animais.map(a => {
+            var cardsHtml = animais.map(a => {
                 const foto = a.foto_pet || 'placeholder.webp';
-                return '<div style="min-width:180px;flex-shrink:0;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;" onclick="destaquesVerDetalhes(' + escapeHtml(a.id) + ')">' +
-                    '<img src="/uploads/animais/' + escapeHtml(foto) + '" alt="' + escapeHtml(a.nome || '') + '" style="width:100%;height:140px;object-fit:cover;">' +
-                    '<div style="padding:0.5rem;">' +
-                        '<strong style="color:#244C4E;">' + escapeHtml(a.nome || '') + '</strong>' +
-                        '<p style="font-size:0.8rem;color:#666;margin:0;">' + escapeHtml(a.raca || a.tipo || '') + '</p>' +
+                return '<div class="destaque-card" onclick="destaquesVerDetalhes(' + a.id + ')">' +
+                    '<img src="/uploads/animais/' + foto + '" alt="' + (a.nome || '') + '">' +
+                    '<div class="destaque-card-body">' +
+                        '<strong>' + (a.nome || '') + '</strong>' +
+                        '<p>' + (a.raca || a.tipo || '') + '</p>' +
                     '</div>' +
                 '</div>';
             }).join('');
+            container.innerHTML = cardsHtml + cardsHtml;
         } catch (e) {
             const container = document.getElementById('destaques-container');
             if (container) {
@@ -58,8 +59,10 @@ async function carregarDestaques() {
             const donoId = animal.dono_id;
             const isOwner = donoId == window.USUARIO_ID;
 
-            var favoritarBtnText = animal.favoritado ? 'Remover dos Favoritos' : 'Favoritar';
-            var favoritarHtml = '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '">' + favoritarBtnText + '</button>';
+            var coracao = animal.favoritado ? '\u2764' : '\u2661';
+            var favoritarHtml = !isOwner
+                ? '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '" style="width:2.2rem;height:2.2rem;border:none;border-radius:50%;background:#f5f5f5;color:' + (animal.favoritado ? '#e74c3c' : '#999') + ';font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background 0.2s;" title="' + (animal.favoritado ? 'Remover dos Favoritos' : 'Favoritar') + '">' + coracao + '</button>'
+                : '';
 
             let matchHtml = '';
             if (!isOwner) {
@@ -85,50 +88,72 @@ async function carregarDestaques() {
             })();
 
             document.body.style.overflow = 'hidden';
-            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);z-index:9999;';
+            modal.className = 'animal-modal';
+            modal.style.cssText = '';
 
-            var galeriaHtml = '<div class="modal-gallery" data-fotos=\'' + JSON.stringify(fotos).replace(/</g, '\\u003C') + '\' data-index="0">' +
+            var fotosJson = JSON.stringify(fotos).replace(/</g, '\\u003C');
+            var setasGaleria = fotos.length > 1
+                ? '<button type="button" class="gallery-prev">&#10094;</button><button type="button" class="gallery-next">&#10095;</button>'
+                : '';
+
+            var galeriaHtml = '<div class="animal-modal-gallery" data-fotos=\'' + fotosJson + '\'>' +
                 '<div class="gallery-track">' +
                     fotos.map(function(f) {
                         return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
                     }).join('') +
-                '</div>';
-            if (fotos.length > 1) {
-                galeriaHtml += '<button type="button" class="gallery-prev">&#10094;</button>' +
-                               '<button type="button" class="gallery-next">&#10095;</button>';
-            }
-            galeriaHtml += '</div>';
-
-            modal.innerHTML = '<div class="modal-content">' +
-                '<button type="button" class="modal-close" onclick="this.closest(\'#animais-modal\').style.display=\'none\';document.body.style.overflow=\'auto\';">x</button>' +
-                galeriaHtml +
-                '<h3>' + (animal.nome || 'Sem nome') + '</h3>' +
-                '<p><strong>Data de Nascimento:</strong> ' + (animal.data_nascimento || 'Nao informada') + '</p>' +
-                '<p><strong>Descricao:</strong> ' + (animal.descricao || 'Nao informada') + '</p>' +
-                '<p><strong>Sexo:</strong> ' + (animal.sexo || 'Nao informado') + '</p>' +
-                '<p><strong>Raca:</strong> ' + (animal.raca || 'Nao informada') + '</p>' +
-                '<p><strong>Tipo:</strong> ' + (animal.tipo || 'Nao informado') + '</p>' +
-                '<p><strong>Peso:</strong> ' + (animal.peso || 'Nao informado') + ' Kg</p>' +
-                '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? 'Sim' : 'Nao') + '</p>' +
-                '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? 'Sim' : 'Nao') + '</p>' +
-                '<p><strong>Porte:</strong> ' + (animal.porte || 'Nao informado') + '</p>' +
-                '<p><strong>Cor:</strong> ' + (animal.cor || 'Nao informada') + '</p>' +
-                '<div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">' +
-                    matchHtml +
-                    favoritarHtml +
-                    '<button type="button" onclick="window.location.href=\'/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=' + animal.id + '\'">Reportar</button>' +
                 '</div>' +
+                setasGaleria +
             '</div>';
+
+            modal.innerHTML =
+                '<div class="animal-modal-content">' +
+                    '<div class="animal-modal-header">' +
+                        '<h3>' + (animal.nome || 'Sem nome') + '</h3>' +
+                        '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+                            favoritarHtml +
+                            '<button type="button" class="animal-modal-close">✕</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="animal-modal-body">' +
+                        galeriaHtml +
+                        '<div class="animal-modal-info">' +
+                            '<p><strong>Raça:</strong> ' + (animal.raca || 'Nao informada') + '</p>' +
+                            '<p><strong>Sexo:</strong> ' + (animal.sexo || 'Nao informado') + '</p>' +
+                            '<p><strong>Tipo:</strong> ' + (animal.tipo || 'Nao informado') + '</p>' +
+                            '<p><strong>Porte:</strong> ' + (animal.porte || 'Nao informado') + '</p>' +
+                            '<p><strong>Cor:</strong> ' + (animal.cor || 'Nao informada') + '</p>' +
+                            '<p><strong>Data de Nasc.:</strong> ' + (animal.data_nascimento || 'Nao informada') + '</p>' +
+                            '<p><strong>Peso:</strong> ' + (animal.peso || 'Nao informado') + ' Kg</p>' +
+                            '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? 'Sim' : 'Nao') + '</p>' +
+                            '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? 'Sim' : 'Nao') + '</p>' +
+                            '<p style="margin-top:0.5rem;font-size:0.85rem;color:#666;">' + (animal.descricao || '') + '</p>' +
+                            '<div class="animal-modal-actions">' +
+                                matchHtml +
+                                '<button type="button" onclick="window.location.href=\'/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=' + animal.id + '\'" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;border:1px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-weight:600;">Reportar</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
 
             modal.onclick = (e) => {
                 if (e.target === modal) {
+                    modal.className = '';
                     modal.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 }
             };
 
+            var closeBtn = modal.querySelector('.animal-modal-close');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    modal.className = '';
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                };
+            }
+
             setTimeout(function() {
-                var galeria = modal.querySelector('.modal-gallery');
+                var galeria = modal.querySelector('.animal-modal-gallery');
                 if (!galeria) return;
                 var track = galeria.querySelector('.gallery-track');
                 if (!track) return;
@@ -157,51 +182,6 @@ async function carregarDestaques() {
             console.error(e);
         }
     };
-
-    document.addEventListener("click", async (event) => {
-        const target = event.target;
-
-        const favBtn = target instanceof Element ? target.closest("#animais-modal .favoritar-btn") : null;
-        if (favBtn) {
-            const animalId = favBtn.dataset.animalId;
-            if (animalId) {
-                const estaFavoritado = favBtn.textContent.trim() === "Remover dos Favoritos";
-                favBtn.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
-                try {
-                    await fetch("/backEnd/home.php?route=favoritar_animal&idAnimal=" + animalId);
-                } catch (error) {
-                    console.error("Erro ao favoritar:", error);
-                }
-            }
-            return;
-        }
-
-        const matchBtn = target instanceof Element ? target.closest("#animais-modal .match-btn") : null;
-        if (!matchBtn || matchBtn.disabled) return;
-
-        const animalId = matchBtn.dataset.animalId;
-        if (!confirm("Enviar solicitacao de match para este animal?")) return;
-
-        try {
-            const response = await fetch("/backEnd/match.php?route=enviar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ pet_id: animalId, remetente_id: window.USUARIO_ID }),
-                credentials: "same-origin"
-            });
-            const data = await response.json();
-            if (data.sucesso) {
-                alert(data.mensagem);
-                matchStatusMap[animalId] = { status: "pendente", solicitacao_id: data.solicitacao_id };
-                matchBtn.textContent = "Pendente";
-                matchBtn.disabled = true;
-            } else {
-                alert("Erro: " + (data.erro || "Erro desconhecido"));
-            }
-        } catch (error) {
-            alert("Erro de conexao.");
-        }
-    });
 
     carregarMatchStatus();
     carregarDestaques();

@@ -87,10 +87,10 @@
             header("Location: /backEnd/verificarEmail.php?id=$usuarioId");
             exit();
         } catch (InvalidArgumentException $e) {
-            echo htmlspecialchars($e->getMessage());
+            header("Location: /backEnd/usuario/cadastrarUsuario.php?erro=" . urlencode($e->getMessage()));
+            exit();
         } catch (PDOException $e) {
-            error_log("Erro ao cadastrar usuário: " . $e->getMessage());
-            echo "<p id='mensagem' class='mensagem-escondida'>Erro ao cadastrar. Tente novamente.</p>";
+            header("Location: /backEnd/usuario/cadastrarUsuario.php?erro=" . urlencode($e->getMessage()));
+            exit();
         }
     }
-    require __DIR__ . "/../../frontEnd/view/footer.html";

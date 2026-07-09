@@ -12,31 +12,35 @@
     <link rel="stylesheet" href="/frontEnd/style/style.css">
 </head>
 <body>
-    <nav>
-        <h1>NavBar aqui</h1>
-        <ul>
-            <img src="/uploads/usuario/<?= htmlspecialchars($_SESSION['usuario_imagem'] ?? 'placeholder.webp') ?>" alt="Foto do Usuário" style="width: 10rem; height: 10rem; object-fit: cover;">
-            <li><a href="/backEnd/home.php">Inicio</a></li>
-            <li><a href="/backEnd/usuario/membros.php">Membros</a></li>
-            <li><a href="/backEnd/animal/favoritos.php">Favoritos</a></li>
-            <li><a href="/backEnd/animal/meusAnimais.php">Meus Animais</a></li>
-            <button type="button" class="btn btn-menu" commandFor="menu" command="show-modal">Menu</button>
-        </ul>
-
-        <dialog id="menu">
-            <button type="button" class="btn btn-close" commandFor="menu" command="close">X</button>
-            <ul>
-                <li><a href="/backEnd/animal/cadastrarAnimal.php">Cadastrar Animal</a></li>
-                <li><a href="/backEnd/usuario/perfil.php">Perfil</a></li>
-                <li><a href="/backEnd/usuario/configuracoes.php">Configuracoes</a></li>
-                <li><a href="/backEnd/chat.php">Chat</a></li>
-                <li><a href="/backEnd/match.php">Notificações</a></li>
-                <?php if (isset($_SESSION['usuario_tipo']) && $_SESSION['usuario_tipo'] == 1): ?>
-                    <li><a href="/backEnd/admin/denuncias.php">Denúncias</a></li>
-                    <li><a href="/backEnd/admin/estatisticas.php">Estatísticas</a></li>
-                <?php endif; ?>
-            </ul>
-        </dialog>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="/frontEnd/assets/images/logo.webp" alt="PetAlliance" class="navbar-logo">
+            <span class="navbar-title">PetAlliance</span>
+        </div>
+        <div class="navbar-right">
+            <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" alt="Usuário" class="navbar-avatar">
+            <a href="/backEnd/home.php" class="navbar-btn" title="Início">⌂</a>
+            <a href="/backEnd/animal/favoritos.php" class="navbar-btn" title="Favoritos">♡</a>
+            <button type="button" class="navbar-btn" commandFor="menu" command="show-modal" title="Menu">☰</button>
+        </div>
     </nav>
+
+    <dialog id="menu" class="dialog-menu">
+        <div class="dialog-menu-header">
+            <span class="dialog-menu-title">Menu</span>
+            <button type="button" class="dialog-menu-close" commandFor="menu" command="close">✕</button>
+        </div>
+        <ul class="dialog-menu-list">
+            <li><a href="/backEnd/home.php">Início</a></li>
+            <li><a href="/backEnd/animal/meusAnimais.php">Meus Animais</a></li>
+            <li><a href="/backEnd/animal/cadastrarAnimal.php">Cadastrar Animal</a></li>
+            <li><a href="/backEnd/animal/favoritos.php">Favoritos</a></li>
+            <li><a href="/backEnd/usuario/membros.php">Membros</a></li>
+            <li><a href="/backEnd/chat.php">Chat</a></li>
+            <li><a href="/backEnd/match.php">Notificações</a></li>
+            <li><a href="/backEnd/usuario/perfil.php">Perfil</a></li>
+            <li><a href="/backEnd/usuario/configuracoes.php">Configurações</a></li>
+        </ul>
+    </dialog>
 
     <script src="/frontEnd/utils/navBar.js"></script>
