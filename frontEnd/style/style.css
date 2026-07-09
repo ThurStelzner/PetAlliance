@@ -622,74 +622,149 @@ html, body {
     flex-shrink: 0; 
     object-fit: cover; 
 }
-.modal-gallery { 
-    position: relative; 
-    overflow: hidden; 
-    max-width: 20rem; 
-    height: 15rem; 
-    margin: 0 auto 1rem; 
-    border-radius: 8px; 
-}
-.gallery-track { 
-    display: flex; 
-    transition: transform 0.4s ease; 
-    height: 100%; 
-}
-.gallery-track img { 
-    width: 100%; 
-    height: 100%; 
-    flex-shrink: 0; 
-    object-fit: cover; 
-}
-.gallery-prev, .gallery-next { 
-    position: absolute; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    background: rgba(0,0,0,0.4); 
-    color: #fff; border: none; 
-    border-radius: 50%; 
-    width: 2rem; 
-    height: 2rem; 
-    font-size: 1.2rem; 
-    cursor: pointer; 
-    z-index: 2; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    line-height: 1; 
-    transition: background 0.2s; 
-}
-.gallery-prev { 
-    left: 0.5rem; 
-}
-.gallery-next { 
-    right: 0.5rem; 
-}
-.gallery-prev:hover, .gallery-next:hover { 
-    background: rgba(0,0,0,0.7); 
-}
-.foto-input-group { 
-    margin-bottom: 0.5rem; 
-}
-.foto-input-group .preview-foto { 
-    border: 1px solid #ddd; 
-    border-radius: 6px; 
-    margin-bottom: 0.25rem; 
-}
-.btn-remove-foto { 
-    background: #e74c3c; 
-    color: #fff; border: none; 
-    border-radius: 4px; 
-    padding: 0.25rem 0.5rem; 
-    cursor: pointer; 
-    font-size: 0.8rem; 
-}
-.btn-remove-foto:hover { 
-    background: #c0392b; 
+
+.animal-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  z-index: 9999;
 }
 
-footer { 
-    display: none; 
+.animal-modal-content {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.animal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.animal-modal-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.animal-modal-close {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  background: #f5f5f5;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.animal-modal-close:hover {
+  background: #e0e0e0;
+}
+
+.animal-modal-body {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.animal-modal-gallery {
+  flex: 0 0 280px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  height: 210px;
+}
+
+.animal-modal-gallery .gallery-track {
+  display: flex;
+  transition: transform 0.4s ease;
+  height: 100%;
+}
+
+.animal-modal-gallery .gallery-track img {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.animal-modal-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.animal-modal-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.animal-modal-info p strong {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.animal-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+}
+
+.animal-modal-actions .btn,
+.animal-modal-actions button {
+  flex: 1;
+  min-width: 100px;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.foto-input-group { margin-bottom: 0.5rem; }
+.foto-input-group .preview-foto { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.25rem; }
+.btn-remove-foto { background: #e74c3c; color: #fff; border: none; border-radius: 4px; padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.8rem; }
+.btn-remove-foto:hover { background: #c0392b; }
+
+footer { display: none; }
+
+@media (max-width: 600px) {
+  .animal-modal-body {
+    flex-direction: column;
+  }
+  .animal-modal-gallery {
+    flex: none;
+    width: 100%;
+    height: 200px;
+  }
 }
 
 /* === TOAST MESSAGES === */

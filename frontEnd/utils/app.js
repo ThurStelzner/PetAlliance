@@ -286,16 +286,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    container.addEventListener("click", async (event) => {
+    document.addEventListener("click", async (event) => {
         const target = event.target;
-        const button = target instanceof Element ? target.closest(".favoritar-btn") : null;
-        if (button) {
-            const animalId = button.dataset.animalId;
+
+        const favBtn = target instanceof Element ? target.closest(".favoritar-btn") : null;
+        if (favBtn) {
+            const animalId = favBtn.dataset.animalId;
             if (animalId) {
-                const estaFavoritado = button.textContent.trim() === '\u2764';
-                button.textContent = estaFavoritado ? '\u2661' : '\u2764';
-                button.style.color = estaFavoritado ? '#999' : '#e74c3c';
-                button.title = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
+                const estaFavoritado = favBtn.textContent.trim() === '\u2764';
+                favBtn.textContent = estaFavoritado ? '\u2661' : '\u2764';
+                favBtn.style.color = estaFavoritado ? '#999' : '#e74c3c';
+                favBtn.title = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
                 try {
                     fetch('/backEnd/home.php?route=favoritar_animal&idAnimal=' + animalId);
                 } catch (error) {
@@ -306,32 +307,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const matchBtn = target instanceof Element ? target.closest(".match-btn") : null;
-        if (!matchBtn) return;
+        if (matchBtn) {
+            const animalId = matchBtn.dataset.animalId;
+            if (!confirm("Enviar solicitação de match para este animal?")) return;
 
-        const animalId = matchBtn.dataset.animalId;
-        if (!confirm("Enviar solicitação de match para este animal?")) return;
-
-        try {
-            const response = await fetch("/backEnd/match.php?route=enviar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ pet_id: animalId, remetente_id: window.USUARIO_ID }),
-                credentials: "same-origin"
-            });
-            const data = await response.json();
-            if (data.sucesso) {
-                alert(data.mensagem);
-                matchStatusMap[animalId] = { status: "pendente" };
-                matchBtn.textContent = "Pendente";
-                matchBtn.disabled = true;
-                matchBtn.style.background = "#ccc";
-                matchBtn.style.color = "#666";
-                matchBtn.style.cursor = "default";
-            } else {
-                alert("Erro: " + (data.erro || "Erro desconhecido"));
+            try {
+                const response = await fetch("/backEnd/match.php?route=enviar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ pet_id: animalId, remetente_id: window.USUARIO_ID }),
+                    credentials: "same-origin"
+                });
+                const data = await response.json();
+                if (data.sucesso) {
+                    alert(data.mensagem);
+                    matchStatusMap[animalId] = { status: "pendente" };
+                    matchBtn.textContent = "Pendente";
+                    matchBtn.disabled = true;
+                    matchBtn.style.background = "#ccc";
+                    matchBtn.style.color = "#666";
+                    matchBtn.style.cursor = "default";
+                } else {
+                    alert("Erro: " + (data.erro || "Erro desconhecido"));
+                }
+            } catch (error) {
+                alert("Erro de conexão.");
             }
-        } catch (error) {
-            alert("Erro de conexão.");
         }
     });
 
@@ -366,6 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function closeModal(modal) {
+        modal.classList.remove("animal-modal");
         modal.style.display = "none";
         document.body.style.overflow = "auto";
     }
@@ -375,19 +377,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const body = document.body;
 
         body.style.overflow = "hidden";
-        modal.style.position = "fixed";
-        modal.style.top = "0";
-        modal.style.left = "0";
-        modal.style.width = "100%";
-        modal.style.height = "100%";
-        modal.style.display = "flex";
-        modal.style.alignItems = "center";
-        modal.style.justifyContent = "center";
-        modal.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-        modal.style.zIndex = "9999";
+        modal.className = "animal-modal";
+        modal.style.cssText = "";
         modal.innerHTML = contentHtml;
 
-        const closeButton = modal.querySelector(".modal-close");
+        const closeButton = modal.querySelector(".animal-modal-close");
         if (closeButton) {
             closeButton.onclick = () => closeModal(modal);
         }
@@ -417,43 +411,78 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
-const fotosJson = encodeURIComponent(JSON.stringify(fotos));
+            const fotosJson = encodeURIComponent(JSON.stringify(fotos));
             const imgsHtml = fotos.map(f =>
                 `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
             ).join('');
 
-            var galeriaHtml = '<div class="modal-gallery" data-fotos=\'' + fotosJson + '\' data-index="0">' +
-                '<div class="gallery-track">' + imgsHtml + '</div>';
-            if (fotos.length > 1) {
-                galeriaHtml += '<button type="button" class="gallery-prev">&#10094;</button>' +
-                               '<button type="button" class="gallery-next">&#10095;</button>';
+            var setasGaleria = fotos.length > 1
+                ? '<button type="button" class="gallery-prev">&#10094;</button><button type="button" class="gallery-next">&#10095;</button>'
+                : '';
+
+            var galeriaHtml = '<div class="animal-modal-gallery" data-fotos=\'' + fotosJson + '\'>' +
+                '<div class="gallery-track">' + imgsHtml + '</div>' +
+                setasGaleria +
+            '</div>';
+
+            var matchHtml = '';
+            if (animal.dono_id != window.USUARIO_ID) {
+                var mStatus = matchStatusMap[animal.id];
+                if (mStatus) {
+                    if (mStatus.status === 'aceito') {
+                        matchHtml = '<a href="/backEnd/chat.php?solicitacao_id=' + mStatus.solicitacao_id + '" class="btn btn-primary" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;border:none;cursor:pointer;font-weight:600;text-decoration:none;text-align:center;">Iniciar Chat</a>';
+                    } else if (mStatus.status === 'pendente') {
+                        matchHtml = '<button type="button" class="btn" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;background:#ccc;color:#666;cursor:default;" disabled>Pendente</button>';
+                    } else {
+                        matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;border:none;cursor:pointer;font-weight:600;background:var(--primary);color:var(--white);">Enviar Match</button>';
+                    }
+                } else {
+                    matchHtml = '<button type="button" class="match-btn" data-animal-id="' + animal.id + '" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;border:none;cursor:pointer;font-weight:600;background:var(--primary);color:var(--white);">Enviar Match</button>';
+                }
             }
-            galeriaHtml += '</div>';
 
-            openModal(`
-                <div class="modal-content">
-                    <button type="button" class="modal-close">×</button>
-                    ${galeriaHtml}
-                    <h3>${animal.nome || "Sem nome"}</h3>
-                    <p><strong>Data de Nascimento:</strong> ${animal.data_nascimento || "Não informada"}</p>
-                    <p><strong>Descrição:</strong> ${animal.descricao || "Não informada"}</p>
-                    <p><strong>Sexo:</strong> ${animal.sexo || "Não informado"}</p>
-                    <p><strong>Raça:</strong> ${animal.raca || "Não informada"}</p>
-                    <p><strong>Tipo:</strong> ${animal.tipo  || "Não informado"}</p>
-                    <p><strong>Peso:</strong> ${animal.peso || "Não informado"} Kg</p>
-                    <p><strong>Vacinado:</strong> ${animal.vacinado == 1 ? "Sim" : "Não"}</p>
-                    <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
-                    <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
-                    <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
-                    <button type="button" onclick="window.location.href='/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=${animal.id}'" >Reportar</button>
+            var coracao = animal.favoritado === true ? '\u2764' : '\u2661';
+            var favoritarHeartHtml = animal.dono_id != window.USUARIO_ID
+                ? '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '" style="width:2.2rem;height:2.2rem;border:none;border-radius:50%;background:#f5f5f5;color:' + (animal.favoritado === true ? '#e74c3c' : '#999') + ';font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background 0.2s;" title="' + (animal.favoritado === true ? 'Remover dos Favoritos' : 'Favoritar') + '">' + coracao + '</button>'
+                : '';
 
-                </div>
-            `);
+            var reportHtml = '<button type="button" onclick="window.location.href=\'/backEnd/denuncias/cadastrarDenuncia.php?tipo=animal&id=' + animal.id + '\'" style="flex:1;min-width:100px;font-size:0.8rem;padding:0.45rem 0.75rem;border-radius:0.5rem;border:1px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-weight:600;">Reportar</button>';
+
+            openModal(
+                '<div class="animal-modal-content">' +
+                    '<div class="animal-modal-header">' +
+                        '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
+                        '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+                            favoritarHeartHtml +
+                            '<button type="button" class="animal-modal-close">✕</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="animal-modal-body">' +
+                        galeriaHtml +
+                        '<div class="animal-modal-info">' +
+                            '<p><strong>Raça:</strong> ' + (animal.raca || "Não informada") + '</p>' +
+                            '<p><strong>Sexo:</strong> ' + (animal.sexo || "Não informado") + '</p>' +
+                            '<p><strong>Tipo:</strong> ' + (animal.tipo || "Não informado") + '</p>' +
+                            '<p><strong>Porte:</strong> ' + (animal.porte || "Não informado") + '</p>' +
+                            '<p><strong>Cor:</strong> ' + (animal.cor || "Não informada") + '</p>' +
+                            '<p><strong>Data de Nasc.:</strong> ' + (animal.data_nascimento || "Não informada") + '</p>' +
+                            '<p><strong>Peso:</strong> ' + (animal.peso || "Não informado") + ' Kg</p>' +
+                            '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? "Sim" : "Não") + '</p>' +
+                            '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? "Sim" : "Não") + '</p>' +
+                            '<p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-muted);">' + (animal.descricao || "") + '</p>' +
+                            '<div class="animal-modal-actions">' +
+                                matchHtml +
+                                reportHtml +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+            );
 
             setTimeout(function() {
                 var modal = document.getElementById('animais-modal');
                 if (!modal) return;
-                var galeria = modal.querySelector('.modal-gallery');
+                var galeria = modal.querySelector('.animal-modal-gallery');
                 if (!galeria) return;
                 var track = galeria.querySelector('.gallery-track');
                 if (!track) return;

@@ -191,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function closeModal(modal) {
+        modal.classList.remove("animal-modal");
         modal.style.display = "none";
         document.body.style.overflow = "auto";
     }
@@ -200,19 +201,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const body = document.body;
 
         body.style.overflow = "hidden";
-        modal.style.position = "fixed";
-        modal.style.top = "0";
-        modal.style.left = "0";
-        modal.style.width = "100%";
-        modal.style.height = "100%";
-        modal.style.display = "flex";
-        modal.style.alignItems = "center";
-        modal.style.justifyContent = "center";
-        modal.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
-        modal.style.zIndex = "9999";
+        modal.className = "animal-modal";
+        modal.style.cssText = "";
         modal.innerHTML = contentHtml;
 
-        const closeButton = modal.querySelector(".modal-close");
+        const closeButton = modal.querySelector(".animal-modal-close");
         if (closeButton) {
             closeButton.onclick = () => closeModal(modal);
         }
@@ -247,36 +240,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
             }).join('');
 
-            var galeriaHtml = '<div class="modal-gallery" data-fotos=\'' + fotosJson + '\' data-index="0">' +
-                '<div class="gallery-track">' + imgsHtml + '</div>';
-            if (fotos.length > 1) {
-                galeriaHtml += '<button type="button" class="gallery-prev">&#10094;</button>' +
-                               '<button type="button" class="gallery-next">&#10095;</button>';
-            }
-            galeriaHtml += '</div>';
+            var setasGaleria = fotos.length > 1
+                ? '<button type="button" class="gallery-prev">&#10094;</button><button type="button" class="gallery-next">&#10095;</button>'
+                : '';
 
-            openModal([
-                '<div class="modal-content">',
-                '<button type="button" class="modal-close">×</button>',
-                galeriaHtml,
-                '<h3>' + (animal.nome || "Sem nome") + '</h3>',
-                '<p><strong>Data de Nascimento:</strong> ' + (animal.data_nascimento || "Não informada") + '</p>',
-                '<p><strong>Descrição:</strong> ' + (animal.descricao || "Não informada") + '</p>',
-                '<p><strong>Sexo:</strong> ' + (animal.sexo || "Não informado") + '</p>',
-                '<p><strong>Raça:</strong> ' + (animal.raca || "Não informada") + '</p>',
-                '<p><strong>Tipo:</strong> ' + (animal.tipo  || "Não informado") + '</p>',
-                '<p><strong>Peso:</strong> ' + (animal.peso || "Não informado") + ' Kg</p>',
-                '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? "Sim" : "Não") + '</p>',
-                '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? "Sim" : "Não") + '</p>',
-                '<p><strong>Porte:</strong> ' + (animal.porte || "Não informado") + '</p>',
-                '<p><strong>Cor:</strong> ' + (animal.cor || "Não informada") + '</p>',
+            var galeriaHtml = '<div class="animal-modal-gallery" data-fotos=\'' + fotosJson + '\'>' +
+                '<div class="gallery-track">' + imgsHtml + '</div>' +
+                setasGaleria +
+            '</div>';
+
+            openModal(
+                '<div class="animal-modal-content">' +
+                    '<div class="animal-modal-header">' +
+                        '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
+                        '<button type="button" class="animal-modal-close">✕</button>' +
+                    '</div>' +
+                    '<div class="animal-modal-body">' +
+                        galeriaHtml +
+                        '<div class="animal-modal-info">' +
+                            '<p><strong>Raça:</strong> ' + (animal.raca || "Não informada") + '</p>' +
+                            '<p><strong>Sexo:</strong> ' + (animal.sexo || "Não informado") + '</p>' +
+                            '<p><strong>Tipo:</strong> ' + (animal.tipo  || "Não informado") + '</p>' +
+                            '<p><strong>Porte:</strong> ' + (animal.porte || "Não informado") + '</p>' +
+                            '<p><strong>Cor:</strong> ' + (animal.cor || "Não informada") + '</p>' +
+                            '<p><strong>Data de Nasc.:</strong> ' + (animal.data_nascimento || "Não informada") + '</p>' +
+                            '<p><strong>Peso:</strong> ' + (animal.peso || "Não informado") + ' Kg</p>' +
+                            '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? "Sim" : "Não") + '</p>' +
+                            '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? "Sim" : "Não") + '</p>' +
+                            '<p style="margin-top:0.5rem;font-size:0.85rem;color:#666;">' + (animal.descricao || "") + '</p>' +
+                        '</div>' +
+                    '</div>' +
                 '</div>'
-            ].join(''));
+            );
 
             setTimeout(function() {
                 var modal = document.getElementById('animais-modal');
                 if (!modal) return;
-                var galeria = modal.querySelector('.modal-gallery');
+                var galeria = modal.querySelector('.animal-modal-gallery');
                 if (!galeria) return;
                 var track = galeria.querySelector('.gallery-track');
                 if (!track) return;
