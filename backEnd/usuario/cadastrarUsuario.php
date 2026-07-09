@@ -89,9 +89,10 @@
             header("Location: /backEnd/verificarEmail.php?id=$usuarioId");
             exit();
         } catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+            header("Location: /backEnd/usuario/cadastrarUsuario.php?erro=" . urlencode($e->getMessage()));
+            exit();
         } catch (PDOException $e) {
-            echo $e->getMessage();
+            header("Location: /backEnd/usuario/cadastrarUsuario.php?erro=" . urlencode($e->getMessage()));
+            exit();
         }
     }
-    require __DIR__ . "/../../frontEnd/view/footer.html";

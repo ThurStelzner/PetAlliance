@@ -22,11 +22,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function getCarrosselHtml(animal) {
+        const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
+        const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
+        const imgs = fotos.map(f =>
+            '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">'
+        ).join('');
+        return '<div class="animal-fotos-carrossel" data-fotos=\'' + fotosJson + '\'><div class="carrossel-track">' + imgs + '</div></div>';
+    }
+
+    function carregarCarrosselEventos(card) {
+        const carrossel = card.querySelector('.animal-fotos-carrossel');
+        if (!carrossel) return;
+        let fotos = [];
+        try { fotos = JSON.parse(carrossel.dataset.fotos); } catch(e) {}
+        if (fotos.length <= 1) return;
+        let intervalo = null;
+        let idx = 0;
+        carrossel.addEventListener('mouseenter', function() {
+            const track = this.querySelector('.carrossel-track');
+            if (!track) return;
+            intervalo = setInterval(function() {
+                idx = (idx + 1) % fotos.length;
+                track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+            }, 1800);
+        });
+        carrossel.addEventListener('mouseleave', function() {
+            clearInterval(intervalo);
+            intervalo = null;
+            idx = 0;
+            const track = this.querySelector('.carrossel-track');
+            if (track) track.style.transform = 'translateX(0)';
+        });
+    }
+
     async function carregarMeusAnimais() {
         try {
             const response = await fetch(API_URL_MEUS_ANIMAIS);
             if (!response.ok) {
-                throw new Error(`Erro ao buscar seus animais: ${response.status}`);
+                throw new Error('Erro ao buscar seus animais: ' + response.status);
             }
 
             const data = await response.json();
@@ -40,152 +74,103 @@ document.addEventListener("DOMContentLoaded", () => {
             container.innerHTML = "";
 
             if (animais.length === 0) {
-                container.innerHTML = "<p>Você ainda não tem nenhum animal cadastrado.</p>";
+                container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Você ainda não tem nenhum animal cadastrado.</p>";
                 return;
             }
 
             await carregarMeusDestaques();
 
-            function getCarrosselHtml(animal) {
-                const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
-                const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
-                const imgs = fotos.map(f =>
-                    '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">'
-                ).join('');
-                return '<div class="animal-fotos-carrossel" data-fotos=\'' + fotosJson + '\'><div class="carrossel-track">' + imgs + '</div></div>';
-            }
-
-            function carregarCarrosselEventos(card) {
-                const carrossel = card.querySelector('.animal-fotos-carrossel');
-                if (!carrossel) return;
-                let fotos = [];
-                try { fotos = JSON.parse(carrossel.dataset.fotos); } catch(e) {}
-                if (fotos.length <= 1) return;
-                let intervalo = null;
-                let idx = 0;
-                carrossel.addEventListener('mouseenter', function() {
-                    const track = this.querySelector('.carrossel-track');
-                    if (!track) return;
-                    intervalo = setInterval(function() {
-                        idx = (idx + 1) % fotos.length;
-                        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
-                    }, 1800);
-                });
-                carrossel.addEventListener('mouseleave', function() {
-                    clearInterval(intervalo);
-                    intervalo = null;
-                    idx = 0;
-                    const track = this.querySelector('.carrossel-track');
-                    if (track) track.style.transform = 'translateX(0)';
-                });
-            }
-
             animais.forEach(animal => {
-                const card = document.createElement("article");
-                card.classList.add("animal-card");
+                var badges = "";
+                if (animal.raca) badges += '<span class="animal-card-badge">' + animal.raca + '</span>';
+                if (animal.porte) badges += '<span class="animal-card-badge">' + animal.porte + '</span>';
+                if (animal.sexo) badges += '<span class="animal-card-badge">' + animal.sexo + '</span>';
+
                 const estaDestacado = meusDestaquesIds.has(animal.id);
                 const textoBotao = estaDestacado ? "Remover Destaque" : "Destacar";
                 const classeBotao = estaDestacado ? "remover-destaque-btn" : "destacar-btn";
+
+                const card = document.createElement("article");
+                card.classList.add("animal-card");
                 card.innerHTML =
                     getCarrosselHtml(animal) +
-                    '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
-                    '<p>' + (animal.descricao || "Não informada") + '</p>' +
-                    '<p>' + (animal.tipo || "Não informado") + '</p>' +
-                    '<p>' + (animal.porte || "Não informado") + '</p>' +
-                    '<p>' + (animal.sexo || "Não informado") + '</p>' +
-                    '<button type="button" class="detalhes-btn" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
-                    '<button type="button" class="' + classeBotao + '" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">' + textoBotao + '</button>' +
-                    '<button type="button" class="editar-btn" data-animal-id="' + animal.id + '" style="margin-left:0.25rem;">Editar</button>';
+                    '<div class="animal-card-body">' +
+                        '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
+                        '<p class="animal-card-desc">' + (animal.descricao || "Não informada") + '</p>' +
+                        '<div class="animal-card-badges">' + badges + '</div>' +
+                        '<div class="animal-card-actions">' +
+                            '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.25rem 0;">Ver Detalhes</button>' +
+                            '<button type="button" class="' + classeBotao + ' btn btn-primary" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">' + textoBotao + '</button>' +
+                            '<button type="button" class="editar-btn btn btn-outline" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">Editar</button>' +
+                        '</div>' +
+                    '</div>';
                 container.appendChild(card);
                 carregarCarrosselEventos(card);
             });
         } catch (error) {
             console.error("Erro ao carregar seus animais:", error);
-            container.innerHTML = "<p>Não foi possível carregar seus animais.</p>";
+            container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Não foi possível carregar seus animais.</p>";
         }
     }
 
     container.addEventListener("click", (event) => {
         const target = event.target;
-        const button = target instanceof Element ? target.closest(".favoritar-btn") : null;
-        if (!button) {
+
+        if (!(target instanceof Element)) return;
+
+        const detalhesBtn = target.closest(".detalhes-btn");
+        if (detalhesBtn) {
+            carregarDetalhesAnimal(detalhesBtn.dataset.animalId);
             return;
         }
 
-        const animalId = button.dataset.animalId;
-        if (animalId) {
-            const estaFavoritado = button.textContent.trim() === "Remover dos Favoritos";
-            button.textContent = estaFavoritado ? "Favoritar" : "Remover dos Favoritos";
-
-            try {
-                fetch(`/backEnd/animal/meusAnimais.php?route=detalhes_animal&id=${animalId}`);
-            } catch (error) {
-                console.error("Erro ao buscar dados do animal:", error);
+        const editarBtn = target.closest(".editar-btn");
+        if (editarBtn) {
+            const animalId = editarBtn.dataset.animalId;
+            if (animalId) {
+                window.location.href = '/backEnd/animal/editarAnimal.php?id=' + animalId;
             }
-        }
-    });
-
-    container.addEventListener("click", (event) => {
-        const target = event.target;
-        const button = target instanceof Element ? target.closest(".detalhes-btn") : null;
-        if (!button) {
             return;
         }
 
-        const animalId = button.dataset.animalId;
-        if (animalId) {
-            carregarDetalhesAnimal(animalId);
-        }
-    });
+        const destaqueBtn = target.closest(".destacar-btn, .remover-destaque-btn");
+        if (destaqueBtn) {
+            const animalId = destaqueBtn.dataset.animalId;
+            const nome = destaqueBtn.dataset.nome || "Animal";
+            const isRemover = destaqueBtn.classList.contains("remover-destaque-btn");
 
-    container.addEventListener("click", (event) => {
-        const target = event.target;
-        const btn = target instanceof Element ? target.closest(".editar-btn") : null;
-        if (!btn) return;
-        const animalId = btn.dataset.animalId;
-        if (animalId) {
-            window.location.href = '/backEnd/animal/editarAnimal.php?id=' + animalId;
-        }
-    });
-
-    container.addEventListener("click", async (event) => {
-        const target = event.target;
-        const button = target instanceof Element ? target.closest(".destacar-btn, .remover-destaque-btn") : null;
-        if (!button) return;
-
-        const animalId = button.dataset.animalId;
-        const nome = button.dataset.nome || "Animal";
-        const isRemover = button.classList.contains("remover-destaque-btn");
-
-        if (isRemover) {
-            if (!confirm(`Tem certeza que deseja remover o destaque de ${nome}?`)) return;
-
-            const res = await fetch('/backEnd/home.php?route=remover_destaque', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ animal_id: animalId })
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert(data.message || "Destaque removido.");
-                carregarMeusAnimais();
+            if (isRemover) {
+                if (!confirm("Tem certeza que deseja remover o destaque de " + nome + "?")) return;
+                fetch('/backEnd/home.php?route=remover_destaque', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ animal_id: animalId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || "Destaque removido.");
+                        carregarMeusAnimais();
+                    } else {
+                        alert(data.error || "Erro ao remover destaque.");
+                    }
+                });
             } else {
-                alert(data.error || "Erro ao remover destaque.");
-            }
-        } else {
-            if (!confirm(`Tem certeza que deseja destacar ${nome}?`)) return;
-
-            const res = await fetch('/backEnd/home.php?route=destacar_animal', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ animal_id: animalId })
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert(data.message || "Animal destacado com sucesso!");
-                carregarMeusAnimais();
-            } else {
-                alert(data.error || "Erro ao destacar animal.");
+                if (!confirm("Tem certeza que deseja destacar " + nome + "?")) return;
+                fetch('/backEnd/home.php?route=destacar_animal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ animal_id: animalId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || "Animal destacado com sucesso!");
+                        carregarMeusAnimais();
+                    } else {
+                        alert(data.error || "Erro ao destacar animal.");
+                    }
+                });
             }
         }
     });
@@ -236,9 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function carregarDetalhesAnimal(animalId) {
         try {
-            const response = await fetch(`/backEnd/animal/meusAnimais.php?route=detalhes_animal&id=${animalId}`, { credentials: 'same-origin' });
+            const response = await fetch('/backEnd/animal/meusAnimais.php?route=detalhes_animal&id=' + animalId, { credentials: 'same-origin' });
             if (!response.ok) {
-                throw new Error(`Erro ao buscar detalhes do animal: ${response.status}`);
+                throw new Error('Erro ao buscar detalhes do animal: ' + response.status);
             }
 
             const data = await response.json();
@@ -265,23 +250,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             galeriaHtml += '</div>';
 
-            openModal(`
-                <div class="modal-content">
-                    <button type="button" class="modal-close">×</button>
-                    ${galeriaHtml}
-                    <h3>${animal.nome || "Sem nome"}</h3>
-                    <p><strong>Data de Nascimento:</strong> ${animal.data_nascimento || "Não informada"}</p>
-                    <p><strong>Descrição:</strong> ${animal.descricao || "Não informada"}</p>
-                    <p><strong>Sexo:</strong> ${animal.sexo || "Não informado"}</p>
-                    <p><strong>Raça:</strong> ${animal.raca || "Não informada"}</p>
-                    <p><strong>Tipo:</strong> ${animal.tipo  || "Não informado"}</p>
-                    <p><strong>Peso:</strong> ${animal.peso || "Não informado"} Kg</p>
-                    <p><strong>Vacinado:</strong> ${animal.vacinado == 1 ? "Sim" : "Não"}</p>
-                    <p><strong>Certificado:</strong> ${animal.certificado == 1 ? "Sim" : "Não"}</p>
-                    <p><strong>Porte:</strong> ${animal.porte || "Não informado"}</p>
-                    <p><strong>Cor:</strong> ${animal.cor || "Não informada"}</p>
-                </div>
-            `);
+            openModal([
+                '<div class="modal-content">',
+                '<button type="button" class="modal-close">×</button>',
+                galeriaHtml,
+                '<h3>' + (animal.nome || "Sem nome") + '</h3>',
+                '<p><strong>Data de Nascimento:</strong> ' + (animal.data_nascimento || "Não informada") + '</p>',
+                '<p><strong>Descrição:</strong> ' + (animal.descricao || "Não informada") + '</p>',
+                '<p><strong>Sexo:</strong> ' + (animal.sexo || "Não informado") + '</p>',
+                '<p><strong>Raça:</strong> ' + (animal.raca || "Não informada") + '</p>',
+                '<p><strong>Tipo:</strong> ' + (animal.tipo  || "Não informado") + '</p>',
+                '<p><strong>Peso:</strong> ' + (animal.peso || "Não informado") + ' Kg</p>',
+                '<p><strong>Vacinado:</strong> ' + (animal.vacinado == 1 ? "Sim" : "Não") + '</p>',
+                '<p><strong>Certificado:</strong> ' + (animal.certificado == 1 ? "Sim" : "Não") + '</p>',
+                '<p><strong>Porte:</strong> ' + (animal.porte || "Não informado") + '</p>',
+                '<p><strong>Cor:</strong> ' + (animal.cor || "Não informada") + '</p>',
+                '</div>'
+            ].join(''));
 
             setTimeout(function() {
                 var modal = document.getElementById('animais-modal');

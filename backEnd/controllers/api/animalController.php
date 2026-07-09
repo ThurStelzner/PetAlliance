@@ -15,9 +15,9 @@
             echo json_encode($animal);
         }
 
-        public function listarAnimais($id) {
-            $animais = $this->dao->readAll($id);
-            echo json_encode($animais);
+        public function listarAnimais($id, $pagina = 1) {
+            $resultado = $this->dao->readAll($id, $pagina);
+            echo json_encode($resultado);
         }
 
         public function readByDonoId($donoId) {
@@ -40,9 +40,9 @@
             }
         }
 
-        public function buscarAnimais($termo, $usuarioId, $filtros = []) {
-            $animais = $this->dao->search($termo, $usuarioId, $filtros);
-            echo json_encode($animais);
+        public function buscarAnimais($termo, $usuarioId, $filtros = [], $pagina = 1) {
+            $resultado = $this->dao->search($termo, $usuarioId, $filtros, $pagina);
+            echo json_encode($resultado);
         }
 
         public function criarAnimal(Animal $animal) {

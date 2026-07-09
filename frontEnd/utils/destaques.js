@@ -24,16 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.innerHTML = '<div style="min-width:100%;text-align:center;color:#999;padding:1rem;">Nenhum animal em destaque no momento.</div>';
                 return;
             }
-            container.innerHTML = animais.map(a => {
+            var cardsHtml = animais.map(a => {
                 const foto = a.foto_pet || 'placeholder.webp';
-                return '<div style="min-width:180px;flex-shrink:0;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;" onclick="destaquesVerDetalhes(' + a.id + ')">' +
-                    '<img src="/uploads/animais/' + foto + '" alt="' + (a.nome || '') + '" style="width:100%;height:140px;object-fit:cover;">' +
-                    '<div style="padding:0.5rem;">' +
-                        '<strong style="color:#244C4E;">' + (a.nome || '') + '</strong>' +
-                        '<p style="font-size:0.8rem;color:#666;margin:0;">' + (a.raca || a.tipo || '') + '</p>' +
+                return '<div class="destaque-card" onclick="destaquesVerDetalhes(' + a.id + ')">' +
+                    '<img src="/uploads/animais/' + foto + '" alt="' + (a.nome || '') + '">' +
+                    '<div class="destaque-card-body">' +
+                        '<strong>' + (a.nome || '') + '</strong>' +
+                        '<p>' + (a.raca || a.tipo || '') + '</p>' +
                     '</div>' +
                 '</div>';
             }).join('');
+            container.innerHTML = cardsHtml + cardsHtml;
         } catch (e) {
             const container = document.getElementById('destaques-container');
             if (container) {

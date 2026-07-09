@@ -64,14 +64,16 @@
                     $filtros[$f] = $_GET[$f];
                 }
             }
-            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros);
+            $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $controllerAnimal->buscarAnimais($termo, $usuarioId, $filtros, $pagina);
             exit;
         }
 
         if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'animais') {
             header('Content-Type: application/json');
             $controllerAnimal = new AnimalController();
-            $controllerAnimal->listarAnimais($usuarioId);
+            $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $controllerAnimal->listarAnimais($usuarioId, $pagina);
             exit;
         }
 
