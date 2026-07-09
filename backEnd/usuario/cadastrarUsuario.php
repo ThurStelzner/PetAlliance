@@ -14,8 +14,11 @@
     
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         try {
+            if (!isset($_POST['aceite_termos'])) {
+                throw new InvalidArgumentException("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
+            }
+
             $nome = trim($_POST['nome'] ?? "");
-            $cpf = trim($_POST['cpf'] ?? "");
             $cep = trim($_POST['cep'] ?? "");
             $email = trim($_POST['email'] ?? "");
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

@@ -23,6 +23,269 @@
   color: var(--text-muted);
 }
 
+/* === PÁGINAS ESTILIZADAS (sobre, termos, privacidade) === */
+.page-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(46,125,50,0.08);
+  color: var(--primary);
+  margin-bottom: 1.25rem;
+  transition: background 0.2s;
+}
+.page-back:hover {
+  background: rgba(46,125,50,0.15);
+}
+
+.page-hero {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #388e3c 100%);
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+.page-hero-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.9);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  margin-bottom: 0.75rem;
+}
+.page-hero-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+.page-hero-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  margin: 0.5rem 0 0;
+}
+
+.page-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.page-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
+}
+.page-card-border {
+  position: relative;
+  overflow: hidden;
+}
+.page-card-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary), #66bb6a);
+  border-radius: 0 2px 2px 0;
+}
+.page-card-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+.page-card-text {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0;
+}
+
+.page-grid-auto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.page-chip {
+  background: linear-gradient(135deg, rgba(46,125,50,0.06), rgba(102,187,106,0.06));
+  border: 1px solid rgba(46,125,50,0.1);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.page-steps {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.page-step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(46,125,50,0.05);
+  border: 1px solid rgba(46,125,50,0.08);
+  border-radius: 10px;
+  padding: 0.45rem 0.85rem;
+}
+.page-step-num {
+  width: 22px;
+  height: 22px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.page-step-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.page-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.page-link:hover {
+  opacity: 0.75;
+}
+
+.page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.page-list .page-card-text {
+  padding-left: 0.75rem;
+  position: relative;
+}
+.page-list .page-card-text::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+@media (max-width: 640px) {
+  .page-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .page-hero {
+    padding: 2rem 1rem;
+  }
+  .page-hero-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* === CHECKBOX LGPD === */
+.checkbox-lgpd {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  position: relative;
+  padding-left: 1.8rem;
+}
+
+.checkbox-lgpd input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-lgpd-mark {
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.checkbox-lgpd input:checked + .checkbox-lgpd-mark {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox-lgpd input:checked + .checkbox-lgpd-mark::after {
+  content: '';
+  position: absolute;
+  left: 0.3rem;
+  top: 0.05rem;
+  width: 0.35rem;
+  height: 0.6rem;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-lgpd-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.checkbox-lgpd-text a {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.checkbox-lgpd-text a:hover {
+  color: var(--primary-hover);
+}
+
+.checkbox-lgpd-erro .checkbox-lgpd-mark {
+  border-color: var(--danger);
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
 /* === VARIÁVEIS ADICIONAIS === */
 :root {
   --bg: #f5f7fa;

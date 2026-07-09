@@ -82,6 +82,15 @@ async function validarCep() {
 }
 
 function avancar() {
+    var aceite = document.getElementById('aceite_termos');
+    if (aceite && !aceite.checked) {
+        aceite.focus();
+        aceite.parentElement.classList.add('checkbox-lgpd-erro');
+        setTimeout(function() {
+            aceite.parentElement.classList.remove('checkbox-lgpd-erro');
+        }, 2000);
+        return;
+    }
     document.getElementById('etapa1').style.display = 'none';
     document.getElementById('etapa2').style.display = 'block';
     sessionStorage.setItem('etapa', 'etapa2');
