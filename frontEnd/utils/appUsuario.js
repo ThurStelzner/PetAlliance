@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>CEP:</strong> ${cepFormatado}</p>
                 </div>
                 <div class="usuario-actions">
-                    <a href="/backEnd/usuario/alterarEmail.php" class="btn btn-primary" style="width:100%;display:block;">Alterar Email</a>
+                    <a href="/backEnd/usuario/alterarEmail.php" class="btn btn-primary" style="width:100%;display:block;box-sizing:border-box;">Alterar Email</a>
                 </div>
             </article>
         `;
