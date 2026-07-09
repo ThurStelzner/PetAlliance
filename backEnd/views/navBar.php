@@ -32,10 +32,8 @@
             <button type="button" class="dialog-menu-close" commandFor="menu" command="close">✕</button>
         </div>
         <ul class="dialog-menu-list">
-            <li><a href="/backEnd/home.php">Início</a></li>
             <li><a href="/backEnd/animal/meusAnimais.php">Meus Animais</a></li>
             <li><a href="/backEnd/animal/cadastrarAnimal.php">Cadastrar Animal</a></li>
-            <li><a href="/backEnd/animal/favoritos.php">Favoritos</a></li>
             <li><a href="/backEnd/usuario/membros.php">Membros</a></li>
             <li><a href="/backEnd/chat.php">Chat</a></li>
             <li><a href="/backEnd/match.php">Notificações</a></li>

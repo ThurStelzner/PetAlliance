@@ -1,104 +1,112 @@
-<form method="POST" enctype="multipart/form-data">
-    <h1>Cadastro de Animal</h1>
+<div style="max-width:600px;margin:0 auto; padding: 5rem;">
+  <form method="POST" enctype="multipart/form-data">
+    <a href="/backEnd/home.php" class="btn-back">&larr;</a>
+    <h1 class="form-title">Cadastro de Animal</h1>
 
     <?php if (!empty($erro)): ?>
-        <p style="color:red;font-weight:bold;padding:0.5rem;border:1px solid red;border-radius:4px;margin-bottom:1rem;"><?= htmlspecialchars($erro) ?></p>
+      <div class="form-msg form-msg-error"><?= htmlspecialchars($erro) ?></div>
     <?php endif; ?>
 
-    <label>Fotos do animal (máximo 10):</label>
-    <div id="fotos-container">
-        <div class="foto-input-group">
-            <img src="/uploads/usuario/placeholder.webp" class="preview-foto" width="150" alt="Preview">
-            <br>
-            <input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp" required>
+    <label class="form-label">Fotos do animal (m&aacute;ximo 10):</label>
+    <div id="fotos-scroll-wrapper" style="overflow-x:auto;white-space:nowrap;padding:0.5rem 0;margin-bottom:0.75rem;">
+      <div id="fotos-container" style="display:inline-flex;gap:0.75rem;">
+        <div class="foto-input-group" style="display:inline-flex;flex-direction:column;align-items:center;min-width:130px;">
+          <img src="/uploads/usuario/placeholder.webp" class="preview-foto" style="width:120px;height:120px;object-fit:cover;border-radius:0.5rem;border:1px solid var(--border);" alt="Preview">
+          <input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp" required style="font-size:0.7rem;width:100%;margin-top:0.25rem;">
+          <button type="button" class="btn-remove-foto" style="margin-top:0.25rem;display:none;">Remover</button>
         </div>
+      </div>
     </div>
-    <button type="button" id="btn-add-foto" style="margin-top:0.5rem;">Adicionar mais fotos</button>
-    <p id="foto-counter" style="font-size:0.85rem;color:#666;margin-top:0.25rem;">1 de 10 fotos</p>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+      <button type="button" id="btn-add-foto" class="btn btn-ghost" style="padding:0.25rem 0.75rem;font-size:0.85rem;">+ Adicionar foto</button>
+      <span id="foto-counter" style="font-size:0.8rem;color:var(--text-muted);">1 de 10 fotos</span>
+    </div>
 
-    <label for="nome">Nome do animal:</label>
-    <input type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
+    <label class="form-label" for="nome">Nome do animal:</label>
+    <input class="form-input" type="text" name="nome" id="nome" minlength="3" maxlength="80" placeholder="Nome do animal" required>
 
-
-    <label for="tipo">Tipo de animal:</label>
-    <select name="tipo" id="tipo" required>
-        <option value="" selected disabled>Selecione</option>
-        <option value="Cachorro">Cachorro</option>
-        <option value="Gato">Gato</option>
-        <option value="Cavalo">Cavalo</option>
-        <option value="Outro">Outro</option>
+    <label class="form-label" for="tipo">Tipo de animal:</label>
+    <select class="form-input" name="tipo" id="tipo" required>
+      <option value="" selected disabled>Selecione</option>
+      <option value="Cachorro">Cachorro</option>
+      <option value="Gato">Gato</option>
+      <option value="Cavalo">Cavalo</option>
+      <option value="Outro">Outro</option>
     </select>
 
+    <label class="form-label" for="raca">Ra&ccedil;a:</label>
+    <input class="form-input" type="text" name="raca" id="raca" minlength="3" maxlength="80" placeholder="Ra&ccedil;a" required>
 
-    <label for="raca">Raça:</label>
-    <input type="text" name="raca" id="raca" minlength="3" maxlength="80" placeholder="Raça" required>
-
-    <label for="cor">Cor:</label>
-    <select name="cor" id="cor" required>
-        <option value="" selected disabled>Selecione</option>
-        <option value="Preto">Preto</option>
-        <option value="Branco">Branco</option>
-        <option value="Cinza">Cinza</option>
-        <option value="Marrom">Marrom</option>
-        <option value="Outro">Outro</option>
+    <label class="form-label" for="cor">Cor:</label>
+    <select class="form-input" name="cor" id="cor" required>
+      <option value="" selected disabled>Selecione</option>
+      <option value="Preto">Preto</option>
+      <option value="Branco">Branco</option>
+      <option value="Cinza">Cinza</option>
+      <option value="Marrom">Marrom</option>
+      <option value="Outro">Outro</option>
     </select>
 
-    <label for="sexo">Sexo:</label>
-    <select name="sexo" id="sexo" required>
-        <option value="" selected disabled>Selecione</option>
-        <option value="Macho">Macho</option>
-        <option value="Fêmea">Fêmea</option>
+    <label class="form-label" for="sexo">Sexo:</label>
+    <select class="form-input" name="sexo" id="sexo" required>
+      <option value="" selected disabled>Selecione</option>
+      <option value="Macho">Macho</option>
+      <option value="F&ecirc;mea">Fêmea</option>
     </select>
 
-    <label for="porte">Porte:</label>
-    <select name="porte" id="porte" required>
-        <option value="" selected disabled>Selecione</option>
-        <option value="Pequeno">Pequeno</option>
-        <option value="Médio">Médio</option>
-        <option value="Grande">Grande</option>
+    <label class="form-label" for="porte">Porte:</label>
+    <select class="form-input" name="porte" id="porte" required>
+      <option value="" selected disabled>Selecione</option>
+      <option value="Pequeno">Pequeno</option>
+      <option value="M&eacute;dio">M&eacute;dio</option>
+      <option value="Grande">Grande</option>
     </select>
 
-    <label for="dt_nascimento">Data de Nascimento:</label>
-    <input type="date"  min="1900-01-01" name="dt_nascimento" id="dt_nascimento" required>
+    <label class="form-label" for="dt_nascimento">Data de Nascimento:</label>
+    <input class="form-input" type="date" min="1900-01-01" name="dt_nascimento" id="dt_nascimento" required>
 
-    <label for="peso">Peso:</label>
-    <input type="number" min="0" step="0.01" name="peso" id="peso" placeholder="Peso" required>
+    <label class="form-label" for="peso">Peso (kg):</label>
+    <input class="form-input" type="number" min="0" step="0.01" name="peso" id="peso" placeholder="Ex: 5.5" required>
 
-    <label for="descricao">Descrição:</label>
-    <textarea name="descricao" id="descricao" minlength="10" maxlength="200" placeholder="Descrição" required></textarea>
+    <label class="form-label" for="descricao">Descri&ccedil;&atilde;o:</label>
+    <textarea class="form-input" style="min-width: 600px; max-width: 600px; min-height: 50px;" name="descricao" id="descricao" minlength="10" maxlength="200" placeholder="Descri&ccedil;&atilde;o" required></textarea>
 
-    <label for="vacinado" >Vacinado?</label>
-    <select id="vacinado" name="vacinado" required>
-        <option value="" style="display: none;" selected disabled>Sim ou não</option>
-        <option value="1">Sim</option>
-        <option value="0">Não</option>
+    <label class="form-label" for="vacinado">Vacinado?</label>
+    <select class="form-input" id="vacinado" name="vacinado" required>
+      <option value="" disabled selected>Sim ou n&atilde;o</option>
+      <option value="1">Sim</option>
+      <option value="0">N&atilde;o</option>
     </select>
 
-    <label for="certificado" >Possui Certificado de raça?</label>
-    <select id="certificado" name="certificado" required>
-        <option value="" style="display: none;" selected disabled>Sim ou não</option>
-        <option value="1">Sim</option>
-        <option value="0">Não</option>
+    <label class="form-label" for="certificado">Possui Certificado de ra&ccedil;a?</label>
+    <select class="form-input" id="certificado" name="certificado" required>
+      <option value="" disabled selected>Sim ou n&atilde;o</option>
+      <option value="1">Sim</option>
+      <option value="0">N&atilde;o</option>
     </select>
 
     <div id="campoCertificado" style="display:none;">
-        <label for="arquivoCertificado">Enviar Certificado:</label>
-        <input type="file" name="arquivoCertificado" id="arquivoCertificado" required>
+      <label class="form-label" for="arquivoCertificado">Enviar Certificado:</label>
+      <input class="form-input" type="file" name="arquivoCertificado" id="arquivoCertificado" required>
     </div>
 
     <div id="campoVacinacao" style="display:none;">
-        <label for="arquivoVacinacao">Enviar carteira de vacinação:</label>
-        <input type="file" name="arquivoVacinacao" id="arquivoVacinacao" required>
+      <label class="form-label" for="arquivoVacinacao">Enviar carteira de vacina&ccedil;&atilde;o:</label>
+      <input class="form-input" type="file" name="arquivoVacinacao" id="arquivoVacinacao" required>
     </div>
 
-    <button type="submit">Cadastrar</button>
-</form>
+    <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.5rem;">
+      <button type="submit" class="btn btn-primary" style="flex:1;">Cadastrar</button>
+    </div>
+  </form>
+</div>
 
 <script>
     const maxFotos = 10;
     const container = document.getElementById('fotos-container');
     const btnAdd = document.getElementById('btn-add-foto');
     const counter = document.getElementById('foto-counter');
+    const wrapper = document.getElementById('fotos-scroll-wrapper');
 
     function updateCounter() {
         const total = container.querySelectorAll('.foto-input-group').length;
@@ -127,11 +135,13 @@
 
         const group = document.createElement('div');
         group.className = 'foto-input-group';
+        group.style.cssText = 'display:inline-flex;flex-direction:column;align-items:center;min-width:130px;';
         group.innerHTML =
-            '<img src="/uploads/usuario/placeholder.webp" class="preview-foto" width="150" alt="Preview"><br>' +
-            '<input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp">' +
-            '<button type="button" class="btn-remove-foto" style="margin-left:0.5rem;">Remover</button>';
+            '<img src="/uploads/usuario/placeholder.webp" class="preview-foto" style="width:120px;height:120px;object-fit:cover;border-radius:0.5rem;border:1px solid var(--border);" alt="Preview">' +
+            '<input type="file" name="fotos[]" class="input-foto" accept="image/jpeg,image/png,image/webp" style="font-size:0.7rem;width:100%;margin-top:0.25rem;">' +
+            '<button type="button" class="btn-remove-foto" style="margin-top:0.25rem;">Remover</button>';
         container.appendChild(group);
+        wrapper.scrollLeft = wrapper.scrollWidth;
         updateCounter();
     });
 
