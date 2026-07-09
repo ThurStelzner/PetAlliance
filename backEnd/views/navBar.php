@@ -20,10 +20,14 @@
         </div>
         <div class="navbar-right">
             <a href="/backEnd/usuario/perfil.php">
-<?php if (!empty($_SESSION['usuario_imagem'])): ?>
-              <img src="/uploads/usuario/<?= $_SESSION['usuario_imagem'] ?>" alt="Usuário" class="navbar-avatar">
+<?php
+  $img = $_SESSION['usuario_imagem'] ?? '';
+  if ($img && $img !== 'placeholder.webp' && $img !== 'null'):
+?>
+              <img src="/uploads/usuario/<?= $img ?>" alt="" class="navbar-avatar">
 <?php else:
-  $inicial = strtoupper(substr($_SESSION['usuario_nome'] ?? 'U', 0, 1));
+  $nome = $_SESSION['usuario_nome'] ?? '';
+  $inicial = $nome ? strtoupper(substr($nome, 0, 1)) : '?';
 ?>
               <span class="navbar-avatar-initial"><?= $inicial ?></span>
 <?php endif; ?>
