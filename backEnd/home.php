@@ -182,7 +182,7 @@
         exit;
     }
 
-    require __DIR__ . '/../frontEnd/view/navBar.php'; ?>
+    require __DIR__ . '/views/navBar.php'; ?>
     <script>
         window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
         window.USUARIO_ID = <?= (int) $usuarioId ?>;

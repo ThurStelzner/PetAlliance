@@ -50,7 +50,7 @@ class SolicitacaoMatchController {
                 // Ignora: dono do pet pode ter sido deletado
             }
 
-            echo json_encode(['sucesso' => true, 'mensagem' => 'Solicitação enviada!']);
+            echo json_encode(['sucesso' => true, 'mensagem' => 'Solicitação enviada!', 'solicitacao_id' => (int) $solicitacao->getId()]);
         } catch (Exception $e) {
             echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
         }

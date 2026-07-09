@@ -23,7 +23,7 @@
         exit;
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     ?><script>window.USUARIO_ID = <?= (int) $usuarioId ?>;</script><?php
     require __DIR__ . "/../../frontEnd/view/favoritos.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

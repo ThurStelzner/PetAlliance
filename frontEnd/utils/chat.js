@@ -24,7 +24,8 @@ async function carregarConversas() {
         data.conversas.forEach(c => {
             const foto = c.outro_foto || "placeholder.webp";
             const ativo = conversaAtual && conversaAtual.solicitacao_id == c.solicitacao_id ? "active" : "";
-            html += `<div class="conversa-item ${ativo}" data-solicitacao-id="${c.solicitacao_id}" data-conversa-id="${c.id}">
+            const convIdAttr = c.id ? `data-conversa-id="${c.id}"` : '';
+            html += `<div class="conversa-item ${ativo}" data-solicitacao-id="${c.solicitacao_id}" ${convIdAttr}>
                 <img src="/uploads/usuario/${foto}" alt="">
                 <div class="conversa-info">
                     <strong>${c.outro_nome}</strong>
@@ -36,7 +37,7 @@ async function carregarConversas() {
 
         container.querySelectorAll(".conversa-item").forEach(el => {
             el.addEventListener("click", () => {
-                const convId = el.dataset.conversaId;
+                const convId = el.dataset.conversaId || null;
                 const solId = el.dataset.solicitacaoId;
                 abrirConversa(convId, solId);
             });
@@ -131,6 +132,7 @@ function renderizarMensagens(mensagens) {
 }
 
 function adicionarMensagemNaTela(m) {
+    if (conversaAtual && m.conversa_id && conversaAtual.id != m.conversa_id) return;
     const container = document.getElementById("chat-messages");
     const ehMinha = parseInt(m.remetente_id) === parseInt(window.USUARIO_ID);
     const div = document.createElement("div");
@@ -142,7 +144,7 @@ function adicionarMensagemNaTela(m) {
 
 function iniciarPolling() {
     pararPolling();
-    polling = setInterval(buscarNovas, 500);
+    polling = setInterval(buscarNovas, 2000);
 }
 
 function pararPolling() {
@@ -177,6 +179,49 @@ document.getElementById("chat-input")?.addEventListener("keydown", e => {
     }
 });
 
+/* === Sidebar toggle (mobile) === */
+function initChatToggle() {
+    var sidebar = document.getElementById("chat-sidebar");
+    var btnFechar = document.getElementById("chat-toggle-sidebar");
+    var btnAbrir = document.getElementById("chat-toggle-main");
+    if (!sidebar) return;
+
+    function isMobile() { return window.innerWidth <= 768; }
+
+    if (btnFechar) {
+        btnFechar.addEventListener("click", function() {
+            sidebar.classList.add("oculta");
+            if (btnAbrir) btnAbrir.style.display = "flex";
+        });
+    }
+
+    if (btnAbrir) {
+        btnAbrir.addEventListener("click", function() {
+            sidebar.classList.remove("oculta");
+            btnAbrir.style.display = "none";
+        });
+    }
+
+    if (isMobile()) {
+        sidebar.classList.add("oculta");
+        if (btnAbrir) btnAbrir.style.display = "flex";
+    }
+
+    window.addEventListener("resize", function() {
+        if (isMobile()) {
+            if (!sidebar.classList.contains("oculta")) {
+                sidebar.classList.add("oculta");
+                if (btnAbrir) btnAbrir.style.display = "flex";
+            }
+        } else {
+            sidebar.classList.remove("oculta");
+            if (btnAbrir) btnAbrir.style.display = "none";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", initChatToggle);
+
 async function enviarMensagem() {
     const input = document.getElementById("chat-input");
     const conteudo = input.value.trim();
@@ -187,6 +232,8 @@ async function enviarMensagem() {
     input.value = "";
     input.disabled = true;
     document.getElementById("chat-send").disabled = true;
+
+    pararPolling();
 
     try {
         const resp = await fetch(API_BASE + "enviar", {
@@ -205,14 +252,11 @@ async function enviarMensagem() {
                 conversaAtual.id = data.mensagem.conversa_id;
                 carregarConversas();
                 await carregarMensagens();
-                iniciarPolling();
-            } else {
-                if (data.mensagem.id > ultimoId) {
-                    adicionarMensagemNaTela(data.mensagem);
-                    document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
-                }
-                ultimoId = data.mensagem.id;
+            } else if (data.mensagem.id > ultimoId) {
+                adicionarMensagemNaTela(data.mensagem);
             }
+            ultimoId = data.mensagem.id;
+            iniciarPolling();
         } else {
             alert("Erro: " + (data.erro || "Erro ao enviar"));
         }

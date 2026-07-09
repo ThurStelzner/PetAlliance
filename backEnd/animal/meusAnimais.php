@@ -33,6 +33,6 @@
         exit;
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

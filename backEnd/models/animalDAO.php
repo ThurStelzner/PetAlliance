@@ -232,6 +232,9 @@
                 $params = array_merge($params, $certificados);
             }
 
+            $condicoes[] = 'p.dono_id != ?';
+            $params[] = $usuarioId;
+
             $where = count($condicoes) > 0 ? 'WHERE ' . implode(' AND ', $condicoes) : '';
             $whereParams = array_slice($params, 1);
 
@@ -292,8 +295,9 @@
             $limite = 24;
             $offset = ($pagina - 1) * $limite;
 
-            $countSql = "SELECT COUNT(*) FROM tb_pets";
-            $countStmt = $this->pdo->query($countSql);
+            $countSql = "SELECT COUNT(*) FROM tb_pets WHERE dono_id != ?";
+            $countStmt = $this->pdo->prepare($countSql);
+            $countStmt->execute([$usuarioId]);
             $totalAnimais = (int)$countStmt->fetchColumn();
             $totalPaginas = max(1, (int)ceil($totalAnimais / $limite));
 
@@ -305,10 +309,11 @@
                             AND f.id_usuario = ?
                     ) AS favoritado
                 FROM tb_pets p
+                WHERE p.dono_id != ?
                 ORDER BY p.nome
                 LIMIT $limite OFFSET $offset";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$usuarioId]);
+            $stmt->execute([$usuarioId, $usuarioId]);
             $animais = [];
 
             while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {

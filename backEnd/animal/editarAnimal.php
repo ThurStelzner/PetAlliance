@@ -76,5 +76,5 @@
 
     $fotos = $dao->carregarFotos($animal->getId());
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/editarAnimal.html";

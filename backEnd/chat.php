@@ -9,15 +9,19 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuarioId = $_SESSION['usuario_id'];
 $solicitacaoId = $_GET['solicitacao_id'] ?? null;
 
-require __DIR__ . '/../frontEnd/view/navBar.php';
+require __DIR__ . '/views/navBar.php';
 ?>
-<link rel="stylesheet" href="/frontEnd/assets/css/chat.css">
+<link rel="stylesheet" href="/frontEnd/style/chat.css">
 <main class="main-conteudo">
     <div class="chat-layout">
         <aside class="chat-sidebar" id="chat-sidebar">
-            <h2>Conversas</h2>
+            <div class="chat-sidebar-header">
+                <h2>Conversas</h2>
+                <button type="button" class="chat-toggle-sidebar" id="chat-toggle-sidebar" title="Fechar">✕</button>
+            </div>
             <div id="conversas-list"></div>
         </aside>
+        <button type="button" class="chat-toggle-main" id="chat-toggle-main" title="Abrir conversas">☰</button>
         <section class="chat-main">
             <div id="chat-placeholder" class="chat-placeholder">
                 <p>Selecione uma conversa</p>

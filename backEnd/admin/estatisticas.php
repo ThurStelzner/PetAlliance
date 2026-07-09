@@ -42,6 +42,6 @@ if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'sistema') 
     exit;
 }
 
-require __DIR__ . "/../../frontEnd/view/navBar.php";
+require __DIR__ . "/../views/navBar.php";
 require __DIR__ . "/../../frontEnd/view/adminEstatisticas.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";

@@ -69,5 +69,5 @@
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    require __DIR__ . "/../views/navBar.php";
     require __DIR__ . "/../../frontEnd/view/editarPerfil.html";
