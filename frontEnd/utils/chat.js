@@ -179,6 +179,49 @@ document.getElementById("chat-input")?.addEventListener("keydown", e => {
     }
 });
 
+/* === Sidebar toggle (mobile) === */
+function initChatToggle() {
+    var sidebar = document.getElementById("chat-sidebar");
+    var btnFechar = document.getElementById("chat-toggle-sidebar");
+    var btnAbrir = document.getElementById("chat-toggle-main");
+    if (!sidebar) return;
+
+    function isMobile() { return window.innerWidth <= 768; }
+
+    if (btnFechar) {
+        btnFechar.addEventListener("click", function() {
+            sidebar.classList.add("oculta");
+            if (btnAbrir) btnAbrir.style.display = "flex";
+        });
+    }
+
+    if (btnAbrir) {
+        btnAbrir.addEventListener("click", function() {
+            sidebar.classList.remove("oculta");
+            btnAbrir.style.display = "none";
+        });
+    }
+
+    if (isMobile()) {
+        sidebar.classList.add("oculta");
+        if (btnAbrir) btnAbrir.style.display = "flex";
+    }
+
+    window.addEventListener("resize", function() {
+        if (isMobile()) {
+            if (!sidebar.classList.contains("oculta")) {
+                sidebar.classList.add("oculta");
+                if (btnAbrir) btnAbrir.style.display = "flex";
+            }
+        } else {
+            sidebar.classList.remove("oculta");
+            if (btnAbrir) btnAbrir.style.display = "none";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", initChatToggle);
+
 async function enviarMensagem() {
     const input = document.getElementById("chat-input");
     const conteudo = input.value.trim();

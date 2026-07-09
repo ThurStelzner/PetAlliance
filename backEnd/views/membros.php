@@ -1,51 +1,112 @@
-<main>
+<main class="planos-page">
     <div id="pagamento-modal" class="modal" style="display:none;"></div>
 
-    <h2>Produto Exclusivo</h2>
+    <div class="planos-header">
+        <h2>Escolha seu plano</h2>
+        <p>Desbloqueie recursos exclusivos e destaque seus animais</p>
+    </div>
 
     <?php
     $produtos = [
         [
-            'nome' => 'Membro Iniciante',
+            'nome' => 'Iniciante',
             'preco' => 7.50,
+            'preco_riscado' => 15.00,
+            'preco_dia' => 0.25,
             'produto_id' => getenv('ABACATEPAY_PRODUCT_ID'),
-            'imagem' => '/uploads/usuario/placeholder.webp'
+            'destaque' => false,
+            'descricao' => 'Badge de membro e destaque para 5 animais',
+            'beneficios' => [
+                'Badge de membro',
+                'Perfil verificado',
+                'Destaque para 5 animais',
+                'Suporte por email'
+            ]
         ],
         [
-            'nome' => 'Membro Básico',
+            'nome' => 'Básico',
             'preco' => 15.00,
+            'preco_riscado' => 30.00,
+            'preco_dia' => 0.50,
             'produto_id' => getenv('ABACATEPAY_PRODUCT2_ID'),
-            'imagem' => '/uploads/usuario/placeholder.webp'
+            'destaque' => false,
+            'descricao' => 'Badge de membro e destaque para 10 animais',
+            'beneficios' => [
+                'Badge de membro',
+                'Perfil verificado',
+                'Destaque para 10 animais',
+                'Suporte por email'
+            ]
         ],
         [
-            'nome' => 'Membro Profissional',
+            'nome' => 'Profissional',
             'preco' => 30.00,
+            'preco_riscado' => 60.00,
+            'preco_dia' => 1.00,
             'produto_id' => getenv('ABACATEPAY_PRODUCT3_ID'),
-            'imagem' => '/uploads/usuario/placeholder.webp'
+            'destaque' => true,
+            'descricao' => 'Badge de membro e destaque para 20 animais',
+            'beneficios' => [
+                'Badge de membro',
+                'Perfil verificado',
+                'Destaque para 20 animais',
+                'Suporte prioritário'
+            ]
         ],
         [
-            'nome' => 'Membro Premium',
+            'nome' => 'Premium',
             'preco' => 45.00,
+            'preco_riscado' => 90.00,
+            'preco_dia' => 1.50,
             'produto_id' => getenv('ABACATEPAY_PRODUCT4_ID'),
-            'imagem' => '/uploads/usuario/placeholder.webp'
+            'destaque' => false,
+            'descricao' => 'Badge de membro e destaque para 30 animais',
+            'beneficios' => [
+                'Badge de membro',
+                'Perfil verificado',
+                'Destaque para 30 animais',
+                'Suporte VIP 24h'
+            ]
         ]
     ];
     ?>
 
+    <div class="planos-grid">
     <?php foreach ($produtos as $produto): ?>
-    <section class="produto-card">
-        <img src="<?= $produto['imagem'] ?>" alt="Produto" class="produto-imagem" style="width: 20rem;">
-        <h3><?= $produto['nome'] ?></h3>
-        <p class="preco-animal">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></p>
-        <button type="button" class="comprar-btn" data-preco="<?= $produto['preco'] ?>" data-nome="<?= $produto['nome'] ?>" data-produto-id="<?= $produto['produto_id'] ?>">Comprar</button>
-    </section>
+        <section class="plano-card <?= $produto['destaque'] ? 'plano-destaque' : '' ?>">
+            <?php if ($produto['destaque']): ?>
+                <span class="plano-badge-destaque">Mais Popular</span>
+            <?php endif; ?>
+            <div class="plano-card-header">
+                <h3><?= $produto['nome'] ?></h3>
+                <p class="plano-desc"><?= $produto['descricao'] ?></p>
+            </div>
+            <div class="plano-preco-area">
+                <span class="plano-preco-riscado">R$ <?= number_format($produto['preco_riscado'], 2, ',', '.') ?></span>
+                <span class="plano-preco">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></span>
+                <span class="plano-preco-mes">/mês</span>
+                <span class="plano-preco-dia">≈ R$ <?= number_format($produto['preco_dia'], 2, ',', '.') ?>/dia</span>
+            </div>
+            <ul class="plano-beneficios">
+                <?php foreach ($produto['beneficios'] as $beneficio): ?>
+                    <li>
+                        <span class="plano-check">✓</span>
+                        <?= $beneficio ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <button type="button" class="plano-comprar-btn" data-preco="<?= $produto['preco'] ?>" data-nome="Membro <?= $produto['nome'] ?>" data-produto-id="<?= $produto['produto_id'] ?>">
+                Assinar agora
+            </button>
+        </section>
     <?php endforeach; ?>
+    </div>
 </main>
 
 <script src="/frontEnd/utils/pagamento.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".comprar-btn").forEach(function(btn) {
+    document.querySelectorAll(".plano-comprar-btn").forEach(function(btn) {
         btn.addEventListener("click", function() {
             var preco = this.dataset.preco;
             var nome = this.dataset.nome;
@@ -58,13 +119,15 @@ document.addEventListener("DOMContentLoaded", function() {
 function abrirModalPagamento(preco, nome, produtoId) {
     var modal = document.getElementById("pagamento-modal");
     modal.innerHTML = `
-        <div class="modal-content">
-            <button type="button" class="modal-close" onclick="fecharModalPagamento()">×</button>
-            <h3>${nome}</h3>
-            <p class="preco-animal">R$ ${parseFloat(preco).toFixed(2)}</p>
-            <p>Confirme para ser redirecionado ao AbacatePay.</p>
-            <button type="button" class="btn-comprar" id="btn-pagar" data-produto-id="${produtoId}">Pagar R$ ${parseFloat(preco).toFixed(2)}</button>
-            <button type="button" class="btn-cancelar" onclick="fecharModalPagamento()">Cancelar</button>
+        <div class="pagamento-modal-content">
+            <button type="button" class="pagamento-modal-close" onclick="fecharModalPagamento()">×</button>
+            <div class="pagamento-modal-body">
+                <h3 class="pagamento-modal-titulo">${nome}</h3>
+                <p class="pagamento-modal-preco">R$ ${parseFloat(preco).toFixed(2)}</p>
+                <p class="pagamento-modal-desc">Confirme para ser redirecionado ao AbacatePay.</p>
+                <button type="button" class="btn btn-primary" id="btn-pagar" data-produto-id="${produtoId}">Pagar R$ ${parseFloat(preco).toFixed(2)}</button>
+                <button type="button" class="btn btn-ghost pagamento-modal-cancelar" onclick="fecharModalPagamento()">Cancelar</button>
+            </div>
         </div>
     `;
     modal.style.display = "flex";
