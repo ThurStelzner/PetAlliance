@@ -19,7 +19,7 @@
             <span class="navbar-title">PetAlliance</span>
         </div>
         <div class="navbar-right">
-            <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" alt="Usuário" class="navbar-avatar">
+            <a href="/backEnd/usuario/perfil.php"><img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?: 'placeholder.webp'; ?>" alt="Usuário" class="navbar-avatar"></a>
             <a href="/backEnd/home.php" class="navbar-btn" title="Início">⌂</a>
             <a href="/backEnd/animal/favoritos.php" class="navbar-btn" title="Favoritos">♡</a>
             <button type="button" class="navbar-btn" commandFor="menu" command="show-modal" title="Menu">☰</button>
