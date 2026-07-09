@@ -1,5 +1,6 @@
 <?php
-    require_once __DIR__ . '/../../backEnd/controllers/api/usuarioController.php';
+    require_once __DIR__ . '/../../backEnd/models/usuarioDAO.php';
+    require_once __DIR__ . '/../../backEnd/models/usuario.php';
 
     session_start();
 
@@ -8,45 +9,65 @@
         exit();
     }
 
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    $dao = new UsuarioDAO();
+    $cpf = preg_replace('/[^0-9]/', '', $_SESSION['usuario_cpf'] ?? '');
+    $usuarioAtual = $dao->read($cpf);
 
-    $metodo = $_SERVER['REQUEST_METHOD'];
-    $cpf = isset($_SESSION['usuario_cpf']) ? preg_replace('/[^0-9]/', '', $_SESSION['usuario_cpf']) : null;
+    $sucesso = $_GET['sucesso'] ?? '';
 
-    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-    $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
-    $wantsJson = (isset($_GET['route']) && $_GET['route'] === 'usuario') || $isAjax || (strpos($acceptHeader, 'application/json') !== false);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        try {
+            $nome = $_POST['nome'] ?? '';
+            $cep = $_POST['cep'] ?? '';
 
-    if ($metodo === 'GET' && $wantsJson && isset($cpf)) {
-        header('Content-Type: application/json');
-        $controllerUsuario = new usuarioController();
-        $controllerUsuario->read($cpf);
-        exit;
-    }
+            if (empty($nome)) {
+                throw new InvalidArgumentException("Nome é obrigatório.");
+            }
 
-    if ($metodo === 'POST' && $wantsJson && isset($cpf)) {
-        header('Content-Type: application/json');
+            $usuarioAtual->setNome($nome);
+            $usuarioAtual->setCep(preg_replace('/[^0-9]/', '', $cep));
 
-        $data = $_POST;
-        if (empty($data)) {
-            $rawData = file_get_contents('php://input');
-            if (!empty($rawData)) {
-                $decodedData = json_decode($rawData, true);
-                if (is_array($decodedData)) {
-                    $data = $decodedData;
+            // Upload de foto
+            if (isset($_FILES['imagemPerfil']) && $_FILES['imagemPerfil']['error'] !== UPLOAD_ERR_NO_FILE) {
+                if ($_FILES['imagemPerfil']['error'] !== UPLOAD_ERR_OK) {
+                    throw new InvalidArgumentException("Erro no upload da imagem.");
+                }
+                if ($_FILES['imagemPerfil']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho máximo permitido: 100MB.");
+                }
+
+                $extensao = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
+                $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+                if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
+                    throw new InvalidArgumentException("Tipo de imagem não permitido. Use JPG, PNG ou WEBP.");
+                }
+
+                $fotoAntiga = $usuarioAtual->getImagem();
+                $novoNome = uniqid('foto_') . '.' . $extensao;
+                $caminho = __DIR__ . '/../../uploads/usuario/' . $novoNome;
+
+                if (move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], $caminho)) {
+                    if ($fotoAntiga !== "placeholder.webp" && file_exists(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga)) {
+                        unlink(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga);
+                    }
+                    $usuarioAtual->setImagem($novoNome);
+                    $_SESSION['usuario_imagem'] = $novoNome;
+                } else {
+                    throw new Exception("Erro ao salvar a imagem.");
                 }
             }
-        }
 
-        if (!empty($data['nome']) && !empty($data['email']) && !empty($data['cep'])) {
-            $controllerUsuario = new usuarioController();
-            $controllerUsuario->updateUsuarioFromRequest($cpf, $data);
-        } else {
-            echo json_encode(["success" => false, "message" => "Dados incompletos para atualização."]);
+            $dao->updateUsuario($usuarioAtual, $cpf);
+            $_SESSION['usuario_nome'] = $nome;
+
+            header("Location: /backEnd/usuario/editarPerfil.php?sucesso=1");
+            exit();
+        } catch (InvalidArgumentException $e) {
+            $erro = $e->getMessage();
+        } catch (Exception $e) {
+            $erro = "Erro: " . $e->getMessage();
         }
-        exit;
     }
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/editarPerfil.html";

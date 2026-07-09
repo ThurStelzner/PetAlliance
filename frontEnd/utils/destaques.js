@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function carregarDestaques() {
+    function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+async function carregarDestaques() {
         try {
             const resp = await fetch('/backEnd/home.php?route=animais_destaque');
             const animais = await resp.json();

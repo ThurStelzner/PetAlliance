@@ -1,21 +1,17 @@
 <?php
-    require_once __DIR__ . '/../backEnd/controllers/api/animalController.php';
-    require_once __DIR__ . '/../backEnd/controllers/api/MembroController.php';
-    require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
+    require_once __DIR__ . '/controllers/api/animalController.php';
+    require_once __DIR__ . '/controllers/api/MembroController.php';
+    require_once __DIR__ . "/models/usuarioDAO.php";
 
     session_start();
 
-    header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-    $metodo = $_SERVER['REQUEST_METHOD'];
-    $usuarioId = $_SESSION['usuario_id'];
-
-    if(!$_SESSION['usuario_id']) {
+    if(!isset($_SESSION['usuario_id']) || !$_SESSION['usuario_id']) {
         header('Location: /index.php');
         exit();
     }
+
+    $metodo = $_SERVER['REQUEST_METHOD'];
+    $usuarioId = $_SESSION['usuario_id'];
 
     $usuarioDAO = new UsuarioDAO();
 
@@ -161,13 +157,16 @@
     if ($flashMessage){
         $jsonMsg = json_encode($flashMessage, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT);
         echo '<script>window.flashMessage = ' . $jsonMsg . ';</script>';
-        echo '<div id="flash-message" class="flash-' . ($flashMessage['tipo'] ?? 'info') . '" style="padding:1rem;margin:1rem;border-radius:8px;text-align:center;font-weight:bold;';
-        if (($flashMessage['tipo'] ?? '') === 'sucesso') {
-            echo 'background:#d4edda;color:#155724;border:1px solid #c3e6cb;';
-        } else {
-            echo 'background:#fff3cd;color:#856404;border:1px solid #ffeeba;';
-        }
-        echo '">' . htmlspecialchars($flashMessage['mensagem'] ?? '') . '</div>';
+        echo '<script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var msg = ' . $jsonMsg . ';
+                var toast = document.createElement("div");
+                toast.className = "toast-message toast-" + (msg.tipo || "info");
+                toast.textContent = msg.mensagem || "";
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.remove(); }, 4000);
+            });
+        </script>';
     }
     try {
         if ($metodo === 'DELETE' && isset($_GET['route']) && $_GET['route'] === 'excluir_animal' && isset($_GET['id'])) {
@@ -183,10 +182,10 @@
         exit;
     }
 
-    require __DIR__ . '/../frontEnd/view/navBar.html'; ?>
+    require __DIR__ . '/../frontEnd/view/navBar.php'; ?>
     <script>
         window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
-        window.USUARIO_ID = <?= $usuarioId ?>;
+        window.USUARIO_ID = <?= (int) $usuarioId ?>;
     </script>
     <?php require __DIR__ . '/../frontEnd/view/destaques.html'; ?>
     <script src="/frontEnd/utils/destaques.js"></script>
@@ -195,16 +194,40 @@
 
     if (isset($_GET['mensagem'])) {
         if ($_GET['mensagem'] === 'animal_cadastrado') {
-            echo 'Animal cadastrado com sucesso';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-sucesso";
+                    toast.textContent = "Animal cadastrado com sucesso";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         } else {
              echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
         }
     }
     if (isset($_GET['erro'])) {
         if ($_GET['erro'] === 'acesso_negado') {
-            echo 'Você não pode entrar aqui';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-erro";
+                    toast.textContent = "Você não pode entrar aqui";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         } else {
-            echo 'Ocorreu um erro';
+            echo '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var toast = document.createElement("div");
+                    toast.className = "toast-message toast-erro";
+                    toast.textContent = "Ocorreu um erro";
+                    document.body.appendChild(toast);
+                    setTimeout(function() { toast.remove(); }, 4000);
+                });
+            </script>';
         }
     }
     require __DIR__ . '/../frontEnd/view/footer.html';

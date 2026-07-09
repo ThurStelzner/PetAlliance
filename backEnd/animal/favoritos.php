@@ -10,7 +10,6 @@
 
     $usuarioId = $_SESSION['usuario_id'];
 
-    header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -24,7 +23,7 @@
         exit;
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
-    ?><script>window.USUARIO_ID = <?= $usuarioId ?>;</script><?php
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
+    ?><script>window.USUARIO_ID = <?= (int) $usuarioId ?>;</script><?php
     require __DIR__ . "/../../frontEnd/view/favoritos.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

@@ -91,7 +91,7 @@
 
         public function cadastrarUsuario(Usuario $usuario) {
             if($this->validaCPF($usuario->getCpf()) === false) {
-                throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF Informado é inválido</p>");
+                throw new InvalidArgumentException("CPF Informado é inválido");
             } else {
                 try {
                     $sql = "INSERT INTO tb_usuarios (foto_perfil, cpf, cep, nome, email, senha) VALUES (?,?,?,?,?,?)";
@@ -108,9 +108,9 @@
                     return $usuario;
                 } catch (PDOException $e) {
                     if($e->errorInfo[1] == 1062) {
-                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>O CPF ou E-mail informado já está cadastrado.</p>");
+                        throw new InvalidArgumentException("O CPF ou E-mail informado já está cadastrado.");
                     } else if ($e->errorInfo[1] == 1406) {
-                        throw new InvalidArgumentException("<p id='mensagem' class='mensagem-escondida'>CPF ou CEP inválido!</p>");
+                        throw new InvalidArgumentException("CPF ou CEP inválido!");
                     }
                     throw $e;
                 }
@@ -148,6 +148,29 @@
             $sql = "UPDATE tb_usuarios SET verificado = TRUE WHERE id = ?";
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute([$id]);
+        }
+
+        public function salvarEmailPendente($id, $emailPendente, $token) {
+            $sql = "UPDATE tb_usuarios SET email_pendente = ?, token_email_pendente = ? WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$emailPendente, $token, $id]);
+        }
+
+        public function confirmarEmailPendente($token) {
+            $sql = "SELECT * FROM tb_usuarios WHERE token_email_pendente = ? AND email_pendente IS NOT NULL LIMIT 1";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$token]);
+            $dados = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$dados) return null;
+
+            $sql = "UPDATE tb_usuarios SET email = email_pendente, email_pendente = NULL, token_email_pendente = NULL WHERE id = ?";
+            $this->pdo->prepare($sql)->execute([$dados['id']]);
+
+            $usuario = new Usuario($dados['foto_perfil'],$dados['cpf'],$dados['cep'],$dados['tipo_usuario'],$dados['nome'],$dados['email_pendente'],$dados['senha'],);
+            $usuario->setId($dados['id']);
+
+            return $usuario;
         }
 
         public function updateSenha($id, $senha) {

@@ -74,10 +74,19 @@ class Usuario implements JsonSerializable {
     }
 
     public function setNome($nome) {
+        if (mb_strlen($nome) > 100) {
+            throw new InvalidArgumentException("Nome deve ter no máximo 100 caracteres.");
+        }
         $this->nome = $nome;
     }
 
     public function setEmail($email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException("Email inválido.");
+        }
+        if (mb_strlen($email) > 100) {
+            throw new InvalidArgumentException("Email deve ter no máximo 100 caracteres.");
+        }
         $this->email = $email;
     }
 

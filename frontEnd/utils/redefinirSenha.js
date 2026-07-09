@@ -1,3 +1,19 @@
+function validarSenhaForte(senha) {
+    if (senha.length < 8) {
+        return 'A senha deve ter pelo menos 8 caracteres.';
+    }
+    if (!/[A-Z]/.test(senha)) {
+        return 'A senha deve conter pelo menos uma letra maiúscula.';
+    }
+    if (!/[a-z]/.test(senha)) {
+        return 'A senha deve conter pelo menos uma letra minúscula.';
+    }
+    if (!/[0-9]/.test(senha)) {
+        return 'A senha deve conter pelo menos um número.';
+    }
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('form-senha');
     if (!form) return;
@@ -14,8 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
         erroDiv.style.display = 'none';
         sucessoDiv.style.display = 'none';
 
-        if (senha.length < 3) {
-            erroDiv.textContent = 'A senha deve ter pelo menos 3 caracteres.';
+        const erroSenha = validarSenhaForte(senha);
+        if (erroSenha) {
+            erroDiv.textContent = erroSenha;
             erroDiv.style.display = 'block';
             return;
         }

@@ -39,8 +39,11 @@
                 }
                 for ($i = 0; $i < $totalFotos; $i++) {
                     if ($_FILES['fotos']['error'][$i] !== UPLOAD_ERR_OK) continue;
+                    if ($_FILES['fotos']['size'][$i] > MAX_FILE_SIZE) {
+                        throw new InvalidArgumentException('Arquivo muito grande: ' . $_FILES['fotos']['name'][$i]);
+                    }
                     $extensao = strtolower(pathinfo($_FILES['fotos']['name'][$i], PATHINFO_EXTENSION));
-                    if (!in_array($extensao, $permitidos, true)) {
+if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos']['tmp_name'][$i])) {
                         throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['fotos']['name'][$i]);
                     }
                     $nomeArquivo = uniqid('pet_') . '.' . $extensao;
@@ -84,6 +87,31 @@
                 throw new InvalidArgumentException('Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.');
             }
 
+            if (mb_strlen($nome) > 50) {
+                throw new InvalidArgumentException('Nome deve ter no máximo 50 caracteres.');
+            }
+
+            if (mb_strlen($descricao) > 2000) {
+                throw new InvalidArgumentException('Descrição deve ter no máximo 2000 caracteres.');
+            }
+
+            if ($dt_nascimento !== '') {
+                $dataNasc = DateTime::createFromFormat('Y-m-d', $dt_nascimento);
+                if (!$dataNasc || $dataNasc->format('Y-m-d') !== $dt_nascimento) {
+                    throw new InvalidArgumentException('Data de nascimento inválida.');
+                }
+                if ($dataNasc > new DateTime()) {
+                    throw new InvalidArgumentException('A data de nascimento não pode ser futura.');
+                }
+                if ($dt_nascimento < '2000-01-01') {
+                    throw new InvalidArgumentException('A data mínima permitida é 01/01/2000.');
+                }
+            }
+
+            if (!is_numeric($peso) || $peso <= 0 || $peso > 500) {
+                throw new InvalidArgumentException('Peso deve ser entre 0.001 kg (1 grama) e 500 kg.');
+            }
+
             $fotoCertificado = null;
             $fotoVacinacao = null;
 
@@ -93,6 +121,9 @@
             }
 
             if (!empty($_FILES['arquivoCertificado']['name'])) {
+                if ($_FILES['arquivoCertificado']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de certificado muito grande.');
+                }
                 $extensao = strtolower(pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
@@ -108,10 +139,13 @@
             }
 
             if (!empty($_FILES['arquivoVacinacao']['name'])) {
+                if ($_FILES['arquivoVacinacao']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de vacinação muito grande.');
+                }
                 $extensao = strtolower(pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
-                if (!in_array($extensao, $permitidos, true)) {
+                if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoVacinacao']['tmp_name'])) {
                     throw new InvalidArgumentException('Tipo de imagem não permitido para a carteira de vacinação.');
                 }
 
@@ -157,6 +191,6 @@
         }
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

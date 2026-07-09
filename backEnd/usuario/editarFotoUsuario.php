@@ -10,7 +10,7 @@
         exit();
     }
     
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
 
     // Proteção: Verifica se o usuário está logado
     if (!isset($_SESSION['usuario_cpf'])) {
@@ -25,10 +25,14 @@
                     throw new InvalidArgumentException("Selecione uma imagem para atualizar seu perfil.");
                 }
 
+                if ($_FILES['imagemPerfil']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho máximo permitido: 100MB.");
+                }
+
                 // Validação de Extensão
                 $extensao = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-                if (!in_array(strtolower($extensao), $permitidos)) {
+                if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
                     throw new InvalidArgumentException("Tipo de imagem não permitido. Use JPG, PNG ou WEBP.");
                 }
 
@@ -45,14 +49,14 @@
 
                 // 2. Processar novo upload
                 $novoNomeArquivo = uniqid('prod_') . '.' . $extensao;
-                $caminhoDestino = '../../uploads/usuario/' . $novoNomeArquivo;
+                $caminhoDestino = __DIR__ . '/../../uploads/usuario/' . $novoNomeArquivo;
 
                 if (move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], $caminhoDestino)) {
                     
                     // 3. Deletar foto antiga do servidor para não acumular lixo
                     // Não deletamos se for a imagem padrão (placeholder)
-                    if ($fotoAntiga !== "placeholder.webp" && file_exists('../../uploads/usuario/' . $fotoAntiga)) {
-                        unlink('../../uploads/usuario/' . $fotoAntiga);
+                    if ($fotoAntiga !== "placeholder.webp" && file_exists(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga)) {
+                        unlink(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga);
                     }
 
                     // 4. Atualizar no Banco de Dados
@@ -69,10 +73,10 @@
                 }
             }
         } catch (InvalidArgumentException $e) {
-            echo $e->getMessage();
+            echo htmlspecialchars($e->getMessage());
             exit();
         } catch (Exception $e) {
-            echo "Erro: " . $e->getMessage();
+            echo "Erro: " . htmlspecialchars($e->getMessage());
             exit();
         }
     }

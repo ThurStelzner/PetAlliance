@@ -414,7 +414,7 @@ html, body {
 }
 
 .destaque-card {
-  min-width: 180px;
+  width: 180px;
   flex-shrink: 0;
   background: var(--white);
   border-radius: 12px;
@@ -690,4 +690,41 @@ html, body {
 
 footer { 
     display: none; 
+}
+
+/* === TOAST MESSAGES === */
+.toast-message {
+  position: fixed;
+  top: 4.5rem;
+  right: 1rem;
+  z-index: 99999;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  animation: toast-in 0.3s ease;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(1rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast-sucesso {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.toast-erro {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.toast-info {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
 }

@@ -1,8 +1,5 @@
 <?php
 
-    require __DIR__ . '/frontEnd/view/index.html';
-    require __DIR__ . '/frontEnd/view/footer.html';
-
     session_start();
 
     $diretorioUsuario = 'uploads/usuario';
@@ -14,5 +11,8 @@
     if(!is_dir($diretorioAnimal)) {
         mkdir($diretorioAnimal, 0755, true);
     }
+
+    require __DIR__ . '/frontEnd/view/index.html';
+    require __DIR__ . '/frontEnd/view/footer.html';
 
 ?>

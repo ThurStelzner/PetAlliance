@@ -1,3 +1,8 @@
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const API_URL_ANIMAIS = window.API_URL_ANIMAIS || "/backEnd/home.php?route=animais";
     const container = document.getElementById("animais-container");
@@ -76,11 +81,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (buscaInput) {
-        buscaInput.addEventListener("input", executarBusca);
+        buscaInput.addEventListener("input", () => executarBusca());
     }
 
     filtroCheckboxes.forEach(cb => {
-        cb.addEventListener("change", executarBusca);
+        cb.addEventListener("change", () => executarBusca());
     });
 
     if (btnFiltros && filtrosDropdown) {
@@ -412,7 +417,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
-            const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
+const fotosJson = encodeURIComponent(JSON.stringify(fotos));
             const imgsHtml = fotos.map(f =>
                 `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
             ).join('');

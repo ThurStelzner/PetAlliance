@@ -13,7 +13,6 @@
 
     $donoId = $_GET['donoid'] ?? ($_POST['dono_id'] ?? ($_SESSION['usuario_id'] ?? null));
 
-    header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -34,6 +33,6 @@
         exit;
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

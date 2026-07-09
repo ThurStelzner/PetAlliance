@@ -1,22 +1,42 @@
-<script>
-    window.API_URL_PERFIL = "/backEnd/usuario/editarPerfil.php";
-</script>
-<script src="/frontEnd/utils/editarPerfil.js"></script>
+<h2>Editar Perfil</h2>
 
-<form id="editar-perfil-form" method="POST" enctype="multipart/form-data">
-    <img src="/uploads/usuario/<?php echo $_SESSION['usuario_imagem'] ?? 'placeholder.webp'; ?>" style="width: 10rem; height: 10rem; object-fit: cover;">
-    <a href="/backEnd/usuario/editarFotoUsuario.php">Trocar Foto</a>
-    <div id="etapa1">
-        <h3>Informações pessoais</h3>
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" id="nome" placeholder="Seu Nome aqui" required>
-        <label for="cep">CEP:</label>
-        <input type="text" name="cep" id="cep" placeholder="Seu CEP aqui" maxlength="9" minlength="8" required>
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" placeholder="Seu Email aqui" required>
-        <button type="submit">Atualizar Perfil</button>
+<?php if ($_GET['sucesso'] ?? ''): ?>
+    <p style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;">Perfil atualizado com sucesso!</p>
+<?php elseif (!empty($erro)): ?>
+    <p style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;"><?= htmlspecialchars($erro) ?></p>
+<?php endif; ?>
+
+<form method="POST" enctype="multipart/form-data">
+    <label>Nome:</label>
+    <input type="text" name="nome" value="<?= htmlspecialchars($usuarioAtual->getNome()) ?>" required>
+
+    <label>CEP:</label>
+    <input type="text" name="cep" value="<?= htmlspecialchars($usuarioAtual->getCep()) ?>" maxlength="9">
+
+    <label>Foto de perfil:</label>
+    <div>
+        <img src="/uploads/usuario/<?= htmlspecialchars($usuarioAtual->getImagem() ?: 'placeholder.webp') ?>" 
+             id="preview-foto" 
+             style="width:150px;height:150px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px;">
+        <input type="file" name="imagemPerfil" id="input-foto" accept="image/*">
+        <p style="font-size:0.85em;color:#666;">Deixe em branco para manter a foto atual.</p>
     </div>
+
+    <button type="submit">Salvar</button>
 </form>
 
-<script src="../../frontEnd/utils/usuarioSalvos.js"></script>
-<script src="../../frontEnd/utils/formatacao.js"></script>
+<p><a href="/backEnd/usuario/alterarEmail.php">Alterar email</a></p>
+<p><a href="/backEnd/usuario/configuracoes.php">Voltar às configurações</a></p>
+
+<script>
+    document.getElementById('input-foto')?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview-foto').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

@@ -3,9 +3,9 @@
 
     <form method="POST" >
 
-        <input type="hidden" name="tipo_alvo" value="<?= $_GET['tipo'] ?? 'site' ?>">
+        <input type="hidden" name="tipo_alvo" value="<?= htmlspecialchars($_GET['tipo'] ?? 'site') ?>">
 
-        <input type="hidden" name="alvo_id" value="<?= $_GET['id'] ?? null ?>">
+        <input type="hidden" name="alvo_id" value="<?= htmlspecialchars($_GET['id'] ?? '') ?>">
 
         <input
             name="descricao"

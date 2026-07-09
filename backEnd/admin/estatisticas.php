@@ -1,15 +1,9 @@
 <?php
 require_once __DIR__ . "/../config/config.php";
-require_once __DIR__ . "/../models/denunciaDAO.php";
-require_once __DIR__ . "/../models/denuncia.php";
 require_once __DIR__ . "/../models/usuarioDAO.php";
-require_once __DIR__ . "/../controllers/api/denunciaController.php";
+require_once __DIR__ . "/../models/usuario.php";
 
 session_start();
-
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 if (!isset($_SESSION['usuario_cpf'])) {
     die("Usuário não está logado.");
@@ -26,26 +20,6 @@ if (!$ehAdmin) {
 }
 
 $metodo = $_SERVER['REQUEST_METHOD'];
-
-if ($metodo === 'GET' && isset($_GET['route'])) {
-    $controller = new DenunciaController();
-
-    if ($_GET['route'] === 'listar') {
-        $controller->listarDenuncias();
-        exit;
-    }
-
-    if ($_GET['route'] === 'estatisticas') {
-        $controller->estatisticas();
-        exit;
-    }
-}
-
-if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'resolver') {
-    $controller = new DenunciaController();
-    $controller->resolverDenuncia();
-    exit;
-}
 
 if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'sistema') {
     header('Content-Type: application/json');
@@ -68,11 +42,6 @@ if ($metodo === 'GET' && isset($_GET['route']) && $_GET['route'] === 'sistema') 
     exit;
 }
 
-require __DIR__ . "/../../frontEnd/view/navBar.html";
-require __DIR__ . "/../../frontEnd/view/admin.html";
-?>
-<script>
-    window.EH_ADMIN = true;
-</script>
-<?php
+require __DIR__ . "/../../frontEnd/view/navBar.php";
+require __DIR__ . "/../../frontEnd/view/adminEstatisticas.html";
 require __DIR__ . "/../../frontEnd/view/footer.html";

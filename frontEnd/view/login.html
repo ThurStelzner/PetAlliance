@@ -12,9 +12,13 @@
 <div class="card-wide">
   <div class="card">
     <?php if (isset($_GET['verificado'])): ?>
-      <div class="form-msg form-msg-success">Email verificado com sucesso! Fa&ccedil;a o login.</div>
-    <?php elseif (isset($_GET['erro'])): ?>
-      <div class="form-msg form-msg-error"><?= htmlspecialchars($_GET['erro']) ?></div>
+        <div style="color:#2e7d32;background:#e8f5e9;padding:10px;border-radius:4px;margin-bottom:15px;">
+            Email verificado com sucesso! Faça o login.
+        </div>
+    <?php elseif (isset($_GET['erro']) || isset($_SESSION['erro_login'])): ?>
+        <div style="color:#d32f2f;background:#fce4e4;padding:10px;border-radius:4px;margin-bottom:15px;">
+            <?= htmlspecialchars($_GET['erro'] ?? $_SESSION['erro_login'] ?? '') ?>
+        </div>
     <?php endif; ?>
 
     <form method="POST">
@@ -44,3 +48,5 @@ setTimeout(function() {
 </script>
 </body>
 </html>
+<script src="/frontEnd/utils/loginSalvos.js"></script>
+<script src="/frontEnd/utils/formatacao.js"></script>

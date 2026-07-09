@@ -35,11 +35,13 @@
                     exit();
                 }
 
+                session_regenerate_id(true);
                 $_SESSION['usuario_id'] = $usuario->getId();
                 $_SESSION['usuario_nome'] = $usuario->getNome();
                 $_SESSION['usuario_cpf'] = $usuario->getCpf();
                 $_SESSION['usuario_email'] = $usuario->getEmail();
                 $_SESSION['usuario_imagem'] = $usuario->getImagem();
+                $_SESSION['usuario_tipo'] = $usuario->getTipo();
                 header("Location: /backEnd/home.php?sucesso=1");
                 exit;
             }
@@ -48,5 +50,9 @@
     }
 
     require __DIR__ . "/../../frontEnd/view/login.html";
+
+    if (isset($_SESSION['erro_login'])) {
+        unset($_SESSION['erro_login']);
+    }
 
 

@@ -77,4 +77,28 @@ class EmailService {
             return false;
         }
     }
+
+    public function enviarAlteracaoEmail($email, $nome, $token) {
+        try {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($email, $nome);
+
+            $link = "http://{$_SERVER['HTTP_HOST']}/backEnd/verificarEmail.php?token=" . urlencode($token) . "&tipo=alteracao_email";
+
+            $this->mail->Subject = 'PetAlliance - Confirme seu novo email';
+            $this->mail->Body = "
+                <h2>Olá, $nome!</h2>
+                <p>Você solicitou a alteração do seu email.</p>
+                <p>Clique no link abaixo para confirmar o novo email:</p>
+                <p><a href='$link' style='display:inline-block;padding:12px 24px;background:#2196F3;color:white;text-decoration:none;border-radius:4px;'>Confirmar novo email</a></p>
+                <p>Se você não solicitou esta alteração, ignore este email.</p>
+            ";
+            $this->mail->AltBody = "Confirme seu novo email clicando no link: $link";
+
+            return $this->mail->send();
+        } catch (Exception $e) {
+            error_log("Erro ao enviar email: " . $e->getMessage());
+            return false;
+        }
+    }
 }

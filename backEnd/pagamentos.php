@@ -4,7 +4,7 @@
 
     session_start();
 
-    if(!$_SESSION['usuario_id']) {
+    if(!isset($_SESSION['usuario_id']) || !$_SESSION['usuario_id']) {
         header('Location: /index.php');
         exit();
     }
@@ -16,6 +16,6 @@
         exit;
     }
 
-    require __DIR__ . "/../frontEnd/view/navBar.html";
+    require __DIR__ . "/../frontEnd/view/navBar.php";
     require __DIR__ . "/../frontEnd/view/pagamentos.html";
     require __DIR__ . "/../frontEnd/view/footer.html";

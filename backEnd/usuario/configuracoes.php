@@ -7,6 +7,6 @@
         exit();
     }
 
-    require __DIR__ . "/../../frontEnd/view/navBar.html";
+    require __DIR__ . "/../../frontEnd/view/navBar.php";
     require __DIR__ . "/../../frontEnd/view/configuracoes.html";
     require __DIR__ . "/../../frontEnd/view/footer.html";

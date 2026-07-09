@@ -10,6 +10,8 @@ CREATE TABLE tb_usuarios (
     tipo_usuario INT DEFAULT 0 NOT NULL,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    email_pendente VARCHAR(100) NULL,
+    token_email_pendente VARCHAR(255) NULL,
     senha VARCHAR(255) NOT NULL,
     verificado BOOLEAN DEFAULT FALSE,
     tentativas_login INT DEFAULT 0 ,
@@ -36,17 +38,8 @@ CREATE TABLE tb_pets (
     foto_certificado VARCHAR(250) DEFAULT 0,
     venda_preco DECIMAL(10,2) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-    CONSTRAINT fk_pets_dono FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
-);
-
--- FOTOS DOS PETS
-CREATE TABLE tb_pets_fotos (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    pet_id BIGINT UNSIGNED NOT NULL,
-    foto_path VARCHAR(250) NOT NULL,
-    ordem INT DEFAULT 0,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_fotos_pet FOREIGN KEY (pet_id) REFERENCES tb_pets(id) ON DELETE CASCADE
+    FOREIGN KEY (dono_id) REFERENCES tb_usuarios(id)
+    ON DELETE CASCADE
 );
 
 -- MATCH
@@ -60,9 +53,9 @@ CREATE TABLE tb_matches (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     respondido_em TIMESTAMP,
     CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_animais(id),
+    CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_pets(id),
     CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
-    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_animais(id),
+    CONSTRAINT fk_animal2 FOREIGN KEY (id_animal2) REFERENCES tb_pets(id),
     CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
 -- BLOQUEIOS
@@ -187,7 +180,7 @@ CREATE TABLE tb_verificacao_email (
     usuario_id BIGINT UNSIGNED NOT NULL,
     token VARCHAR(255) NOT NULL,
     codigo VARCHAR(6) NOT NULL,
-    tipo ENUM('verificacao', 'recuperacao') NOT NULL DEFAULT 'verificacao',
+    tipo ENUM('verificacao', 'recuperacao', 'alteracao_email_atual', 'alteracao_email_novo') NOT NULL DEFAULT 'verificacao',
     expiracao DATETIME NOT NULL,
     usado BOOLEAN DEFAULT FALSE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

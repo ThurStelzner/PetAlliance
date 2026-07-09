@@ -67,6 +67,9 @@ class Animal implements JsonSerializable {
     }
 
     public function setNome($nome) {
+        if (mb_strlen($nome) > 50) {
+            throw new Exception("Nome deve ter no máximo 50 caracteres.");
+        }
         $this->nome = $nome;
     }
 
@@ -196,18 +199,21 @@ class Animal implements JsonSerializable {
         if (!$data || $data->format("Y-m-d") !== $dt_nascimento) {
             throw new Exception("Data de nascimento inválida.");
         }
-        if ($dt_nascimento < '2000-01-01') {
-            echo 'Erro: A data escolhida é menor que a data mínima permitida.';
-        } else {
-            echo 'Sucesso: Data válida!';
+
+        if ($data > new DateTime()) {
+            throw new Exception("A data de nascimento não pode ser futura.");
         }
-    
+
+        if ($dt_nascimento < '2000-01-01') {
+            throw new Exception('A data escolhida é menor que a data mínima permitida.');
+        }
+
         $this->data_nascimento = $dt_nascimento;
     }
 
     public function setPeso($peso) {
-        if (!is_numeric($peso) || $peso < 0) {
-            throw new Exception("Peso deve ser um número maior que zero.");
+        if (!is_numeric($peso) || $peso <= 0 || $peso > 500) {
+            throw new Exception("Peso deve ser entre 0.001 kg (1 grama) e 500 kg.");
         }
     
         $this->peso = $peso;
@@ -217,6 +223,9 @@ class Animal implements JsonSerializable {
             if (empty($descricao)) {
                 throw new Exception("Descrição não pode ser vazia.");
             }
+        if (mb_strlen($descricao) > 2000) {
+            throw new Exception("Descrição deve ter no máximo 2000 caracteres.");
+        }
         $this->descricao = $descricao;
     }
 
@@ -242,7 +251,7 @@ class Animal implements JsonSerializable {
                 $extensao  = pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
             
-                if (!in_array(strtolower($extensao), $permitidos)) {
+                if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['arquivoCertificado']['tmp_name'])) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $this->foto_certificado = uniqid('cert_') . '.' . $extensao;
@@ -258,7 +267,7 @@ class Animal implements JsonSerializable {
                 $extensao  = pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
             
-                if (!in_array(strtolower($extensao), $permitidos)) {
+                if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['arquivoVacinacao']['tmp_name'])) {
                     $erro = 'Tipo de imagem não permitido.';
                 } else {
                     $this->foto_vacina = uniqid('vaci_') . '.' . $extensao;

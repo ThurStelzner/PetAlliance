@@ -24,6 +24,16 @@
     carregarEnv();
     date_default_timezone_set('America/Sao_Paulo');
 
+    define('MAX_FILE_SIZE', 100 * 1024 * 1024);
+
+    function validarMimeImagem($arquivoTmp) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $arquivoTmp);
+        finfo_close($finfo);
+        $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+        return in_array($mime, $permitidos, true);
+    }
+
     class Conexao {
         private static $instancia = null;
 
@@ -41,7 +51,8 @@
                     );
                     self::$instancia->exec("SET time_zone = 'America/Sao_Paulo'");
                 } catch (PDOException $e){
-                    die("Erro: " . $e->getMessage());
+                    error_log("Erro de conexão: " . $e->getMessage());
+                    die("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
                 }
             }
             return self::$instancia;
