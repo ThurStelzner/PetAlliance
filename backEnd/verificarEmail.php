@@ -139,11 +139,32 @@ if ($controller->isVerificado($usuarioId)) {
     <title>Verificar Email - PetAlliance</title>
     <link rel="stylesheet" href="/frontEnd/style/style.css">
 </head>
-<body>
-    <div style="padding:1rem;">
-        <a href="/index.php" style="text-decoration:none;color:#244C4E;font-size:1rem;">&larr; Voltar</a>
+<body class="card-centered">
+    <div class="card-wide">
+        <div class="card">
+            <a href="/index.php" class="btn-back">&larr;</a>
+            <h1 class="form-title">Verificar Email</h1>
+
+            <p style="margin-bottom:0.5rem;">Enviamos um código para <strong><?= htmlspecialchars($usuario->getEmail()) ?></strong></p>
+            <p style="margin-bottom:1rem;">Digite o código abaixo ou clique no link enviado por email.</p>
+
+            <div id="mensagem-erro" class="form-msg form-msg-error" style="display:none;"></div>
+            <div id="mensagem-sucesso" class="form-msg form-msg-success" style="display:none;"></div>
+
+            <form id="form-verificacao" method="POST">
+                <input type="hidden" name="usuario_id" value="<?= htmlspecialchars($usuarioId) ?>">
+                <label for="codigo" class="form-label">Código de verificação</label>
+                <input type="text" class="form-input" name="codigo" id="codigo" maxlength="6" placeholder="000000" required>
+                <button type="submit" class="btn btn-primary" style="width:100%">Verificar</button>
+            </form>
+
+            <div class="reenviar" style="text-align:center;margin-top:1rem;">
+                <p style="margin-bottom:0.25rem;font-size:0.85rem;">Não recebeu o código?</p>
+                <button id="btn-reenviar" class="btn-ghost" onclick="reenviarCodigo()">Reenviar código</button>
+            </div>
+        </div>
     </div>
-    <?php require __DIR__ . "/../frontEnd/view/verificarEmail.html"; ?>
-    <?php require __DIR__ . "/../frontEnd/view/footer.html"; ?>
+
+    <script src="../../frontEnd/utils/verificacaoEmail.js"></script>
 </body>
 </html>

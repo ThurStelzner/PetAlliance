@@ -19,6 +19,7 @@
             }
 
             $nome = trim($_POST['nome'] ?? "");
+            $cpf = trim($_POST['cpf'] ?? "");
             $cep = trim($_POST['cep'] ?? "");
             $email = trim($_POST['email'] ?? "");
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
