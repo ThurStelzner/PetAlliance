@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../../backEnd/config/config.php";
+require_once __DIR__ . "/../config/config.php";
 
 class ConversaDAO {
     private $pdo;
