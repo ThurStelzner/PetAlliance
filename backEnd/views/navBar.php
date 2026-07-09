@@ -27,9 +27,15 @@
               <img src="/uploads/usuario/<?= $img ?>" alt="" class="navbar-avatar">
 <?php else:
   $nome = $_SESSION['usuario_nome'] ?? '';
-  $inicial = $nome ? strtoupper(substr($nome, 0, 1)) : '?';
+  $inicial = $nome ? strtoupper(substr($nome, 0, 1)) : '';
 ?>
-              <span class="navbar-avatar-initial"><?= $inicial ?></span>
+              <span class="navbar-avatar-initial">
+<?php if ($inicial): ?>
+                <?= $inicial ?>
+<?php else: ?>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+<?php endif; ?>
+              </span>
 <?php endif; ?>
             </a>
             <a href="/backEnd/home.php" class="navbar-btn" title="Início">⌂</a>
