@@ -11,25 +11,24 @@ $solicitacaoId = $_GET['solicitacao_id'] ?? null;
 
 require __DIR__ . '/views/navBar.php';
 ?>
-<link rel="stylesheet" href="/frontEnd/style/chat.css">
-<main class="main-conteudo">
-    <div class="chat-layout">
-        <aside class="chat-sidebar" id="chat-sidebar">
-            <div class="chat-sidebar-header">
+<main>
+    <div>
+        <aside id="chat-sidebar">
+            <div>
                 <h2>Conversas</h2>
-                <button type="button" class="chat-toggle-sidebar" id="chat-toggle-sidebar" title="Fechar">✕</button>
+                <button type="button" id="chat-toggle-sidebar" title="Fechar">✕</button>
             </div>
             <div id="conversas-list"></div>
         </aside>
-        <button type="button" class="chat-toggle-main" id="chat-toggle-main" title="Abrir conversas">☰</button>
-        <section class="chat-main">
-            <div id="chat-placeholder" class="chat-placeholder">
+        <button type="button" id="chat-toggle-main" title="Abrir conversas">☰</button>
+        <section>
+            <div id="chat-placeholder">
                 <p>Selecione uma conversa</p>
             </div>
-            <div id="chat-active" class="chat-active" style="display:none;">
-                <div class="chat-header" id="chat-header"></div>
-                <div class="chat-messages" id="chat-messages"></div>
-                <div class="chat-input-area">
+            <div id="chat-active">
+                <div id="chat-header"></div>
+                <div id="chat-messages"></div>
+                <div>
                     <textarea id="chat-input" rows="2" placeholder="Digite sua mensagem..."></textarea>
                     <button id="chat-send">Enviar</button>
                 </div>

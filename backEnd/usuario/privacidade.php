@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Política de Privacidade - PetAlliance</title>
-  <link rel="stylesheet" href="/frontEnd/style/style.css">
-  <link rel="stylesheet" href="/frontEnd/style/estilos.css">
-</head>
-<body style="background:var(--bg);margin:0;min-height:100vh">
+  </head>
+<body>
   <?php require __DIR__ . "/../../frontEnd/view/privacidade.html"; ?>
 </body>
 </html>

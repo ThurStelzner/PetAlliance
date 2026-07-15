@@ -204,7 +204,7 @@
                 });
             </script>';
         } else {
-             echo "<p id='mensagem-erro' class='erro-escondido'>mensagem de erro</p>";
+             echo "<p id='mensagem-erro'>mensagem de erro</p>";
         }
     }
     if (isset($_GET['erro'])) {

@@ -137,30 +137,29 @@ if ($controller->isVerificado($usuarioId)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificar Email - PetAlliance</title>
-    <link rel="stylesheet" href="/frontEnd/style/style.css">
-</head>
-<body class="card-centered">
-    <div class="card-wide">
-        <div class="card">
-            <a href="/index.php" class="btn-back">&larr;</a>
-            <h1 class="form-title">Verificar Email</h1>
+    </head>
+<body>
+    <div>
+        <div>
+            <a href="/index.php">&larr;</a>
+            <h1>Verificar Email</h1>
 
-            <p style="margin-bottom:0.5rem;">Enviamos um código para <strong><?= htmlspecialchars($usuario->getEmail()) ?></strong></p>
-            <p style="margin-bottom:1rem;">Digite o código abaixo ou clique no link enviado por email.</p>
+            <p>Enviamos um código para <strong><?= htmlspecialchars($usuario->getEmail()) ?></strong></p>
+            <p>Digite o código abaixo ou clique no link enviado por email.</p>
 
-            <div id="mensagem-erro" class="form-msg form-msg-error" style="display:none;"></div>
-            <div id="mensagem-sucesso" class="form-msg form-msg-success" style="display:none;"></div>
+            <div id="mensagem-erro"></div>
+            <div id="mensagem-sucesso"></div>
 
             <form id="form-verificacao" method="POST">
                 <input type="hidden" name="usuario_id" value="<?= htmlspecialchars($usuarioId) ?>">
-                <label for="codigo" class="form-label">Código de verificação</label>
-                <input type="text" class="form-input" name="codigo" id="codigo" maxlength="6" placeholder="000000" required>
-                <button type="submit" class="btn btn-primary" style="width:100%">Verificar</button>
+                <label for="codigo">Código de verificação</label>
+                <input type="text" name="codigo" id="codigo" maxlength="6" placeholder="000000" required>
+                <button type="submit">Verificar</button>
             </form>
 
-            <div class="reenviar" style="text-align:center;margin-top:1rem;">
-                <p style="margin-bottom:0.25rem;font-size:0.85rem;">Não recebeu o código?</p>
-                <button id="btn-reenviar" class="btn-ghost" onclick="reenviarCodigo()">Reenviar código</button>
+            <div>
+                <p>Não recebeu o código?</p>
+                <button id="btn-reenviar" onclick="reenviarCodigo()">Reenviar código</button>
             </div>
         </div>
     </div>

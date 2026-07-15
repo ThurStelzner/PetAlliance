@@ -7,19 +7,17 @@
 </head>
 <body>
 
-    <div class="container-foto">
+    <div>
         <h2>Minha Foto</h2>
 
         <!-- A foto antiga é carregada via PHP através da sessão -->
         <img src="/uploads/usuario/<?= htmlspecialchars($_SESSION['usuario_imagem'] ?? 'placeholder.webp') ?>" 
              id="preview-foto" 
-             class="perfil-preview" 
-             alt="Foto de Perfil" 
-             style="width: 20rem;">
+             alt="Foto de Perfil">
 
-        <form action="editarFotoUsuario.php" method="POST" enctype="multipart/form-data" class="upload-group">
+        <form action="editarFotoUsuario.php" method="POST" enctype="multipart/form-data">
             <input type="file" name="imagemPerfil" id="input-foto" accept="image/*" required>
-            <button type="submit" name="editarFoto" class="btn-atualizar">Salvar Nova Foto</button>
+            <button type="submit" name="editarFoto">Salvar Nova Foto</button>
         </form>
     </div>
 

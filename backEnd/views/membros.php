@@ -1,7 +1,7 @@
-<main class="planos-page">
-    <div id="pagamento-modal" class="modal" style="display:none;"></div>
+<main>
+    <div id="pagamento-modal"></div>
 
-    <div class="planos-header">
+    <div>
         <h2>Escolha seu plano</h2>
         <p>Desbloqueie recursos exclusivos e destaque seus animais</p>
     </div>
@@ -71,31 +71,31 @@
     ];
     ?>
 
-    <div class="planos-grid">
+    <div>
     <?php foreach ($produtos as $produto): ?>
-        <section class="plano-card <?= $produto['destaque'] ? 'plano-destaque' : '' ?>">
+        <section>
             <?php if ($produto['destaque']): ?>
-                <span class="plano-badge-destaque">Mais Popular</span>
+                <span>Mais Popular</span>
             <?php endif; ?>
-            <div class="plano-card-header">
+            <div>
                 <h3><?= $produto['nome'] ?></h3>
-                <p class="plano-desc"><?= $produto['descricao'] ?></p>
+                <p><?= $produto['descricao'] ?></p>
             </div>
-            <div class="plano-preco-area">
-                <span class="plano-preco-riscado">R$ <?= number_format($produto['preco_riscado'], 2, ',', '.') ?></span>
-                <span class="plano-preco">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></span>
-                <span class="plano-preco-mes">/mês</span>
-                <span class="plano-preco-dia">≈ R$ <?= number_format($produto['preco_dia'], 2, ',', '.') ?>/dia</span>
+            <div>
+                <span>R$ <?= number_format($produto['preco_riscado'], 2, ',', '.') ?></span>
+                <span>R$ <?= number_format($produto['preco'], 2, ',', '.') ?></span>
+                <span>/mês</span>
+                <span>≈ R$ <?= number_format($produto['preco_dia'], 2, ',', '.') ?>/dia</span>
             </div>
-            <ul class="plano-beneficios">
+            <ul>
                 <?php foreach ($produto['beneficios'] as $beneficio): ?>
                     <li>
-                        <span class="plano-check">✓</span>
+                        <span>✓</span>
                         <?= $beneficio ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <button type="button" class="plano-comprar-btn" data-preco="<?= $produto['preco'] ?>" data-nome="Membro <?= $produto['nome'] ?>" data-produto-id="<?= $produto['produto_id'] ?>">
+            <button type="button" data-preco="<?= $produto['preco'] ?>" data-nome="Membro <?= $produto['nome'] ?>" data-produto-id="<?= $produto['produto_id'] ?>">
                 Assinar agora
             </button>
         </section>
@@ -119,14 +119,14 @@ document.addEventListener("DOMContentLoaded", function() {
 function abrirModalPagamento(preco, nome, produtoId) {
     var modal = document.getElementById("pagamento-modal");
     modal.innerHTML = `
-        <div class="pagamento-modal-content">
-            <button type="button" class="pagamento-modal-close" onclick="fecharModalPagamento()">×</button>
-            <div class="pagamento-modal-body">
-                <h3 class="pagamento-modal-titulo">${nome}</h3>
-                <p class="pagamento-modal-preco">R$ ${parseFloat(preco).toFixed(2)}</p>
-                <p class="pagamento-modal-desc">Confirme para ser redirecionado ao AbacatePay.</p>
-                <button type="button" class="btn btn-primary" id="btn-pagar" data-produto-id="${produtoId}">Pagar R$ ${parseFloat(preco).toFixed(2)}</button>
-                <button type="button" class="btn btn-ghost pagamento-modal-cancelar" onclick="fecharModalPagamento()">Cancelar</button>
+        <div>
+            <button type="button" onclick="fecharModalPagamento()">×</button>
+            <div>
+                <h3>${nome}</h3>
+                <p>R$ ${parseFloat(preco).toFixed(2)}</p>
+                <p>Confirme para ser redirecionado ao AbacatePay.</p>
+                <button type="button" id="btn-pagar" data-produto-id="${produtoId}">Pagar R$ ${parseFloat(preco).toFixed(2)}</button>
+                <button type="button" onclick="fecharModalPagamento()">Cancelar</button>
             </div>
         </div>
     `;
