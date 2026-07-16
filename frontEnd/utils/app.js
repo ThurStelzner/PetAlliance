@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
         const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
         const imgs = fotos.map(f =>
-            `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
+            `<img src="/uploads/animais/${f}" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
         ).join('');
         return `<div class="animal-fotos-carrossel" data-fotos='${fotosJson}'><div class="carrossel-track">${imgs}</div></div>`;
     }
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
             const fotosJson = encodeURIComponent(JSON.stringify(fotos));
             const imgsHtml = fotos.map(f =>
-                `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
+                `<img src="/uploads/animais/${f}" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
             ).join('');
 
             var setasGaleria = fotos.length > 1
@@ -452,10 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 '<div class="animal-modal-content">' +
                     '<div class="animal-modal-header">' +
                         '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
-                        '<div style="display:flex;align-items:center;gap:0.5rem;">' +
-                            favoritarHeartHtml +
-                            '<button type="button" class="animal-modal-close">✕</button>' +
-                        '</div>' +
+                        '<button type="button" class="animal-modal-close">✕</button>' +
                     '</div>' +
                     '<div class="animal-modal-body">' +
                         galeriaHtml +
@@ -476,6 +473,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             '</div>' +
                         '</div>' +
                     '</div>' +
+                    favoritarHeartHtml +
                 '</div>'
             );
 

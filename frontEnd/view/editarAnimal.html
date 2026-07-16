@@ -16,7 +16,7 @@
       <div id="fotos-atuais">
         <?php foreach ($fotos as $i => $foto): ?>
           <div data-foto-path="<?= htmlspecialchars($foto) ?>">
-            <img src="/uploads/animais/<?= htmlspecialchars($foto) ?>" alt="Foto <?= $i+1 ?>">
+            <img src="/uploads/animais/<?= htmlspecialchars($foto) ?>" loading="lazy" alt="Foto <?= $i+1 ?>">
             <button type="button" data-foto-path="<?= htmlspecialchars($foto) ?>">&times;</button>
           </div>
         <?php endforeach; ?>

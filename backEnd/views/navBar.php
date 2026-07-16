@@ -9,6 +9,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/frontEnd/style/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>PetAlliance</title>
     </head>
 <body>
@@ -29,6 +32,12 @@
         <a href="/backEnd/animal/meusAnimais.php">
             <img src="/frontEnd/assets/images/patas.png" class="pata" alt="Meus animais" style="width: 25px; height: 25px;">
             <span>Meus Animais</span>
+        </a>
+        <a href="/backEnd/animal/favoritos.php">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+            </svg>
+            <span>Favoritos</span>
         </a>
         <a href="/backEnd/animal/cadastrarAnimal.php">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
