@@ -52,7 +52,7 @@
                     self::$instancia->exec("SET time_zone = 'America/Sao_Paulo'");
                 } catch (PDOException $e){
                     error_log("Erro de conexão: " . $e->getMessage());
-                    die("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
+                    throw new InvalidArgumentException("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
                 }
             }
             return self::$instancia;
