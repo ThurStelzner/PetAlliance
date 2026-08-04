@@ -26,14 +26,6 @@
 
     define('MAX_FILE_SIZE', 100 * 1024 * 1024);
 
-    function validarMimeImagem($arquivoTmp) {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $arquivoTmp);
-        finfo_close($finfo);
-        $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
-        return in_array($mime, $permitidos, true);
-    }
-
     class Conexao {
         private static $instancia = null;
 

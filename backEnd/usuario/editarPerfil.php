@@ -38,7 +38,7 @@
 
                 $extensao = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-                if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
+                if (!in_array(strtolower($extensao), $permitidos)) {
                     throw new InvalidArgumentException("Tipo de imagem não permitido. Use JPG, PNG ou WEBP.");
                 }
 
