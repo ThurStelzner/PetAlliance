@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     session_start();
 
@@ -12,6 +12,6 @@
         mkdir($diretorioAnimal, 0755, true);
     }
 
-    require __DIR__ . '/frontEnd/view/index.html';
+    require __DIR__ . '/frontEnd/views/index.html';
 
 ?>

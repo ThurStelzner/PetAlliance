@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../../backEnd/models/usuarioDAO.php';
     require_once __DIR__ . '/../../backEnd/models/usuario.php';
 
@@ -21,7 +21,7 @@
             $cep = $_POST['cep'] ?? '';
 
             if (empty($nome)) {
-                throw new InvalidArgumentException("Nome é obrigatório.");
+                throw new InvalidArgumentException("Nome Ã© obrigatÃ³rio.");
             }
 
             $usuarioAtual->setNome($nome);
@@ -33,13 +33,13 @@
                     throw new InvalidArgumentException("Erro no upload da imagem.");
                 }
                 if ($_FILES['imagemPerfil']['size'] > MAX_FILE_SIZE) {
-                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho máximo permitido: 100MB.");
+                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho mÃ¡ximo permitido: 100MB.");
                 }
 
                 $extensao = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
                 if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
-                    throw new InvalidArgumentException("Tipo de imagem não permitido. Use JPG, PNG ou WEBP.");
+                    throw new InvalidArgumentException("Tipo de imagem nÃ£o permitido. Use JPG, PNG ou WEBP.");
                 }
 
                 $fotoAntiga = $usuarioAtual->getImagem();
@@ -70,4 +70,4 @@
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/editarPerfil.html";
+    require __DIR__ . "/../../frontEnd/views/editarPerfil.html";

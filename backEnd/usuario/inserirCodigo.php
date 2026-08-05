@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 session_start();
 
@@ -11,7 +11,7 @@ require_once __DIR__ . "/../../backEnd/controllers/api/usuarioController.php";
 
 $controller = new UsuarioController();
 
-// GET ?token=xxx — veio por link, já verifica e redireciona
+// GET ?token=xxx â€” veio por link, jÃ¡ verifica e redireciona
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     $resultado = $controller->verificarToken($_GET['token']);
     if ($resultado['success'] && $resultado['tipo'] === 'recuperacao') {
@@ -24,13 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['token'])) {
     }
 }
 
-// POST — rotas AJAX
+// POST â€” rotas AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 
     $route = $_GET['route'] ?? '';
 
-    // Verificar código
+    // Verificar cÃ³digo
     if ($route === 'verificar_codigo') {
         $usuarioId = $_POST['usuario_id'] ?? $_SESSION['recuperacao_usuario_id'] ?? null;
         $codigo = trim($_POST['codigo'] ?? '');
@@ -48,16 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Reenviar código
+    // Reenviar cÃ³digo
     if ($route === 'reenviar') {
         $usuarioId = $_SESSION['recuperacao_usuario_id'] ?? null;
         if (!$usuarioId) {
-            echo json_encode(["success" => false, "message" => "Usuário não identificado."]);
+            echo json_encode(["success" => false, "message" => "UsuÃ¡rio nÃ£o identificado."]);
             exit();
         }
         $usuario = (new UsuarioDAO())->readPorId($usuarioId);
         if (!$usuario) {
-            echo json_encode(["success" => false, "message" => "Usuário não encontrado."]);
+            echo json_encode(["success" => false, "message" => "UsuÃ¡rio nÃ£o encontrado."]);
             exit();
         }
         $enviou = $controller->enviarRecuperacaoSenha($usuario->getEmail());
@@ -68,16 +68,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    echo json_encode(["success" => false, "message" => "Rota inválida."]);
+    echo json_encode(["success" => false, "message" => "Rota invÃ¡lida."]);
     exit();
 }
 
-// Exibir página
+// Exibir pÃ¡gina
 $usuarioId = $_SESSION['recuperacao_usuario_id'] ?? null;
 if (!$usuarioId) {
     header("Location: /backEnd/usuario/esqueceuSenha.php");
     exit();
 }
 
-require __DIR__ . "/../../frontEnd/view/inserirCodigo.html";
-require __DIR__ . "/../../frontEnd/view/footer.html";
+require __DIR__ . "/../../frontEnd/views/inserirCodigo.html";
+require __DIR__ . "/../../frontEnd/views/footer.html";

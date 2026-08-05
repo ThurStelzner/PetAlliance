@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
@@ -10,12 +10,12 @@
 
     session_start();
 
-    require __DIR__ . "/../../frontEnd/view/cadastrarUsuario.html";
+    require __DIR__ . "/../../frontEnd/views/cadastrarUsuario.html";
     
     if($_SERVER['REQUEST_METHOD'] === "POST") {
         try {
             if (!isset($_POST['aceite_termos'])) {
-                throw new InvalidArgumentException("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
+                throw new InvalidArgumentException("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
             }
 
             $nome = trim($_POST['nome'] ?? "");
@@ -23,14 +23,14 @@
             $cep = trim($_POST['cep'] ?? "");
             $email = trim($_POST['email'] ?? "");
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                throw new InvalidArgumentException("Email inválido.");
+                throw new InvalidArgumentException("Email invÃ¡lido.");
             }
             $senha = trim($_POST['senha'] ?? "");
             $tipo = 0;
 
             $cepNumerico = preg_replace('/[^0-9]/', '', $cep);
             if (strlen($cepNumerico) !== 8) {
-                throw new InvalidArgumentException("CEP inválido. Informe um CEP com 8 dígitos.");
+                throw new InvalidArgumentException("CEP invÃ¡lido. Informe um CEP com 8 dÃ­gitos.");
             }
 
             $validacaoSenha = validarSenhaForte($senha);
@@ -48,13 +48,13 @@
                     exit();
                 }
                 if ($_FILES['imagemPerfil']['size'] > MAX_FILE_SIZE) {
-                    echo "Arquivo muito grande. Tamanho máximo permitido: 100MB.";
+                    echo "Arquivo muito grande. Tamanho mÃ¡ximo permitido: 100MB.";
                     exit();
                 }
                 $extensao  = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
                 if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
-                    echo 'Tipo de imagem não permitido.';
+                    echo 'Tipo de imagem nÃ£o permitido.';
                     exit();
                 } else {
                     $nomeArquivo = uniqid('prod_') . '.' . $extensao;
@@ -70,7 +70,7 @@
                 $usuarioId = $usuarioCadastrado->getId();
             }
 
-            // Admin (tipo 1) já verificado e logado
+            // Admin (tipo 1) jÃ¡ verificado e logado
             if ($tipo == 1) {
                 $dao = new UsuarioDAO();
                 $dao->marcarVerificado($usuarioId);
@@ -85,7 +85,7 @@
                 exit();
             }
 
-            // Usuário normal: envia verificação e redireciona
+            // UsuÃ¡rio normal: envia verificaÃ§Ã£o e redireciona
             $controller->enviarEmailVerificacao($usuarioId);
             $_SESSION['usuario_verificacao_id'] = $usuarioId;
             header("Location: /backEnd/verificarEmail.php?id=$usuarioId");

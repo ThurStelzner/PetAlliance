@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 
 require_once __DIR__ . "/../../backEnd/config/config.php";
@@ -24,22 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strpos($input, '@') !== false) {
         $usuario = $usuarioDAO->buscarPorEmail($input);
         if (!$usuario) {
-            echo json_encode(["success" => false, "message" => "Email não cadastrado."]);
+            echo json_encode(["success" => false, "message" => "Email nÃ£o cadastrado."]);
             exit();
         }
     } else {
         $cpf = preg_replace('/[^0-9]/', '', $input);
         if (strlen($cpf) !== 11) {
-            echo json_encode(["success" => false, "message" => "CPF deve ter 11 dígitos (recebido: '$input' -> '$cpf', len=" . strlen($cpf) . ")."]);
+            echo json_encode(["success" => false, "message" => "CPF deve ter 11 dÃ­gitos (recebido: '$input' -> '$cpf', len=" . strlen($cpf) . ")."]);
             exit();
         }
         if (!$usuarioDAO->validaCPF($cpf)) {
-            echo json_encode(["success" => false, "message" => "CPF com dígitos verificadores inválidos."]);
+            echo json_encode(["success" => false, "message" => "CPF com dÃ­gitos verificadores invÃ¡lidos."]);
             exit();
         }
         $usuario = $usuarioDAO->read($cpf);
         if (!$usuario) {
-            echo json_encode(["success" => false, "message" => "CPF não cadastrado."]);
+            echo json_encode(["success" => false, "message" => "CPF nÃ£o cadastrado."]);
             exit();
         }
     }
@@ -68,8 +68,8 @@ $cpfSalvo = $_SESSION['cpf_digitado'] ?? '';
 </head>
 <body style="background:var(--bg);margin:0;min-height:100vh">
 <?php
-require __DIR__ . "/../../frontEnd/view/esqueceuSenha.html";
-require __DIR__ . "/../../frontEnd/view/footer.html";
+require __DIR__ . "/../../frontEnd/views/esqueceuSenha.html";
+require __DIR__ . "/../../frontEnd/views/footer.html";
 ?>
 </body>
 </html>

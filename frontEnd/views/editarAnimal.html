@@ -1,4 +1,4 @@
-<main style="max-width:600px;margin:2rem auto;padding:1rem;">
+﻿<main style="max-width:600px;margin:2rem auto;padding:1rem;">
     <h1>Editar Animal</h1>
 
     <?php if ($erro): ?>
@@ -21,7 +21,7 @@
             <option value="Outro" <?= $animal->getTipo() === 'Outro' ? 'selected' : '' ?>>Outro</option>
         </select>
 
-        <label for="raca">Raça:</label>
+        <label for="raca">RaÃ§a:</label>
         <input type="text" name="raca" id="raca" value="<?= htmlspecialchars($animal->getRaca()) ?>" required>
 
         <label for="cor">Cor:</label>
@@ -36,13 +36,13 @@
         <label for="sexo">Sexo:</label>
         <select name="sexo" id="sexo" required>
             <option value="Macho" <?= $animal->getSexo() === 'Macho' ? 'selected' : '' ?>>Macho</option>
-            <option value="Fêmea" <?= $animal->getSexo() === 'Fêmea' ? 'selected' : '' ?>>Fêmea</option>
+            <option value="FÃªmea" <?= $animal->getSexo() === 'FÃªmea' ? 'selected' : '' ?>>FÃªmea</option>
         </select>
 
         <label for="porte">Porte:</label>
         <select name="porte" id="porte" required>
             <option value="Pequeno" <?= $animal->getPorte() === 'Pequeno' ? 'selected' : '' ?>>Pequeno</option>
-            <option value="Médio" <?= $animal->getPorte() === 'Médio' ? 'selected' : '' ?>>Médio</option>
+            <option value="MÃ©dio" <?= $animal->getPorte() === 'MÃ©dio' ? 'selected' : '' ?>>MÃ©dio</option>
             <option value="Grande" <?= $animal->getPorte() === 'Grande' ? 'selected' : '' ?>>Grande</option>
         </select>
 
@@ -52,19 +52,19 @@
         <label for="peso">Peso (kg):</label>
         <input type="number" step="0.01" name="peso" id="peso" value="<?= htmlspecialchars($animal->getPeso()) ?>" required>
 
-        <label for="descricao">Descrição:</label>
+        <label for="descricao">DescriÃ§Ã£o:</label>
         <textarea name="descricao" id="descricao" required><?= htmlspecialchars($animal->getDescricao()) ?></textarea>
 
         <label for="vacinado">Vacinado?</label>
         <select name="vacinado" id="vacinado" required>
             <option value="1" <?= $animal->getVacinado() == 1 ? 'selected' : '' ?>>Sim</option>
-            <option value="0" <?= $animal->getVacinado() == 0 ? 'selected' : '' ?>>Não</option>
+            <option value="0" <?= $animal->getVacinado() == 0 ? 'selected' : '' ?>>NÃ£o</option>
         </select>
 
-        <label for="certificado">Possui Certificado de raça?</label>
+        <label for="certificado">Possui Certificado de raÃ§a?</label>
         <select name="certificado" id="certificado" required>
             <option value="1" <?= $animal->getCertificado() == 1 ? 'selected' : '' ?>>Sim</option>
-            <option value="0" <?= $animal->getCertificado() == 0 ? 'selected' : '' ?>>Não</option>
+            <option value="0" <?= $animal->getCertificado() == 0 ? 'selected' : '' ?>>NÃ£o</option>
         </select>
 
         <hr style="margin:2rem 0;">
@@ -89,7 +89,7 @@
         <button type="button" id="btn-add-nova-foto" style="margin-top:0.5rem;">Adicionar mais</button>
 
         <hr style="margin:2rem 0;">
-        <button type="submit">Salvar Alterações</button>
+        <button type="submit">Salvar AlteraÃ§Ãµes</button>
         <a href="/backEnd/animal/meusAnimais.php" style="display:inline-block;margin-left:0.5rem;padding:0.5rem 1rem;background:#6c757d;color:#fff;text-decoration:none;border-radius:6px;">Cancelar</a>
     </form>
 </main>
@@ -122,7 +122,7 @@
                 alert('Erro: ' + (data.error || 'Erro desconhecido'));
             }
         } catch (err) {
-            alert('Erro de conexão.');
+            alert('Erro de conexÃ£o.');
         }
     });
 
@@ -135,4 +135,4 @@
     });
 </script>
 
-<?php require __DIR__ . "/../../frontEnd/view/footer.html"; ?>
+<?php require __DIR__ . "/../../frontEnd/views/footer.html"; ?>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../models/usuarioDAO.php";
 require_once __DIR__ . "/../models/usuario.php";
@@ -9,7 +9,7 @@ require_once __DIR__ . "/../controllers/api/denunciaController.php";
 session_start();
 
 if (!isset($_SESSION['usuario_cpf'])) {
-    die("Usuário não está logado.");
+    die("UsuÃ¡rio nÃ£o estÃ¡ logado.");
 }
 
 $usuarioDAO = new UsuarioDAO();
@@ -40,5 +40,5 @@ if ($metodo === 'POST' && isset($_GET['route']) && $_GET['route'] === 'resolver'
 }
 
 require __DIR__ . "/../views/navBar.php";
-require __DIR__ . "/../../frontEnd/view/adminDenuncias.html";
-require __DIR__ . "/../../frontEnd/view/footer.html";
+require __DIR__ . "/../../frontEnd/views/adminDenuncias.html";
+require __DIR__ . "/../../frontEnd/views/footer.html";

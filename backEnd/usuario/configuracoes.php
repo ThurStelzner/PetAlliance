@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     session_start();
 
@@ -8,5 +8,5 @@
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/configuracoes.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/views/configuracoes.html";
+    require __DIR__ . "/../../frontEnd/views/footer.html";

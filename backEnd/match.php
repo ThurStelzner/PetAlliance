@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../backEnd/controllers/api/solicitacaoMatchController.php';
 require_once __DIR__ . '/../backEnd/controllers/api/notificacaoController.php';
 require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";
@@ -9,7 +9,7 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 if (!isset($_SESSION['usuario_cpf']) || !isset($_SESSION['usuario_id'])) {
-    die("Usuário não está logado.");
+    die("UsuÃ¡rio nÃ£o estÃ¡ logado.");
 }
 
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -71,10 +71,10 @@ try {
 }
 
 require __DIR__ . '/views/navBar.php';
-require __DIR__ . '/../frontEnd/view/notificacoes.html';
+require __DIR__ . '/../frontEnd/views/notificacoes.html';
 ?>
 <script>
     window.USUARIO_ID = <?= (int) $usuarioId ?>;
 </script>
 <?php
-require __DIR__ . '/../frontEnd/view/footer.html';
+require __DIR__ . '/../frontEnd/views/footer.html';

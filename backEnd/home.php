@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/controllers/api/animalController.php';
     require_once __DIR__ . '/controllers/api/MembroController.php';
     require_once __DIR__ . "/models/usuarioDAO.php";
@@ -16,7 +16,7 @@
     $usuarioDAO = new UsuarioDAO();
 
     if (!isset($_SESSION['usuario_cpf'])) {
-        die("Usuário não está logado.");
+        die("UsuÃ¡rio nÃ£o estÃ¡ logado.");
     }
 
     $cpf = $_SESSION['usuario_cpf'];
@@ -108,7 +108,7 @@
             $dados = json_decode(file_get_contents("php://input"), true);
             $animalId = $dados['animal_id'] ?? null;
             if (!$animalId) {
-                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                echo json_encode(['success' => false, 'error' => 'animal_id Ã© obrigatÃ³rio.']);
                 exit;
             }
             $controllerMembro = new MembroController();
@@ -121,7 +121,7 @@
             $dados = json_decode(file_get_contents("php://input"), true);
             $animalId = $dados['animal_id'] ?? null;
             if (!$animalId) {
-                echo json_encode(['success' => false, 'error' => 'animal_id é obrigatório.']);
+                echo json_encode(['success' => false, 'error' => 'animal_id Ã© obrigatÃ³rio.']);
                 exit;
             }
             $controllerMembro = new MembroController();
@@ -141,7 +141,7 @@
             require_once __DIR__ . '/../backEnd/models/animalDAO.php';
             $dao = new AnimalDAO();
             $resultado = $dao->removerFotoByPath($petId, $fotoPath);
-            echo json_encode(['success' => $resultado, 'error' => $resultado ? null : 'Foto não encontrada.']);
+            echo json_encode(['success' => $resultado, 'error' => $resultado ? null : 'Foto nÃ£o encontrada.']);
             exit;
         }
     } catch (Exception $e) {
@@ -187,10 +187,10 @@
         window.EH_ADMIN = <?= $ehAdmin ? 'true' : 'false' ?>;
         window.USUARIO_ID = <?= (int) $usuarioId ?>;
     </script>
-    <?php require __DIR__ . '/../frontEnd/view/destaques.html'; ?>
+    <?php require __DIR__ . '/../frontEnd/views/destaques.html'; ?>
     <script src="/frontEnd/utils/destaques.js"></script>
     <?php
-    require __DIR__ . '/../frontEnd/view/home.html';
+    require __DIR__ . '/../frontEnd/views/home.html';
 
     if (isset($_GET['mensagem'])) {
         if ($_GET['mensagem'] === 'animal_cadastrado') {
@@ -213,7 +213,7 @@
                 document.addEventListener("DOMContentLoaded", function() {
                     var toast = document.createElement("div");
                     toast.className = "toast-message toast-erro";
-                    toast.textContent = "Você não pode entrar aqui";
+                    toast.textContent = "VocÃª nÃ£o pode entrar aqui";
                     document.body.appendChild(toast);
                     setTimeout(function() { toast.remove(); }, 4000);
                 });
@@ -230,6 +230,6 @@
             </script>';
         }
     }
-    require __DIR__ . '/../frontEnd/view/footer.html';
+    require __DIR__ . '/../frontEnd/views/footer.html';
 ?>
 

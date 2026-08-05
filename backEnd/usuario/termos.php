@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -8,6 +8,6 @@
   <link rel="stylesheet" href="/frontEnd/style/estilos.css">
 </head>
 <body style="background:var(--bg);margin:0;min-height:100vh">
-  <?php require __DIR__ . "/../../frontEnd/view/termos.html"; ?>
+  <?php require __DIR__ . "/../../frontEnd/views/termos.html"; ?>
 </body>
 </html>

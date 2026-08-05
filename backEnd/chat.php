@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
@@ -17,11 +17,11 @@ require __DIR__ . '/views/navBar.php';
         <aside class="chat-sidebar" id="chat-sidebar">
             <div class="chat-sidebar-header">
                 <h2>Conversas</h2>
-                <button type="button" class="chat-toggle-sidebar" id="chat-toggle-sidebar" title="Fechar">✕</button>
+                <button type="button" class="chat-toggle-sidebar" id="chat-toggle-sidebar" title="Fechar">âœ•</button>
             </div>
             <div id="conversas-list"></div>
         </aside>
-        <button type="button" class="chat-toggle-main" id="chat-toggle-main" title="Abrir conversas">☰</button>
+        <button type="button" class="chat-toggle-main" id="chat-toggle-main" title="Abrir conversas">â˜°</button>
         <section class="chat-main">
             <div id="chat-placeholder" class="chat-placeholder">
                 <p>Selecione uma conversa</p>
@@ -42,4 +42,4 @@ require __DIR__ . '/views/navBar.php';
     window.SOLICITACAO_ID = <?= $solicitacaoId ? json_encode($solicitacaoId) : 'null' ?>;
 </script>
 <script src="/frontEnd/utils/chat.js"></script>
-<?php require __DIR__ . '/../frontEnd/view/footer.html'; ?>
+<?php require __DIR__ . '/../frontEnd/views/footer.html'; ?>

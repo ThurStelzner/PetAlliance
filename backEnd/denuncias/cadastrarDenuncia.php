@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 require_once __DIR__ . "/../models/denunciaDAO.php";
 require_once __DIR__ . "/../models/denuncia.php";
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $resolvido = 0;
 
         if (empty($descricao)) {
-            throw new InvalidArgumentException("Descreva o motivo da denúncia.");
+            throw new InvalidArgumentException("Descreva o motivo da denÃºncia.");
         }
 
         $controller = new DenunciaController();
@@ -33,8 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } catch (InvalidArgumentException $e) {
         $erro = $e->getMessage();
     } catch (PDOException $e) {
-        $erro = "Erro ao salvar denúncia.";
+        $erro = "Erro ao salvar denÃºncia.";
     }
 }
 
-require __DIR__ . "/../../frontEnd/view/cadastrarDenuncia.html";
+require __DIR__ . "/../../frontEnd/views/cadastrarDenuncia.html";

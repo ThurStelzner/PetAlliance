@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . "/../../backEnd/models/animalDAO.php";
     require_once __DIR__ . "/../../backEnd/models/animal.php";
 
@@ -60,7 +60,7 @@
                     }
                     $extensao = strtolower(pathinfo($_FILES['novas_fotos']['name'][$i], PATHINFO_EXTENSION));
                     if (!in_array($extensao, $permitidos, true)) {
-                        throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['novas_fotos']['name'][$i]);
+                        throw new InvalidArgumentException('Tipo de imagem nÃ£o permitido: ' . $_FILES['novas_fotos']['name'][$i]);
                     }
                     $nomeArquivo = uniqid('pet_') . '.' . $extensao;
                     move_uploaded_file($_FILES['novas_fotos']['tmp_name'][$i], $diretorioUploads . $nomeArquivo);
@@ -77,4 +77,4 @@
     $fotos = $dao->carregarFotos($animal->getId());
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/editarAnimal.html";
+    require __DIR__ . "/../../frontEnd/views/editarAnimal.html";

@@ -78,17 +78,23 @@ define('DB_NAME', 'petalliance');
 PetAlliance/
 ├── backEnd/
 │   ├── config/         # Configuracoes do banco e pagamento
-│   ├── controllers/    # Logica da API
+│   ├── controllers/    # Logica da API (api/)
 │   ├── models/         # Classes e DAOs
+│   ├── views/          # Componentes PHP (navbar, membros)
+│   ├── admin/          # Paginas PHP de administracao
+│   ├── animal/         # Paginas PHP de animais
+│   ├── denuncias/      # Paginas PHP de denuncias
 │   ├── usuario/        # Paginas PHP de usuario
-│   ├── views/          # Navbar e componentes
-│   └── home.php        # Pagina inicial logada
+│   └── *.php           # Paginas/APIs principais (home, match, chat, pagamento)
 ├── frontEnd/
 │   ├── assets/         # Imagens e logos
 │   ├── style/          # CSS (style.css, estilos.css, chat.css)
 │   ├── utils/          # JavaScript (appUsuario, chat, formatacao)
-│   └── view/           # Fragmentos HTML
+│   └── views/          # Fragmentos HTML
+├── docs/               # Documentacao do projeto (SRS, testes, DER, planos)
+├── tests/              # Testes unitarios (PHPUnit)
 ├── uploads/            # Fotos de usuarios e animais
+├── vendor/             # Dependencias do Composer (PHPMailer)
 └── index.php           # Landing page
 ```
 

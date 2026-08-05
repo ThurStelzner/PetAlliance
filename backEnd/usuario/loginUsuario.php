@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     session_start();
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
@@ -15,10 +15,10 @@
         $usuario = $usuarioDAO->read($cpf);
 
         if (!$usuario) {
-            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF não cadastrado!");
+            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF nÃ£o cadastrado!");
             exit();
         } elseif ($cpf !== $usuario->getCpf()) {
-            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF inválido!");
+            header("Location: /backEnd/usuario/loginUsuario.php?erro=CPF invÃ¡lido!");
             exit();
         } else {
             $senhaCorreta = password_verify($senha, $usuario->getSenha());
@@ -49,7 +49,7 @@
 
     }
 
-    require __DIR__ . "/../../frontEnd/view/login.html";
+    require __DIR__ . "/../../frontEnd/views/login.html";
 
     if (isset($_SESSION['erro_login'])) {
         unset($_SESSION['erro_login']);

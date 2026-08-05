@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../../backEnd/models/usuarioDAO.php';
     require_once __DIR__ . '/../../backEnd/models/usuario.php';
     require_once __DIR__ . '/../../backEnd/config/validacao.php';
@@ -27,7 +27,7 @@
             if ($validacao !== true) {
                 $erro = $validacao;
             } elseif ($novaSenha !== $confirmarSenha) {
-                $erro = "A confirmação não corresponde à nova senha.";
+                $erro = "A confirmaÃ§Ã£o nÃ£o corresponde Ã  nova senha.";
             } else {
                 $dao->updateSenha($usuarioAtual->getId(), $novaSenha);
                 $sucesso = true;
@@ -36,4 +36,4 @@
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/alterarSenha.html";
+    require __DIR__ . "/../../frontEnd/views/alterarSenha.html";

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     require_once __DIR__ . "/../../backEnd/models/animalDAO.php";
     require_once __DIR__ . "/../../backEnd/models/animal.php";
@@ -35,7 +35,7 @@
             if (!empty($_FILES['fotos']['name'][0])) {
                 $totalFotos = count($_FILES['fotos']['name']);
                 if ($totalFotos > 10) {
-                    throw new InvalidArgumentException('Máximo de 10 fotos permitidas.');
+                    throw new InvalidArgumentException('MÃ¡ximo de 10 fotos permitidas.');
                 }
                 for ($i = 0; $i < $totalFotos; $i++) {
                     if ($_FILES['fotos']['error'][$i] !== UPLOAD_ERR_OK) continue;
@@ -44,7 +44,7 @@
                     }
                     $extensao = strtolower(pathinfo($_FILES['fotos']['name'][$i], PATHINFO_EXTENSION));
 if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos']['tmp_name'][$i])) {
-                        throw new InvalidArgumentException('Tipo de imagem não permitido: ' . $_FILES['fotos']['name'][$i]);
+                        throw new InvalidArgumentException('Tipo de imagem nÃ£o permitido: ' . $_FILES['fotos']['name'][$i]);
                     }
                     $nomeArquivo = uniqid('pet_') . '.' . $extensao;
                     move_uploaded_file($_FILES['fotos']['tmp_name'][$i], $diretorioUploads . $nomeArquivo);
@@ -74,37 +74,37 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
                 $vacinado === '' ||
                 $certificado === ''
             ) {
-                throw new InvalidArgumentException('Preencha todos os campos obrigatórios.');
+                throw new InvalidArgumentException('Preencha todos os campos obrigatÃ³rios.');
             }
 
             $coresPermitidas = ["Preto", "Branco", "Cinza", "Marrom", "Outro"];
             if (!in_array($cor, $coresPermitidas, true)) {
-                throw new InvalidArgumentException('Cor inválida. Selecione: Preto, Branco, Cinza, Marrom ou Outro.');
+                throw new InvalidArgumentException('Cor invÃ¡lida. Selecione: Preto, Branco, Cinza, Marrom ou Outro.');
             }
 
             $tiposPermitidos = ["Cachorro", "Gato", "Cavalo", "Outro"];
             if (!in_array($tipo, $tiposPermitidos, true)) {
-                throw new InvalidArgumentException('Tipo inválido. Selecione: Cachorro, Gato, Cavalo ou Outro.');
+                throw new InvalidArgumentException('Tipo invÃ¡lido. Selecione: Cachorro, Gato, Cavalo ou Outro.');
             }
 
             if (mb_strlen($nome) > 50) {
-                throw new InvalidArgumentException('Nome deve ter no máximo 50 caracteres.');
+                throw new InvalidArgumentException('Nome deve ter no mÃ¡ximo 50 caracteres.');
             }
 
             if (mb_strlen($descricao) > 2000) {
-                throw new InvalidArgumentException('Descrição deve ter no máximo 2000 caracteres.');
+                throw new InvalidArgumentException('DescriÃ§Ã£o deve ter no mÃ¡ximo 2000 caracteres.');
             }
 
             if ($dt_nascimento !== '') {
                 $dataNasc = DateTime::createFromFormat('Y-m-d', $dt_nascimento);
                 if (!$dataNasc || $dataNasc->format('Y-m-d') !== $dt_nascimento) {
-                    throw new InvalidArgumentException('Data de nascimento inválida.');
+                    throw new InvalidArgumentException('Data de nascimento invÃ¡lida.');
                 }
                 if ($dataNasc > new DateTime()) {
-                    throw new InvalidArgumentException('A data de nascimento não pode ser futura.');
+                    throw new InvalidArgumentException('A data de nascimento nÃ£o pode ser futura.');
                 }
                 if ($dt_nascimento < '2000-01-01') {
-                    throw new InvalidArgumentException('A data mínima permitida é 01/01/2000.');
+                    throw new InvalidArgumentException('A data mÃ­nima permitida Ã© 01/01/2000.');
                 }
             }
 
@@ -128,7 +128,7 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
                 if (!in_array($extensao, $permitidos, true)) {
-                    throw new InvalidArgumentException('Tipo de imagem não permitido para o certificado.');
+                    throw new InvalidArgumentException('Tipo de imagem nÃ£o permitido para o certificado.');
                 }
 
                 $fotoCertificado = uniqid('cert_') . '.' . $extensao;
@@ -140,13 +140,13 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
 
             if (!empty($_FILES['arquivoVacinacao']['name'])) {
                 if ($_FILES['arquivoVacinacao']['size'] > MAX_FILE_SIZE) {
-                    throw new InvalidArgumentException('Arquivo de vacinação muito grande.');
+                    throw new InvalidArgumentException('Arquivo de vacinaÃ§Ã£o muito grande.');
                 }
                 $extensao = strtolower(pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION));
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
 
                 if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoVacinacao']['tmp_name'])) {
-                    throw new InvalidArgumentException('Tipo de imagem não permitido para a carteira de vacinação.');
+                    throw new InvalidArgumentException('Tipo de imagem nÃ£o permitido para a carteira de vacinaÃ§Ã£o.');
                 }
 
                 $fotoVacinacao = uniqid('vac_') . '.' . $extensao;
@@ -192,5 +192,5 @@ if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['fotos
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/cadastrarAnimal.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/views/cadastrarAnimal.html";
+    require __DIR__ . "/../../frontEnd/views/footer.html";

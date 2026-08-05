@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . "/config/config.php";
     require_once __DIR__ . "/controllers/api/PagamentoController.php";
 
@@ -17,5 +17,5 @@
     }
 
     require __DIR__ . "/views/navBar.php";
-    require __DIR__ . "/../frontEnd/view/pagamentos.html";
-    require __DIR__ . "/../frontEnd/view/footer.html";
+    require __DIR__ . "/../frontEnd/views/pagamentos.html";
+    require __DIR__ . "/../frontEnd/views/footer.html";

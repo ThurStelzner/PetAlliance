@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . "/../config/config.php";
     require_once __DIR__ . "/../models/animal.php";
     require_once __DIR__ . "/../controllers/api/animalController.php";
@@ -40,7 +40,7 @@
         $animal = $animalDao->read($animalId);
         if (!$animal || $animal->getDonoid() != $donoId) {
             http_response_code(403);
-            echo json_encode(["sucesso" => false, "mensagem" => "Você não tem permissão para excluir este animal."]);
+            echo json_encode(["sucesso" => false, "mensagem" => "VocÃª nÃ£o tem permissÃ£o para excluir este animal."]);
             exit;
         }
         $controllerAnimal = new AnimalController();
@@ -49,5 +49,5 @@
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/meusAnimais.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/views/meusAnimais.html";
+    require __DIR__ . "/../../frontEnd/views/footer.html";

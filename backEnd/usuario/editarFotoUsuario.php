@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     require_once __DIR__ . "/../../backEnd/models/usuarioDAO.php";
     require_once __DIR__ . "/../../backEnd/models/usuario.php";
@@ -12,7 +12,7 @@
     
     require __DIR__ . "/../views/navBar.php";
 
-    // Proteção: Verifica se o usuário está logado
+    // ProteÃ§Ã£o: Verifica se o usuÃ¡rio estÃ¡ logado
     if (!isset($_SESSION['usuario_cpf'])) {
         header("Location: /backEnd/usuario/loginUsuario.php");
         exit();
@@ -26,23 +26,23 @@
                 }
 
                 if ($_FILES['imagemPerfil']['size'] > MAX_FILE_SIZE) {
-                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho máximo permitido: 100MB.");
+                    throw new InvalidArgumentException("Arquivo muito grande. Tamanho mÃ¡ximo permitido: 100MB.");
                 }
 
-                // Validação de Extensão
+                // ValidaÃ§Ã£o de ExtensÃ£o
                 $extensao = pathinfo($_FILES['imagemPerfil']['name'], PATHINFO_EXTENSION);
                 $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
                 if (!in_array(strtolower($extensao), $permitidos) || !validarMimeImagem($_FILES['imagemPerfil']['tmp_name'])) {
-                    throw new InvalidArgumentException("Tipo de imagem não permitido. Use JPG, PNG ou WEBP.");
+                    throw new InvalidArgumentException("Tipo de imagem nÃ£o permitido. Use JPG, PNG ou WEBP.");
                 }
 
                 $dao = new UsuarioDAO();
                 $cpfUsuario = $_SESSION['usuario_cpf'];
                 
-                // 1. Buscar usuário para saber qual a foto atual (para deletá-la do servidor)
+                // 1. Buscar usuÃ¡rio para saber qual a foto atual (para deletÃ¡-la do servidor)
                 $usuario = $dao->read($cpfUsuario);
                 if (!$usuario) {
-                    throw new Exception("Usuário não encontrado.");
+                    throw new Exception("UsuÃ¡rio nÃ£o encontrado.");
                 }
 
                 $fotoAntiga = $usuario->getImagem();
@@ -53,8 +53,8 @@
 
                 if (move_uploaded_file($_FILES['imagemPerfil']['tmp_name'], $caminhoDestino)) {
                     
-                    // 3. Deletar foto antiga do servidor para não acumular lixo
-                    // Não deletamos se for a imagem padrão (placeholder)
+                    // 3. Deletar foto antiga do servidor para nÃ£o acumular lixo
+                    // NÃ£o deletamos se for a imagem padrÃ£o (placeholder)
                     if ($fotoAntiga !== "placeholder.webp" && file_exists(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga)) {
                         unlink(__DIR__ . '/../../uploads/usuario/' . $fotoAntiga);
                     }
@@ -63,7 +63,7 @@
                     $usuario->setImagem($novoNomeArquivo);
                     $dao->updateFoto($usuario);
 
-                    // 5. Atualizar a Sessão para refletir a mudança imediatamente
+                    // 5. Atualizar a SessÃ£o para refletir a mudanÃ§a imediatamente
                     $_SESSION['usuario_imagem'] = $novoNomeArquivo;
 
                     header("Location: /backEnd/usuario/perfil.php?sucesso=foto_atualizada");
@@ -81,5 +81,5 @@
         }
     }
 
-    // Se não for POST, carrega a View do formulário
-    require __DIR__ . "/../../frontEnd/view/editarFotoUsuario.html";
+    // Se nÃ£o for POST, carrega a View do formulÃ¡rio
+    require __DIR__ . "/../../frontEnd/views/editarFotoUsuario.html";

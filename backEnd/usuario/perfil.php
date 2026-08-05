@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../../backEnd/controllers/api/usuarioController.php';
 
     session_start();
@@ -26,5 +26,5 @@
     }
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/perfil.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/views/perfil.html";
+    require __DIR__ . "/../../frontEnd/views/footer.html";

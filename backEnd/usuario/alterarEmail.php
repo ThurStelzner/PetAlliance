@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../../backEnd/config/config.php';
     require_once __DIR__ . '/../../backEnd/models/usuario.php';
     require_once __DIR__ . '/../../backEnd/models/usuarioDAO.php';
@@ -20,7 +20,7 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rota = $_POST['route'] ?? '';
 
-        // ETAPA 1: confirmar senha + enviar código pro email atual
+        // ETAPA 1: confirmar senha + enviar cÃ³digo pro email atual
         if ($rota === 'confirmar_senha') {
             $senha = $_POST['senha'] ?? '';
             $novoEmail = $_POST['novo_email'] ?? '';
@@ -58,7 +58,7 @@
             exit();
         }
 
-        // ETAPA 2: verificar código do email atual
+        // ETAPA 2: verificar cÃ³digo do email atual
         if ($rota === 'verificar_codigo_atual') {
             $codigo = $_POST['codigo'] ?? '';
 
@@ -89,7 +89,7 @@
             }
         }
 
-        // ETAPA 3: verificar código do novo email e salvar
+        // ETAPA 3: verificar cÃ³digo do novo email e salvar
         if ($rota === 'verificar_codigo_novo') {
             $codigo = $_POST['codigo'] ?? '';
 
@@ -116,7 +116,7 @@
             }
         }
 
-        // Reenviar código
+        // Reenviar cÃ³digo
         if ($rota === 'reenviar') {
             $tipo = $_POST['tipo'] ?? '';
             $email = $tipo === 'novo' ? ($_SESSION['novo_email_pendente'] ?? '') : $usuarioAtual->getEmail();
@@ -142,4 +142,4 @@
     $sucesso = $_GET['sucesso'] ?? '';
 
     require __DIR__ . "/../views/navBar.php";
-    require __DIR__ . "/../../frontEnd/view/alterarEmail.html";
+    require __DIR__ . "/../../frontEnd/views/alterarEmail.html";

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     require_once __DIR__ . '/../controllers/api/animalController.php';
 
     session_start();
@@ -25,5 +25,5 @@
 
     require __DIR__ . "/../views/navBar.php";
     ?><script>window.USUARIO_ID = <?= (int) $usuarioId ?>;</script><?php
-    require __DIR__ . "/../../frontEnd/view/favoritos.html";
-    require __DIR__ . "/../../frontEnd/view/footer.html";
+    require __DIR__ . "/../../frontEnd/views/favoritos.html";
+    require __DIR__ . "/../../frontEnd/views/footer.html";

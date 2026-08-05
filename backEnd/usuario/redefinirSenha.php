@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 session_start();
 
@@ -11,7 +11,7 @@ require_once __DIR__ . "/../../backEnd/controllers/api/usuarioController.php";
 $controller = new UsuarioController();
 $usuarioDAO = new UsuarioDAO();
 
-// POST — salvar nova senha
+// POST â€” salvar nova senha
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmar = trim($_POST['confirmar_senha'] ?? '');
 
     if (!$usuarioId) {
-        echo json_encode(["success" => false, "message" => "Sessão inválida. Solicite um novo código."]);
+        echo json_encode(["success" => false, "message" => "SessÃ£o invÃ¡lida. Solicite um novo cÃ³digo."]);
         exit();
     }
 
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($senha !== $confirmar) {
-        echo json_encode(["success" => false, "message" => "As senhas não conferem."]);
+        echo json_encode(["success" => false, "message" => "As senhas nÃ£o conferem."]);
         exit();
     }
 
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Verificar se está autorizado (veio do código ou token)
+// Verificar se estÃ¡ autorizado (veio do cÃ³digo ou token)
 $usuarioId = $_SESSION['recuperacao_autorizado'] ?? null;
 if (!$usuarioId) {
     header("Location: /backEnd/usuario/esqueceuSenha.php");
@@ -75,5 +75,5 @@ $emailOculto = $posArroba !== false
     ? substr($usuario->getEmail(), 0, 3) . '*****' . substr($usuario->getEmail(), $posArroba)
     : substr($usuario->getEmail(), 0, 3) . '*****';
 
-require __DIR__ . "/../../frontEnd/view/redefinirSenha.html";
-require __DIR__ . "/../../frontEnd/view/footer.html";
+require __DIR__ . "/../../frontEnd/views/redefinirSenha.html";
+require __DIR__ . "/../../frontEnd/views/footer.html";
