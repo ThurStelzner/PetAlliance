@@ -42,10 +42,36 @@
             $animal->setVacinado(trim($_POST['vacinado'] ?? ''));
             $animal->setCertificado(trim($_POST['certificado'] ?? ''));
 
-            $dao->atualizarAnimal($animal);
-
             $diretorioUploads = __DIR__ . '/../../uploads/animais/';
             $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
+
+            if (!empty($_FILES['arquivoCertificado']['name'])) {
+                if ($_FILES['arquivoCertificado']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de certificado muito grande.');
+                }
+                $extensao = strtolower(pathinfo($_FILES['arquivoCertificado']['name'], PATHINFO_EXTENSION));
+                if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoCertificado']['tmp_name'])) {
+                    throw new InvalidArgumentException('Tipo de imagem não permitido para o certificado.');
+                }
+                $fotoCertificado = uniqid('cert_') . '.' . $extensao;
+                move_uploaded_file($_FILES['arquivoCertificado']['tmp_name'], $diretorioUploads . $fotoCertificado);
+                $animal->setFotoCertificado($fotoCertificado);
+            }
+
+            if (!empty($_FILES['arquivoVacinacao']['name'])) {
+                if ($_FILES['arquivoVacinacao']['size'] > MAX_FILE_SIZE) {
+                    throw new InvalidArgumentException('Arquivo de vacinação muito grande.');
+                }
+                $extensao = strtolower(pathinfo($_FILES['arquivoVacinacao']['name'], PATHINFO_EXTENSION));
+                if (!in_array($extensao, $permitidos, true) || !validarMimeImagem($_FILES['arquivoVacinacao']['tmp_name'])) {
+                    throw new InvalidArgumentException('Tipo de imagem não permitido para a carteira de vacinação.');
+                }
+                $fotoVacinacao = uniqid('vac_') . '.' . $extensao;
+                move_uploaded_file($_FILES['arquivoVacinacao']['tmp_name'], $diretorioUploads . $fotoVacinacao);
+                $animal->setFotoVacina($fotoVacinacao);
+            }
+
+            $dao->atualizarAnimal($animal);
 
             if (!empty($_FILES['novas_fotos']['name'][0])) {
                 $totalNovas = count($_FILES['novas_fotos']['name']);
