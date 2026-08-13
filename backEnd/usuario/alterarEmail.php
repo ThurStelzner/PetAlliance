@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     require_once __DIR__ . '/../../backEnd/config/config.php';
     require_once __DIR__ . '/../../backEnd/models/usuario.php';
     require_once __DIR__ . '/../../backEnd/models/usuarioDAO.php';
