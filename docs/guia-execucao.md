@@ -15,7 +15,7 @@ Tutorial completo de instalação e execução do sistema em ambiente local (Win
 | E-mail | PHPMailer (SMTP) — credenciais no `.env` |
 | Servidor local | Servidor embutido do PHP (`php -S`) ou Apache/XAMPP |
 
-**Importante — arquivos de configuração fora do git:** o `backEnd/config/config.php` (credenciais do banco) e o `.env` (chaves AbacatePay/SMTP) **não são versionados** — ambos estão no `.gitignore` e **não vêm no clone**. Cada pessoa configura os seus (seções 3 e 4). Quem **não tem acesso** ao banco remoto da equipe cria um **banco local** importando o `docs/banco.sql`.
+**Importante — segredos fora do git:** o `config.php` **é versionado, mas sem credenciais** (vem com padrão de banco local `localhost`/`root`). O `.env` (chaves AbacatePay/SMTP) **não é versionado** — está no `.gitignore` e não vem no clone. Quem tem acesso ao banco remoto da equipe preenche as credenciais no `config.php` **local** (as edições ficam fora do git). Quem **não tem acesso** usa o banco local: importa o `docs/banco.sql` e pronto (seções 3 e 4).
 
 ---
 
@@ -60,72 +60,20 @@ O projeto já vem com tudo que precisa (não é necessário `composer install`):
 PetAlliance/
 ├── vendor/          # PHPMailer (já versionado)
 ├── .env.example     # Modelo do .env (copiar para .env)
-├── backEnd/config/config.php   # Criado localmente (NÃO vem no clone)
+├── backEnd/config/config.php   # Versionado SEM credenciais (padrão banco local)
 ├── index.php        # Landing page (cria a pasta uploads/ automaticamente)
 └── docs/banco.sql   # Script para criar o banco LOCAL
 ```
 
-### Passo 3 — Criar o `backEnd/config/config.php`
+### Passo 3 — Conferir o `backEnd/config/config.php`
 
-O `config.php` é **ignorado pelo git** (contém as credenciais do banco) — quem já tem o arquivo (membro da equipe) pode pular este passo. Se você **não o recebeu**, crie com as credenciais do seu ambiente:
+O arquivo **já vem no clone** — versionado **sem credenciais**, apontando para o banco local (`localhost` / `root` / senha vazia).
 
-**Com acesso ao banco remoto da equipe:** solicite o `config.php` a um membro do time (ele contém o host, banco, usuário e senha do MySQL remoto).
+- **Sem acesso ao banco remoto?** Não mexa — ele já funciona com o banco local (Passo 4).
+- **Membro da equipe (banco remoto)?** Edite as **linhas 35–39** com as credenciais fornecidas pela equipe (host `tini.click`, usuário `pet_alliance_db` e senha). Essas edições ficam **só na sua máquina**: rode uma única vez o comando abaixo para o git ignorar o arquivo e nunca subir suas credenciais por engano:
 
-**Sem acesso (banco local):** crie o arquivo `backEnd/config/config.php` com o conteúdo abaixo e as credenciais do seu MySQL local (padrão: `localhost` / `root` / senha vazia):
-
-```php
-<?php
-    function carregarEnv() {
-        $arquivo = __DIR__ . '/../../.env';
-        if (!file_exists($arquivo)) {
-            return;
-        }
-        $linhas = file($arquivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($linhas as $linha) {
-            $linha = trim($linha);
-            if ($linha === '' || str_starts_with($linha, '#')) {
-                continue;
-            }
-            $partes = explode('=', $linha, 2);
-            if (count($partes) === 2) {
-                $chave = trim($partes[0]);
-                $valor = trim($partes[1]);
-                $valor = trim($valor, '"\'');
-                putenv("$chave=$valor");
-                $_ENV[$chave] = $valor;
-            }
-        }
-    }
-
-    carregarEnv();
-    date_default_timezone_set('America/Sao_Paulo');
-
-    define('MAX_FILE_SIZE', 100 * 1024 * 1024);
-
-    class Conexao {
-        private static $instancia = null;
-
-        public static function getConexao() {
-            if(self::$instancia === null) {
-                try {
-                    self::$instancia = new PDO(
-                        "mysql:host=localhost;dbname=pet_alliance_db;charset=utf8",
-                        "root",
-                        ""
-                    );
-                    self::$instancia->setAttribute(
-                        PDO::ATTR_ERRMODE,
-                        PDO::ERRMODE_EXCEPTION
-                    );
-                    self::$instancia->exec("SET time_zone = 'America/Sao_Paulo'");
-                } catch (PDOException $e){
-                    error_log("Erro de conexão: " . $e->getMessage());
-                    throw new InvalidArgumentException("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
-                }
-            }
-            return self::$instancia;
-        }
-    }
+```powershell
+git update-index --skip-worktree backEnd/config/config.php
 ```
 
 ### Passo 4 — Criar o banco de dados
@@ -181,7 +129,7 @@ php vendor/bin/phpunit
 
 ### 4.1 Banco de dados — `backEnd/config/config.php`
 
-As credenciais de conexão ficam **dentro do `config.php`**, nas linhas 35–39 (host, banco, usuário e senha):
+As credenciais de conexão ficam nas **linhas 35–39** do `config.php` (host, banco, usuário e senha):
 
 ```php
 self::$instancia = new PDO(
@@ -191,10 +139,10 @@ self::$instancia = new PDO(
 );
 ```
 
-- **Membro da equipe:** o arquivo veio com o host remoto (`tini.click`) — não altere.
-- **Banco local:** use `localhost` / `root` / sua senha e importe o `docs/banco.sql` (Passo 4).
+- **Banco local (padrão versionado):** o arquivo já vem com `localhost` / `root` / senha vazia — só importe o `docs/banco.sql` (Passo 4).
+- **Banco remoto (membro da equipe):** preencha as linhas 35–39 com as credenciais da equipe.
 
-> O arquivo **não é versionado** (`.gitignore`) — edições aqui não aparecem no git e não são sobrescritas por `git pull`.
+> O arquivo é versionado **sem credenciais**. Edições locais não sobem por engano: rode `git update-index --skip-worktree backEnd/config/config.php` (uma vez) para o git ignorar as diferenças locais — o `git pull` também não sobrescreve o arquivo.
 
 ### 4.2 Pagamentos e e-mail — `.env`
 
@@ -219,7 +167,7 @@ A pasta `uploads/usuario` e `uploads/animais` é criada **automaticamente** pelo
 
 O erro mais comum. Causas possíveis, na ordem:
 
-1. **`config.php` inexistente** — o arquivo não vem no clone; sem ele o `require` falha (ou o sistema usa credenciais erradas). Crie-o (Passo 3).
+1. **Credenciais não preenchidas / banco não criado** — quem usa banco local precisa importar o `docs/banco.sql` (Passo 4); membro da equipe precisa preencher as credenciais remotas nas linhas 35–39 do `config.php` (Passo 3).
 2. **Driver `pdo_mysql` não carregado no PHP local** (php.ini ausente ou `extension_dir` errado) — resumo da correção abaixo, detalhes no [Guia de Erros PHP](guia-erros-php.md), seção 1:
    - Localize o PHP: `(Get-Command php).Source`
    - Crie o `php.ini`: `Copy-Item "<pasta-do-php>\php.ini-development" "<pasta-do-php>\php.ini"`
@@ -242,7 +190,7 @@ Causa: arquivos PHP salvos com BOM UTF-8 (3 bytes invisíveis `EF BB BF` no iní
 | `Could not find driver` | `extension=pdo_mysql` descomentado? | Seção 5.1 (item 2) |
 | `Connection refused` / `Access denied` no error_log | MySQL desligado / credenciais erradas | Seção 5.1 (itens 3 e 4) |
 | `Unknown database 'pet_alliance_db'` | Banco local não criado | Passo 4 (importar `docs/banco.sql`) |
-| `Failed opening required ... config.php` | Config ausente (não vem no clone) | Passo 3 (criar o arquivo) |
+| `Access denied` (banco remoto) | Credenciais remotas não preenchidas no `config.php` local | Passo 3 (preencher linhas 35–39) |
 | Página em branco / 404 | Servidor parado ou porta errada | Rodar `php -S localhost:8000` e conferir a URL |
 | E-mail não envia | Variáveis SMTP no `.env` | Conferir seção 4.2 |
 | Pagamento não inicia | Chaves AbacatePay no `.env` | Conferir seção 4.2 |
@@ -256,3 +204,4 @@ Causa: arquivos PHP salvos com BOM UTF-8 (3 bytes invisíveis `EF BB BF` no iní
 | 1.0 | 13/08/2026 | Carlos Eduardo Duhring | Criação do guia — tutorial de execução com pré-requisitos, passo a passo (servidor embutido PHP), configuração (banco remoto, .env) e erros comuns |
 | 1.1 | 13/08/2026 | Carlos Eduardo Duhring | Banco local com `docs/banco.sql` documentado para quem não tem acesso ao remoto; `.env.example` como modelo |
 | 1.2 | 13/08/2026 | Carlos Eduardo Duhring | Decisão final: credenciais do banco permanecem no `config.php` (padrão remoto), que sai do versionamento (`.gitignore`); `.env` só para AbacatePay/SMTP; modelo completo do `config.php` incluído no guia |
+| 1.3 | 13/08/2026 | Carlos Eduardo Duhring | `config.php` volta a ser versionado **sem credenciais** (padrão banco local); membros da equipe preenchem as credenciais remotas no arquivo local com `git update-index --skip-worktree`; `.env` permanece fora do git |

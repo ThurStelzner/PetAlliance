@@ -117,7 +117,7 @@ php -r "try { new PDO('mysql:host=SEU_HOST;dbname=SEU_BANCO;charset=utf8','USUAR
 
 Se conectar, o erro fatal some. Se falhar com outra mensagem (ex.: `Access denied`, `Unknown database`, `Connection refused`), o problema é de credenciais/banco — confira as linhas 35–39 do `config.php` (`backEnd/config/config.php`).
 
-> **Atenção:** o `config.php` **não é versionado** (está no `.gitignore`) — ele não vem no clone do repositório. Se o arquivo não existir na sua máquina, crie-o a partir do modelo do [Guia de Execução](guia-execucao.md) (seção 3, Passo 3).
+> **Atenção:** o `config.php` versionado contém **apenas credenciais locais** (`localhost`/`root`) — sem segredos. Membros da equipe preenchem as credenciais do banco remoto no arquivo **local** (linhas 35–39); as edições locais ficam fora do git rodando uma vez `git update-index --skip-worktree backEnd/config/config.php`.
 
 ### 1.5 Como ver o erro REAL escondido pelo config.php
 
@@ -214,3 +214,4 @@ php -i | Select-String 'extension_dir'     # para onde aponta o extension_dir
 |---|---|---|---|
 | 1.0 | 13/08/2026 | Carlos Eduardo Duhring | Criação do guia — documenta erro de `pdo_mysql`/php.ini e BOM UTF-8 ocorridos em ambiente Windows (PHP 8.4.5 em `C:\Senai\`), corrigidos no commit `ca5800b` |
 | 1.1 | 13/08/2026 | Carlos Eduardo Duhring | Ajustes: `config.php` sai do versionamento (`.gitignore`) — notas de diagnóstico atualizadas para credenciais locais editadas no próprio arquivo |
+| 1.2 | 13/08/2026 | Carlos Eduardo Duhring | `config.php` versionado novamente, **sem credenciais** (padrão banco local); equipe preenche credenciais remotas localmente com `--skip-worktree` |
