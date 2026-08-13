@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     require_once __DIR__ . '/controllers/api/animalController.php';
     require_once __DIR__ . '/controllers/api/MembroController.php';
     require_once __DIR__ . "/models/usuarioDAO.php";

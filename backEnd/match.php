@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../backEnd/controllers/api/solicitacaoMatchController.php';
 require_once __DIR__ . '/../backEnd/controllers/api/notificacaoController.php';
 require_once __DIR__ . "/../backEnd/models/usuarioDAO.php";

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     require_once __DIR__ . '/../../backEnd/controllers/api/usuarioController.php';
 
     session_start();

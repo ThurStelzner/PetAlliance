@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
     require_once __DIR__ . "/../../backEnd/models/animalDAO.php";
     require_once __DIR__ . "/../../backEnd/models/animal.php";
