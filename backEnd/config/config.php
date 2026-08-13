@@ -33,9 +33,9 @@
             if(self::$instancia === null) {
                 try {
                     self::$instancia = new PDO(
-                        "mysql:host=tini.click;dbname=pet_alliance_db;charset=utf8",
-                        "pet_alliance_db",
-                        "aac4539d49ab9948233c6750924c1d4baa1bb739997f5b9f335569f531217658"
+                        "mysql:host=" . getenv('DB_HOST') . ";dbname=" . getenv('DB_NAME') . ";charset=utf8",
+                        getenv('DB_USER'),
+                        getenv('DB_SENHA')
                     );
                     self::$instancia->setAttribute(
                         PDO::ATTR_ERRMODE,

@@ -1,7 +1,4 @@
 ﻿<?php
-
-    session_start();
-
     $diretorioUsuario = 'uploads/usuario';
     $diretorioAnimal = 'uploads/animais';
     
