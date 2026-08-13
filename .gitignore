@@ -1,8 +1,2 @@
-<<<<<<< HEAD
 config.php
 .env
-=======
-composer
-.env
-.env.local
->>>>>>> d7c8c99a49bf17e8f8a3af0231d4be6a28ff4bd3
