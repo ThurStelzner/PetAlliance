@@ -21,6 +21,14 @@
         }
     }
 
+    function validarMimeImagem($arquivoTmp) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $arquivoTmp);
+        finfo_close($finfo);
+        $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+        return in_array($mime, $permitidos, true);
+    }
+
     carregarEnv();
     date_default_timezone_set('America/Sao_Paulo');
 
