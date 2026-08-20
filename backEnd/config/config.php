@@ -33,9 +33,9 @@
             if(self::$instancia === null) {
                 try {
                     self::$instancia = new PDO(
-                        "mysql:host=localhost;dbname=pet_alliance_db;charset=utf8",
-                        "root",
-                        ""
+                        "mysql:host=" . getenv("DB_HOST") . ";dbname=" . getenv("DB_NAME") . ";charset=utf8",
+                        getenv("DB_USER"),
+                        getenv("DB_SENHA")
                     );
                     self::$instancia->setAttribute(
                         PDO::ATTR_ERRMODE,
