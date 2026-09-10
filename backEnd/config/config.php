@@ -49,7 +49,7 @@
                         PDO::ATTR_ERRMODE,
                         PDO::ERRMODE_EXCEPTION
                     );
-                    self::$instancia->exec("SET time_zone = 'America/Sao_Paulo'");
+                    self::$instancia->exec("SET time_zone = '-03:00'");
                 } catch (PDOException $e){
                     error_log("Erro de conexão: " . $e->getMessage());
                     throw new InvalidArgumentException("Erro ao conectar ao banco de dados. Tente novamente mais tarde.");
