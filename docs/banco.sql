@@ -1,4 +1,4 @@
-CREATE DATABASE pet_alliance_db IF NOT EXISTS;
+CREATE DATABASE IF NOT EXISTS pet_alliance_db;
 USE pet_alliance_db;
 
 -- USUÁRIOS
