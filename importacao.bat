@@ -2,7 +2,9 @@
 
 cd "%USERPROFILE%\Documents"
 
-git clone https://github.com/ThurStelzner/PetAlliance.git
+if not exist "%USERPROFILE%\Documents\PetAlliance" (
+    git clone https://github.com/ThurStelzner/PetAlliance.git
+)
 
 cd C:\xampp\mysql\bin
 
