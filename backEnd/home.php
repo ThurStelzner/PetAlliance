@@ -16,7 +16,7 @@
     $usuarioDAO = new UsuarioDAO();
 
     if (!isset($_SESSION['usuario_cpf'])) {
-        die("UsuÃ¡rio nÃ£o estÃ¡ logado.");
+        die("Usuário não está logado.");
     }
 
     $cpf = $_SESSION['usuario_cpf'];

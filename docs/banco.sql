@@ -51,7 +51,7 @@ CREATE TABLE tb_matches (
     id_animal2 BIGINT UNSIGNED NOT NULL,   
     aceito BOOLEAN DEFAULT FALSE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    respondido_em TIMESTAMP,
+    respondido_em TIMESTAMP NULL DEFAULT NULL,
     CONSTRAINT fk_usuario1 FOREIGN KEY (id_usuario1) REFERENCES tb_usuarios(id),
     CONSTRAINT fk_animal1 FOREIGN KEY (id_animal1) REFERENCES tb_pets(id),
     CONSTRAINT fk_usuario2 FOREIGN KEY (id_usuario2) REFERENCES tb_usuarios(id),
