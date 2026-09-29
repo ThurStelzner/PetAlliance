@@ -157,7 +157,7 @@ CREATE TABLE tb_pets_membros (
     FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
-CREATE TABLE `tb_pets_fotos` (
+CREATE TABLE tb_pets_fotos (
   id bigint unsigned NOT NULL AUTO_INCREMENT,
   pet_id bigint unsigned NOT NULL,
   foto_path varchar(250) NOT NULL,
