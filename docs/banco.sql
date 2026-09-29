@@ -157,6 +157,17 @@ CREATE TABLE tb_pets_membros (
     FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
+CREATE TABLE `tb_pets_fotos` (
+  id bigint unsigned NOT NULL AUTO_INCREMENT,
+  pet_id bigint unsigned NOT NULL,
+  foto_path varchar(250) NOT NULL,
+  ordem int DEFAULT '0',
+  criado_em timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY fk_fotos_pet (pet_id),
+  CONSTRAINT fk_fotos_pet FOREIGN KEY (pet_id) REFERENCES tb_pets (id) ON DELETE CASCADE
+)
+
 -- VENDAS
 CREATE TABLE tb_vendas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
