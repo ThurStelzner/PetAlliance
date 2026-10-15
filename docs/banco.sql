@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS pet_alliance_db;
 USE pet_alliance_db;
 
 -- USUÁRIOS
-CREATE TABLE tb_usuarios (
+CREATE TABLE IF NOT EXISTS tb_usuarios (
 	id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	foto_perfil VARCHAR(250) DEFAULT"placeholder.webp",
     cep varchar(8) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE tb_usuarios (
 );
 
 -- PETS
-CREATE TABLE tb_pets (
+CREATE TABLE IF NOT EXISTS tb_pets (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     dono_id BIGINT UNSIGNED NOT NULL,
     nome VARCHAR(50) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE tb_pets (
 );
 
 -- MATCH
-CREATE TABLE tb_matches (
+CREATE TABLE IF NOT EXISTS tb_matches (
     id SERIAL PRIMARY KEY, 
     id_usuario1 BIGINT UNSIGNED NOT NULL,  
     id_animal1 BIGINT UNSIGNED NOT NULL,   
@@ -59,7 +59,7 @@ CREATE TABLE tb_matches (
     CONSTRAINT uq_match_animais UNIQUE (id_animal1, id_animal2)
 );
 -- BLOQUEIOS
-CREATE TABLE tb_bloqueios (
+CREATE TABLE IF NOT EXISTS tb_bloqueios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT UNSIGNED NOT NULL,
     bloqueado_id BIGINT UNSIGNED NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE tb_bloqueios (
 );
 
 -- SOLICITAÇÕES DE MATCH
-CREATE TABLE tb_solicitacoes_match (
+CREATE TABLE IF NOT EXISTS tb_solicitacoes_match (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     pet_id BIGINT UNSIGNED NOT NULL,
     remetente_id BIGINT UNSIGNED NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE tb_solicitacoes_match (
 );
 
 -- CHAT (CONVERSA)
-CREATE TABLE tb_conversas (
+CREATE TABLE IF NOT EXISTS tb_conversas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     solicitacao_id BIGINT UNSIGNED NOT NULL,
     ativa BOOLEAN DEFAULT TRUE NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE tb_conversas (
 );
 
 -- MENSAGENS
-CREATE TABLE tb_mensagens (
+CREATE TABLE IF NOT EXISTS tb_mensagens (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     conversa_id BIGINT UNSIGNED NOT NULL,
     remetente_id BIGINT UNSIGNED NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE tb_mensagens (
 );
 
 -- FAVORITOS
-CREATE TABLE tb_favoritos (
+CREATE TABLE IF NOT EXISTS tb_favoritos (
 	id_pet BIGINT UNSIGNED,
     id_usuario BIGINT UNSIGNED,
     PRIMARY KEY (id_usuario, id_pet),
@@ -108,7 +108,7 @@ CREATE TABLE tb_favoritos (
 );
 
 -- DENÚNCIAS
-CREATE TABLE tb_denuncias (
+CREATE TABLE IF NOT EXISTS tb_denuncias (
      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
      usuario_id BIGINT UNSIGNED NULL,
      tipo_alvo ENUM('animal', 'usuario', 'site') NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE tb_denuncias (
  );
 
 -- NOTIFICAÇÕES
-CREATE TABLE tb_notificacoes (
+CREATE TABLE IF NOT EXISTS tb_notificacoes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT UNSIGNED NOT NULL,
     tipo VARCHAR(50) NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE tb_notificacoes (
 );
 
 -- PAGAMENTOS
-CREATE TABLE tb_pagamentos (
+CREATE TABLE IF NOT EXISTS tb_pagamentos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
     usuario_id BIGINT UNSIGNED NULL,
     prod_id_abacatepay varchar(200) NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE tb_pagamentos (
 );
 
 -- PETS DESTACADOS POR MEMBROS
-CREATE TABLE tb_pets_membros (
+CREATE TABLE IF NOT EXISTS tb_pets_membros (
     usuario_id BIGINT UNSIGNED NOT NULL,
     animal_id BIGINT UNSIGNED NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -157,7 +157,7 @@ CREATE TABLE tb_pets_membros (
     FOREIGN KEY (animal_id) REFERENCES tb_pets(id) ON DELETE CASCADE
 );
 
-CREATE TABLE tb_pets_fotos (
+CREATE TABLE IF NOT EXISTS tb_pets_fotos (
   id bigint unsigned NOT NULL AUTO_INCREMENT,
   pet_id bigint unsigned NOT NULL,
   foto_path varchar(250) NOT NULL,
@@ -169,7 +169,7 @@ CREATE TABLE tb_pets_fotos (
 )
 
 -- VENDAS
-CREATE TABLE tb_vendas (
+CREATE TABLE IF NOT EXISTS tb_vendas (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     animal_id BIGINT UNSIGNED NULL,
     comprador_id BIGINT UNSIGNED NULL,
@@ -186,7 +186,7 @@ CREATE TABLE tb_vendas (
 );
 
 -- VERIFICAÇÃO DE EMAIL E RECUPERAÇÃO DE SENHA
-CREATE TABLE tb_verificacao_email (
+CREATE TABLE IF NOT EXISTS tb_verificacao_email (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     usuario_id BIGINT UNSIGNED NOT NULL,
     token VARCHAR(255) NOT NULL,

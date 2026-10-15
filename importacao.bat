@@ -22,7 +22,7 @@ cd "%USERPROFILE%\Documents\PetAlliance\"
     echo DB_SENHA= 
     echo DB_NAME=pet_alliance_db 
     echo DB_USER=root 
-    echo DB_HOST=127.0.0.1 
+    echo DB_HOST=db
 
     echo ABACATEPAY_API_KEY= 
     echo ABACATEPAY_URL= 
