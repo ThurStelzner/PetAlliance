@@ -1,8 +1,10 @@
 services:
   php:
+    image: petalliance-web:1.0
     build:
       context: .
       dockerfile: docker/dockerfile
+    container_name: petalliance-web
     ports:
       - "8080:80"
     volumes:
@@ -11,8 +13,11 @@ services:
       - .env
     depends_on:
       - db
+    networks:
+      - petNetwork
   db:
     image: mysql:8.0
+    container_name: petalliance-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: pet_alliance_db
@@ -22,6 +27,10 @@ services:
       - db_data:/var/lib/mysql
     ports:
       - "3307:3306"
+    networks:
+      - petNetwork
 volumes:
   db_data:
-
+networks:
+  petNetwork:
+    driver: bridge

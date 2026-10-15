@@ -1,0 +1,1 @@
+Arthur: copie docker/ + docker-compose.yml + .dockerignore + .env.exemple para a RAIZ do repo (branch Arthur), rode: prepararEnv.bat > criarNetwork.bat > docker compose up -d --build > importarBanco.bat > http://localhost:8080. Limpeza: remover.bat
