@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
         const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
         const imgs = fotos.map(f =>
-            `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
+            `<img src="/uploads/animais/${f}" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
         ).join('');
         return `<div class="animal-fotos-carrossel" data-fotos='${fotosJson}'><div class="carrossel-track">${imgs}</div></div>`;
     }
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         container.innerHTML = "";
 
         if (animais.length === 0) {
-            container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Nenhum animal encontrado.</p>";
+            container.innerHTML = '<p class="animais-empty">Nenhum animal encontrado.</p>';
             renderizarPaginacao();
             return;
         }
@@ -166,19 +166,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (animal.dono_id != window.USUARIO_ID) {
                 if (matchStatusMap[animal.id]) {
                     if (matchStatusMap[animal.id].status === 'aceito') {
-                        matchHtml = '<a href="/backEnd/chat.php?solicitacao_id=' + matchStatusMap[animal.id].solicitacao_id + '" class="btn btn-primary" style="width:100%;font-size:0.8rem;padding:0.4rem 0;">Iniciar Chat</a>';
+                        matchHtml = '<a href="/backEnd/chat.php?solicitacao_id=' + matchStatusMap[animal.id].solicitacao_id + '" class="btn btn-primary">Iniciar Chat</a>';
                     } else if (matchStatusMap[animal.id].status === 'pendente') {
-                        matchHtml = '<button type="button" class="btn" style="width:100%;font-size:0.8rem;padding:0.4rem 0;background:#ccc;color:#666;cursor:default;" disabled>Pendente</button>';
+                        matchHtml = '<button type="button" class="btn" disabled>Pendente</button>';
                     } else {
-                        matchHtml = '<button type="button" class="btn btn-primary match-btn" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;">Enviar Match</button>';
+                        matchHtml = '<button type="button" class="btn btn-primary match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
                     }
                 } else {
-                    matchHtml = '<button type="button" class="btn btn-primary match-btn" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;">Enviar Match</button>';
+                    matchHtml = '<button type="button" class="btn btn-primary match-btn" data-animal-id="' + animal.id + '">Enviar Match</button>';
                 }
             }
 
             var adminBtn = window.EH_ADMIN
-                ? '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '" style="width:100%;margin-top:0.25rem;font-size:0.75rem;padding:0.3rem 0;background:transparent;border:1px solid #d32f2f;border-radius:0.5rem;color:#d32f2f;cursor:pointer;">Excluir</button>'
+                ? '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '">Excluir</button>'
                 : "";
 
             var badges = "";
@@ -197,12 +197,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     '<p class="animal-card-desc">' + (animal.descricao || "Não informada") + '</p>' +
                     '<div class="animal-card-badges">' + badges + '</div>' +
                     '<div class="animal-card-actions">' +
-                        '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.25rem 0;">Ver Detalhes</button>' +
+                        '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
                         matchHtml +
                         adminBtn +
                     '</div>' +
                 '</div>' +
-                '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '" style="position:absolute;top:0.4rem;right:0.4rem;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:2rem;height:2rem;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;color:' + (animal.favoritado === true ? '#e74c3c' : '#999') + ';" title="' + favoritarText + '">' +
+                '<button type="button" class="favoritar-btn" data-animal-id="' + animal.id + '" style="color:' + (animal.favoritado === true ? '#e74c3c' : '#999') + ';" title="' + favoritarText + '">' +
                     (animal.favoritado === true ? '\u2764' : '\u2661') +
                 '</button>';
             container.appendChild(card);
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             renderizarAnimais(animais, pagina, totalPag);
         } catch (error) {
             console.error("Erro ao carregar animais:", error);
-            container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Não foi possível carregar os animais.</p>";
+            container.innerHTML = '<p class="animais-error">Não foi possível carregar os animais.</p>';
         }
     }
 
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
             const fotosJson = encodeURIComponent(JSON.stringify(fotos));
             const imgsHtml = fotos.map(f =>
-                `<img src="/uploads/animais/${f}" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
+                `<img src="/uploads/animais/${f}" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src='/uploads/animais/placeholder.webp'">`
             ).join('');
 
             var setasGaleria = fotos.length > 1
@@ -452,10 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 '<div class="animal-modal-content">' +
                     '<div class="animal-modal-header">' +
                         '<h3>' + (animal.nome || "Sem nome") + '</h3>' +
-                        '<div style="display:flex;align-items:center;gap:0.5rem;">' +
-                            favoritarHeartHtml +
-                            '<button type="button" class="animal-modal-close">✕</button>' +
-                        '</div>' +
+                        '<button type="button" class="animal-modal-close">✕</button>' +
                     '</div>' +
                     '<div class="animal-modal-body">' +
                         galeriaHtml +
@@ -476,6 +473,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             '</div>' +
                         '</div>' +
                     '</div>' +
+                    favoritarHeartHtml +
                 '</div>'
             );
 

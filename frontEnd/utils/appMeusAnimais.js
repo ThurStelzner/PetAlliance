@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
         const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
         const imgs = fotos.map(f =>
-            '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">'
+            '<img src="/uploads/animais/' + f + '" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">'
         ).join('');
         return '<div class="animal-fotos-carrossel" data-fotos=\'' + fotosJson + '\'><div class="carrossel-track">' + imgs + '</div></div>';
     }
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
             container.innerHTML = "";
 
             if (animais.length === 0) {
-                container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Você ainda não tem nenhum animal cadastrado.</p>";
+                container.innerHTML = '<p class="animais-empty">Você ainda não tem nenhum animal cadastrado.</p>';
                 return;
             }
 
@@ -104,9 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         '<p class="animal-card-desc">' + (animal.descricao || "Não informada") + '</p>' +
                         '<div class="animal-card-badges">' + badges + '</div>' +
                         '<div class="animal-card-actions">' +
-                            '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.25rem 0;">Ver Detalhes</button>' +
-                            '<button type="button" class="' + classeBotao + ' btn btn-primary" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">' + textoBotao + '</button>' +
-                            '<button type="button" class="editar-btn btn btn-outline" data-animal-id="' + animal.id + '" style="width:100%;font-size:0.8rem;padding:0.4rem 0;margin-top:0.25rem;">Editar</button>' +
+                            '<button type="button" class="detalhes-btn btn btn-ghost" data-animal-id="' + animal.id + '">Ver Detalhes</button>' +
+                            '<button type="button" class="' + classeBotao + ' btn btn-primary" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">' + textoBotao + '</button>' +
+                            '<button type="button" class="editar-btn btn btn-outline" data-animal-id="' + animal.id + '">Editar</button>' +
                             '<button type="button" class="excluir-btn" data-animal-id="' + animal.id + '" data-nome="' + (animal.nome || 'Animal') + '">Excluir</button>' +
                         '</div>' +
                     '</div>';
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         } catch (error) {
             console.error("Erro ao carregar seus animais:", error);
-            container.innerHTML = "<p style='grid-column:1/-1;text-align:center;padding:2rem;color:#666;'>Não foi possível carregar seus animais.</p>";
+            container.innerHTML = '<p class="animais-error">Não foi possível carregar seus animais.</p>';
         }
     }
 
@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const fotos = (animal.fotos && animal.fotos.length > 0) ? animal.fotos : ["placeholder.webp"];
             const fotosJson = JSON.stringify(fotos).replace(/</g, "\\u003C");
             const imgsHtml = fotos.map(function(f) {
-                return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
+                return '<img src="/uploads/animais/' + f + '" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
             }).join('');
 
             var setasGaleria = fotos.length > 1

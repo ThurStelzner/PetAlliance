@@ -1,12 +1,12 @@
 
-<div class="verificacao-container">
-    <div class="verificacao-card">
+<div>
+    <div>
         <h2>Verifique seu email</h2>
         <p>Enviamos um código de verificação para <strong><?= htmlspecialchars($usuario->getEmail()) ?></strong></p>
         <p>Digite o código abaixo ou clique no link enviado por email.</p>
 
-        <div id="mensagem-erro" class="mensagem-erro" style="display:none;"></div>
-        <div id="mensagem-sucesso" class="mensagem-sucesso" style="display:none;"></div>
+        <div id="mensagem-erro"></div>
+        <div id="mensagem-sucesso"></div>
 
         <form id="form-verificacao" method="POST">
             <input type="hidden" name="usuario_id" value="<?= htmlspecialchars($usuarioId) ?>">
@@ -15,7 +15,7 @@
             <button type="submit">Verificar</button>
         </form>
 
-        <div class="reenviar">
+        <div>
             <p>Não recebeu o código?</p>
             <button id="btn-reenviar" onclick="reenviarCodigo()">Reenviar código</button>
         </div>

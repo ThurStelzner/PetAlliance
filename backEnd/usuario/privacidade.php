@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PolÃ­tica de Privacidade - PetAlliance</title>
+  <title>Política de Privacidade - PetAlliance</title>
   <link rel="stylesheet" href="/frontEnd/style/style.css">
   <link rel="stylesheet" href="/frontEnd/style/estilos.css">
 </head>

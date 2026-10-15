@@ -32,7 +32,7 @@ async function carregarDestaques() {
             var cardsHtml = animais.map(a => {
                 const foto = a.foto_pet || 'placeholder.webp';
                 return '<div class="destaque-card" onclick="destaquesVerDetalhes(' + a.id + ')">' +
-                    '<img src="/uploads/animais/' + foto + '" alt="' + (a.nome || '') + '">' +
+                    '<img src="/uploads/animais/' + foto + '" loading="lazy" alt="' + (a.nome || '') + '">' +
                     '<div class="destaque-card-body">' +
                         '<strong>' + (a.nome || '') + '</strong>' +
                         '<p>' + (a.raca || a.tipo || '') + '</p>' +
@@ -99,7 +99,7 @@ async function carregarDestaques() {
             var galeriaHtml = '<div class="animal-modal-gallery" data-fotos=\'' + fotosJson + '\'>' +
                 '<div class="gallery-track">' +
                     fotos.map(function(f) {
-                        return '<img src="/uploads/animais/' + f + '" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
+                        return '<img src="/uploads/animais/' + f + '" loading="lazy" alt="Foto" onerror="this.onerror=null;this.src=\'/uploads/animais/placeholder.webp\'">';
                     }).join('') +
                 '</div>' +
                 setasGaleria +
@@ -109,10 +109,7 @@ async function carregarDestaques() {
                 '<div class="animal-modal-content">' +
                     '<div class="animal-modal-header">' +
                         '<h3>' + (animal.nome || 'Sem nome') + '</h3>' +
-                        '<div style="display:flex;align-items:center;gap:0.5rem;">' +
-                            favoritarHtml +
-                            '<button type="button" class="animal-modal-close">✕</button>' +
-                        '</div>' +
+                        '<button type="button" class="animal-modal-close">✕</button>' +
                     '</div>' +
                     '<div class="animal-modal-body">' +
                         galeriaHtml +
@@ -133,6 +130,7 @@ async function carregarDestaques() {
                             '</div>' +
                         '</div>' +
                     '</div>' +
+                    favoritarHtml +
                 '</div>';
 
             modal.onclick = (e) => {

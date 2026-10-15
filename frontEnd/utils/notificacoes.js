@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let statusLabel = s.status === 'pendente' ? 'Pendente' : s.status === 'aceito' ? 'Aceito' : 'Recusado';
 
                 html += '<div class="notif-card notif-card-solicitacao">' +
-                    '<div class="notif-card-avatar"><img src="/uploads/animais/' + foto + '" alt="Pet"></div>' +
+                    '<div class="notif-card-avatar"><img src="/uploads/animais/' + foto + '" loading="lazy" alt="Pet"></div>' +
                     '<div class="notif-card-body">' +
                         '<div class="notif-card-title">' + s.pet_nome + '</div>' +
                         '<div class="notif-card-sub"><img src="/uploads/usuario/' + fotoRemetente + '" class="notif-avatar-mini"> ' + s.remetente_nome + '</div>' +
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let statusLabel = s.status === 'pendente' ? 'Pendente' : s.status === 'aceito' ? 'Aceito' : 'Recusado';
 
                 html += '<div class="notif-card">' +
-                    '<div class="notif-card-avatar"><img src="/uploads/animais/' + foto + '" alt="Pet"></div>' +
+                    '<div class="notif-card-avatar"><img src="/uploads/animais/' + foto + '" loading="lazy" alt="Pet"></div>' +
                     '<div class="notif-card-body">' +
                         '<div class="notif-card-title">' + s.pet_nome + '</div>' +
                         '<div class="notif-card-sub">' + (s.status === 'pendente' ? 'Aguardando resposta' : s.status === 'aceito' ? 'Match aceito!' : 'Match recusado') + '</div>' +
