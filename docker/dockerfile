@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y \
 RUN echo '<Directory /var/www/html>\n    AllowOverride All\n    Require all granted\n</Directory>' > /etc/apache2/conf-available/petalliance.conf \
   && a2enconf petalliance
 
+# output_buffering: o codigo imprime a view e depois chama header("Location") nos POSTs.
+# Sem buffer (padrao do imagem php) isso quebra com "headers already sent". XAMPP usa 4096; aqui deixamos folgado.
+RUN echo 'output_buffering = 65536' > /usr/local/etc/php/conf.d/zz-petalliance.ini
+
 WORKDIR /var/www/html
 # vendor/ ja vem commitado no repo; .dockerignore tira .git/uploads/docs do contexto
 COPY . .

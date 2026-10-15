@@ -18,6 +18,9 @@ services:
   db:
     image: mysql:8.0
     container_name: petalliance-db
+    # PHP usa America/Sao_Paulo (config.php); sem isso o MySQL do Docker fica em UTC e os
+    # codigos de verificacao (expiracao > NOW()) nascem expirados. Brasil nao tem mais horario de verao.
+    command: "--default-time-zone=-03:00"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: pet_alliance_db

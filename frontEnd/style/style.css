@@ -1167,3 +1167,86 @@ main {
   color: #856404;
   border: 1px solid #ffeeba;
 }
+
+/* === LANDING + FOOTER (restaurado de origin/main: removido sem querer no redesign da sideBar) === */
+.index-split {
+  display: flex;
+  height: 100vh;
+}
+
+.index-image {
+  flex: 1;
+  background: url('/frontEnd/assets/images/indexImage.webp') center / cover no-repeat;
+  min-width: 0;
+}
+
+.index-content {
+  flex: 0 0 35%;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4rem 3.5rem 2.5rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.index-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.index-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.index-sub {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.index-desc {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 2rem;
+}
+
+.index-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-brand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-link:hover {
+  color: var(--primary);
+}

@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS tb_pets_fotos (
   PRIMARY KEY (id),
   KEY fk_fotos_pet (pet_id),
   CONSTRAINT fk_fotos_pet FOREIGN KEY (pet_id) REFERENCES tb_pets (id) ON DELETE CASCADE
-)
+);
 
 -- VENDAS
 CREATE TABLE IF NOT EXISTS tb_vendas (
